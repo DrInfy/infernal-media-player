@@ -1,0 +1,52 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ImpControls="clr-namespace:ImpControls;assembly=ImpControls" x:Class="Imp.Panels.MediaPlayerBottom" 
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ImpResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*" x:Name="left"/>
+            <ColumnDefinition Width="2*" x:Name="right"/>
+            
+        </Grid.ColumnDefinitions>
+
+        <ImpControls:ImpButton Name="ButtonPlay"  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="2" Clicked="ButtonPlay_Clicked" IsTabStop="False"/>
+        <ImpControls:ImpButton Name="ButtonLoop"  HorizontalAlignment="Left"  Margin="40,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="3" Clicked="ButtonLoop_Clicked" IsTabStop="False"/>
+        <ImpControls:ImpButton Name="ButtonMute"  HorizontalAlignment="Right"  Margin="0,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="2" Grid.Column="1" Clicked="ButtonMute_Clicked" CurrentState="1" IsTabStop="False"/>
+
+        <ProgressBar  Name="SliderTime" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="90,3,60,20" HorizontalContentAlignment="Stretch" Grid.ColumnSpan="2" SmallChange="0.1" Foreground="DarkRed" OverridesDefaultStyle="False" AllowDrop="False" MouseMove="sliderTime_MouseMove" MouseUp="sliderTime_MouseUp" MouseDown="sliderTime_MouseDown" IsTabStop="False"/>
+        
+        
+        <!--<Path Name="pathDash"  Stroke="DarkRed" StrokeThickness="3" Data="M 0,0 l 0,1 M 1,0 l 0,1 M 2,0 l 0,1 M 3,0 l 0,1 M 4,0 l 0,1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="90,1,60,28" Stretch="Fill" IsHitTestVisible="False" MouseMove="sliderTime_MouseMove" MouseUp="sliderTime_MouseUp" MouseDown="sliderTime_MouseDown" >
+        </Path>-->
+        <Label Name="LabelPosition" Grid.ColumnSpan="2" HorizontalAlignment="center" Margin="50,15,50,0" FontSize="14" FontWeight="Bold" IsTabStop="False">"0:00:00 / 0:00:00"</Label>
+
+        <Grid Grid.Column="1"
+              MinWidth="15"
+              HorizontalAlignment="Stretch"
+              Margin="0,25,60,1" FrameworkElement.FlowDirection="RightToLeft"  >
+            <Grid.ColumnDefinitions>
+                
+                <ColumnDefinition Width="*" MaxWidth="100" />
+            </Grid.ColumnDefinitions>
+            <ProgressBar Name="SliderVolume" HorizontalAlignment="Stretch" SmallChange="0.1" Value="1" 
+                      Foreground="DarkRed" OverridesDefaultStyle="False" AllowDrop="False" 
+                      MouseMove="sliderVolume_MouseMove" MouseUp="sliderVolume_MouseUp" MouseDown="sliderVolume_MouseDown" 
+                         Style="{StaticResource LowProgressBarStyle}"
+                      Maximum="1" Grid.Column="0" Margin="0,0,0,0" FrameworkElement.FlowDirection="LeftToRight" IsTabStop="False"/>
+        </Grid>
+
+    </Grid>
+</UserControl>

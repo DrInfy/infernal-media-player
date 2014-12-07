@@ -1,0 +1,11 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Panels="clr-namespace:Imp.Panels" x:Class="InfernalWorkOutTracker.MainWindow"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+
+        <Panels:OpenPanel x:Name="OpenPanel" HorizontalAlignment="Stretch" Margin="0,0,150,0" VerticalAlignment="Stretch"/>
+
+    </Grid>
+</Window>

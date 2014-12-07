@@ -1,0 +1,14 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Lists="clr-namespace:ImpControls.Lists;assembly=ImpControls" xmlns:ImpControls="clr-namespace:ImpControls;assembly=ImpControls" x:Class="Imp.DeleteItemsWindow"
+        Title="Are you sure you want to delete the following files?" Height="300" Width="400" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner" Activated="Window_Activated" ShowInTaskbar="False">
+    <Grid>
+
+        <Lists:StringListBox Name="ListItemsToDelete" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,40" Grid.ColumnSpan="2"/>
+
+        <ImpControls:ImpButton Name="DeleteButton" HorizontalAlignment="Left" Height="30" Margin="20,0,0,5" VerticalAlignment="Bottom" Width="75" Clicked="DeleteButton_Clicked"/>
+        <ImpControls:ImpButton Name="CancelButton"  HorizontalAlignment="Right" Height="30" Margin="0,0,20,5" VerticalAlignment="Bottom" Width="75" Grid.Column="1" Clicked="CancelButton_Clicked" />
+
+    </Grid>
+</Window>
