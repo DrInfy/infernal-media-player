@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace Base.Commands
@@ -9,7 +10,6 @@ namespace Base.Commands
         private readonly List<KeyCommand<TCmdType>> commands;
         private readonly KeyboardState currentState;
         private readonly KeyboardState lastState;
-        private PlayerStyle allowedStyle;
         private ModifierKeys modifierKeys;
 
         public ImpKeyboard()
@@ -30,7 +30,7 @@ namespace Base.Commands
             commands.Add(command);
         }
 
-        public List<KeyCommand<TCmdType>> Update(bool isWindowActive)
+        public List<KeyCommand<TCmdType>> Update(bool isWindowActive, PlayerStyle allowedStyles)
         {
             activeCommands.Clear();
 
@@ -52,7 +52,8 @@ namespace Base.Commands
 
             foreach (KeyCommand<TCmdType> impCommand in commands)
             {
-                if (!isWindowActive && !impCommand.Anywhere)
+                if (!HasAnyFlagInCommon(impCommand.AllowedStyle, allowedStyles)
+                    || (!isWindowActive && !impCommand.Anywhere))
                     continue;
 
                 if (IsNewKeyPressed(impCommand.Key) && impCommand.ModifierKeys == modifierKeys)
@@ -68,6 +69,11 @@ namespace Base.Commands
             }
 
             return activeCommands;
+        }
+
+        public static bool HasAnyFlagInCommon(PlayerStyle type, PlayerStyle value)
+        {
+            return (type & value) != 0;
         }
 
         public bool IsNewKeyPressed(Key key)

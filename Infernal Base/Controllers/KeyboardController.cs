@@ -11,12 +11,13 @@ namespace Base.Controllers
         public abstract bool Focused { get; }
         public abstract bool Selected { get; }
         public IEventController EventC { get; protected set; }
+        public PlayerStyle AllowedStyles { get; protected set; }
 
         public abstract void Exec(TCmdType cmd, object arg = null);
 
         public virtual void Update()
         {
-            List<KeyCommand<TCmdType>> cmdList = keyboard.Update(Selected);
+            List<KeyCommand<TCmdType>> cmdList = keyboard.Update(Selected, AllowedStyles);
             GlobalKeyboard.SetModifierKeys(keyboard.ModKeys); 
             if (Focused)
             {

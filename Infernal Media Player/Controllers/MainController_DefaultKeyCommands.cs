@@ -21,8 +21,11 @@ namespace Imp.Controllers
             cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.Pause, Key = Key.MediaStop, NeedRelease = true, Anywhere = true, AllowedStyle = PlayerStyle.All });
 
             // rewind / fast forward
-            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.Fastforward, Key = Key.Right, NeedRelease = false });
-            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.Rewind, Key = Key.Left, NeedRelease = false });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.Fastforward, Key = Key.Right, NeedRelease = false, AllowedStyle = PlayerStyle.MediaPlayer});
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.Rewind, Key = Key.Left, NeedRelease = false, AllowedStyle = PlayerStyle.MediaPlayer });
+            // in picture mode
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.OpenNext, Key = Key.Right, NeedRelease = true, AllowedStyle = PlayerStyle.PictureViewer });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.OpenPrev, Key = Key.Left, NeedRelease = true, AllowedStyle = PlayerStyle.PictureViewer });
 
             // volume / mute keycommands
             cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.VolumeChange, Key = Key.Add, NeedRelease = false, Argument = 0.01 });

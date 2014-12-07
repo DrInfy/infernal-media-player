@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Base;
+﻿using Base;
 using Base.Commands;
 using Base.Controllers;
 using Base.FileData;
@@ -21,6 +10,16 @@ using ImpControls.Controllers;
 using MediaPlayer;
 using MediaPlayer.Player;
 using Microsoft.WindowsAPICodePack.Taskbar;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Imp.Controllers
 {
@@ -36,6 +35,8 @@ namespace Imp.Controllers
 
         public MainController(MainWindow window)
         {
+            AllowedStyles = PlayerStyle.MediaPlayer;
+            
             ToolTipService.ShowDurationProperty.OverrideMetadata(
                 typeof (DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
@@ -162,6 +163,7 @@ namespace Imp.Controllers
 
         private void LoadFailed(ImpError error)
         {
+            AllowedStyles = PlayerStyle.MediaPlayer;
             EventC.ShowError(error);
             MediaC.MediaClosed();
 
@@ -206,6 +208,8 @@ namespace Imp.Controllers
             window.ImageViewer.Stretch = Stretch.Uniform;
             window.ImageViewer.StretchDirection = StretchDirection.Both;
 
+            AllowedStyles = PlayerStyle.PictureViewer;
+
             SetPlayingTitle();
         }
 
@@ -226,12 +230,14 @@ namespace Imp.Controllers
                 window.ImageViewer.Visibility = Visibility.Hidden;
                 window.UriPlayer.Visibility = Visibility.Visible;
                 window.LogoViewer.Visibility = Visibility.Hidden;
+                AllowedStyles = PlayerStyle.VideoPlayer;
             }
             else
             {
                 window.ImageViewer.Visibility = Visibility.Hidden;
                 window.UriPlayer.Visibility = Visibility.Hidden;
                 window.LogoViewer.Visibility = Visibility.Visible;
+                AllowedStyles = PlayerStyle.MusicPlayer;
             }
 
             window.PanelPlaylist.ListPlaylist.PlayingThis(playingItem);
