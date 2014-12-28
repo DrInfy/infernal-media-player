@@ -10,6 +10,7 @@ using Base.Interfaces;
 using Base.Libraries;
 using Base.ListLogic;
 using Imp.Controllers;
+using System.IO;
 
 namespace Base.Controllers
 {
@@ -21,7 +22,7 @@ namespace Base.Controllers
         public MediaController MediaC;
         public Settings Settings;
 
-        private readonly string settingsPath = System.Environment.CurrentDirectory + "\\settings.xml";
+        private readonly string settingsPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\settings.xml";
 
         private long lastExitAttempt = 0;
         protected PlaylistItem loadingItem;
