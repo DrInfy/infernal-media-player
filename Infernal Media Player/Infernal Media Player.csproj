@@ -39,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,6 +49,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>imp-logo-ico.ico</ApplicationIcon>
@@ -64,6 +66,9 @@
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions">
       <HintPath>.\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Pngcs">
+      <HintPath>..\Lib\Pngcs.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -107,6 +112,9 @@
     <Compile Include="DeleteItemsWindow.xaml.cs">
       <DependentUpon>DeleteItemsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Image\ImpJpgDecoder.cs" />
+    <Compile Include="Image\NanoJpeg.cs" />
+    <Compile Include="Image\ImpPngDecoder.cs" />
     <Compile Include="Libraries\ImpMessaging.cs" />
     <Compile Include="Controllers\MainController_DefaultKeyCommands.cs" />
     <Compile Include="Controllers\PanelController.cs" />

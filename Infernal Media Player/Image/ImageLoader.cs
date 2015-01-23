@@ -29,12 +29,29 @@ namespace Imp.Image
                 switch (type)
                 {
                     case ImageType.Jpg:
-                        decoder = new JpegBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
+                        try
+                        {
+                            decoder = new JpegBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
                                                          BitmapCacheOption.OnLoad);
+                        }
+                        catch (Exception)
+                        {
+                            var impJpgDecoder = new ImpJpgDecoder(myUri);
+                            return impJpgDecoder.Source;
+                        }
                         break;
                     case ImageType.Png:
-                        decoder = new PngBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
+                        try
+                        {
+                            decoder = new PngBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
+                                                             BitmapCacheOption.OnLoad);
+                        }
+                        catch (Exception)
+                        {
+                            var impPngDecoder = new ImpPngDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
                                                          BitmapCacheOption.OnLoad);
+                            return impPngDecoder.Source;
+                        }
                         break;
                     case ImageType.Gif:
                         decoder = new GifBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
