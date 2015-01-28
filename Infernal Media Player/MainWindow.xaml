@@ -36,15 +36,14 @@
         <Rectangle x:Name="BarTop" Grid.ColumnSpan="5" Fill="#FFF4F4F5" HorizontalAlignment="Stretch"  Margin="0,0,0,20" Grid.Row="0" VerticalAlignment="Stretch" />
         <Rectangle x:Name="BarTop2" Grid.ColumnSpan="5" Fill="#FFF4F4F5" HorizontalAlignment="Stretch"  Margin="0,20,0,0" Grid.Row="0" VerticalAlignment="Stretch" />
         
-        <Label x:Name="LabelTopic" Grid.Row="0" Grid.ColumnSpan="5" Content="Titleeeeeeeeeeee" HorizontalAlignment="Stretch" Margin="0,0,240,0" VerticalAlignment="Stretch" FontSize="12"/>
+        <Label x:Name="LabelTopic" Grid.Row="0" Grid.ColumnSpan="5" Content="Titleeeeeeeeeeee" HorizontalAlignment="Stretch" Margin="0,0,200,0" VerticalAlignment="Stretch" FontSize="12"/>
         
         <ImpControls:ImpButton x:Name="ButtonExit" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,0,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
         <ImpControls:ImpButton x:Name="ButtonMax" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,40,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" CheckStates="2" IsTabStop="False"/>
         <ImpControls:ImpButton x:Name="ButtonMin" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,80,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
 
         <ImpControls:ImpButton x:Name="ButtonPlayList" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,120,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" CheckStates="2" IsTabStop="False"/>
-        <ImpControls:ImpButton x:Name="ButtonSettings" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,160,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" CheckStates="2" IsTabStop="False"/>
-        <ImpControls:ImpButton x:Name="ButtonOpen" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,200,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
+        <ImpControls:ImpButton x:Name="ButtonOpen" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,160,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
 
         <Rectangle Name="SplitterLeft" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
         <Element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" MouseDown="UriPlayer_MouseDown" MouseDoubleClick="UriPlayer_MouseDoubleClick" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" IsTabStop="False"/>

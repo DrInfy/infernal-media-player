@@ -70,8 +70,7 @@ namespace Imp.Panels
 
             Background = styleLib.GetGridBrush(false);
             styleLib.SetStyle(TextBoxFind);
-            LabelTopic.Background = styleLib.GetGridBrush(true);
-            LabelTopic.Foreground = styleLib.GetForeground();
+            styleLib.SetStyle(LabelTopic);
         }
 
 
@@ -193,11 +192,7 @@ namespace Imp.Panels
         private void ButtonFolderFilter_Clicked(object sender)
         {
             (sender as ImpButton).CurrentState++;
-            if (ButtonFilterFolder.CurrentState == 1)
-                ListDirectories.FindText = TextBoxFind.Text;
-            else
-                ListDirectories.FindText = string.Empty;
-            //Refresh(null);
+            ApplyWordFilter();
         }
 
         public void Refresh(object sender)
@@ -214,11 +209,21 @@ namespace Imp.Panels
         private void TextBoxFind_TextChanged(object sender, TextChangedEventArgs e)
         {
             ListFiles.FindText = TextBoxFind.Text;
+            ApplyWordFilter();
+        }
+
+        private void ApplyWordFilter()
+        {
             if (ButtonFilterFolder.CurrentState == 1)
+            {
                 ListDirectories.FindText = TextBoxFind.Text;
+                ListFiles.FindText = string.Empty;
+            }
             else
+            {
                 ListDirectories.FindText = string.Empty;
-            
+                ListFiles.FindText = TextBoxFind.Text;
+            }
         }
 
 

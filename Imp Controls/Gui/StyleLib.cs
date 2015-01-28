@@ -152,5 +152,10 @@ namespace ImpControls.Gui
             textBox.BorderBrush = BaseStyle.BorderBrush;
             textBox.Foreground = BaseStyle.NormalBrush;
         }
+        public void SetStyle(Label label)
+        {
+            label.Background = GetGridBrush(true);
+            label.Foreground = GetForeground();
+        }
     }
 }

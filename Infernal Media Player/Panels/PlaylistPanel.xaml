@@ -12,13 +12,12 @@
             <RowDefinition Height="30" x:Name="RowTopicBar2" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBox x:Name="TextBoxPlaylistName" HorizontalAlignment="Stretch"  Margin="90,0,30,0" TextAlignment="Left" TextWrapping="NoWrap" Text="Playlist not saved" VerticalAlignment="Stretch" />
         
         <ImpControls:ImpButton x:Name="ButtonClosePanel" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="30" Clicked="ButtonClosePanel_Clicked"/>
         <ImpControls:ImpButton x:Name="ButtonMaximizePanel" Margin="30,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="30" CheckStates="2" Clicked="ButtonMaximizePanel_Clicked"/>
         <ImpControls:ImpButton x:Name="ButtonClearPlaylist" Margin="60,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="30" Clicked="ButtonClearPlaylist_Clicked"/>
-        <ImpControls:ImpButton x:Name="ButtonSavePlaylist" Margin="0,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="30"/>
-
+        <Label x:Name="LabelTopic" Background="#FFF4F4F5" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" Margin="90,0,0,0" VerticalAlignment="Stretch"  Grid.ColumnSpan="2" Content="Playlist" FontSize="16"/>
+        
         <TextBox x:Name="TextBoxFind" HorizontalAlignment="Stretch" Margin="0,0,60,0" Grid.Row="1" TextWrapping="NoWrap" VerticalAlignment="Stretch" Grid.RowSpan="1" TextChanged="TextBoxFind_TextChanged"/>
         <ImpControls:ImpButton x:Name="ButtonSort" Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="30" Clicked="ButtonSort_Clicked"/>
         <ImpControls:ImpButton x:Name="ButtonRemoveFile" Grid.Row="1" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="30" Clicked="ButtonRemoveFile_Clicked"/>

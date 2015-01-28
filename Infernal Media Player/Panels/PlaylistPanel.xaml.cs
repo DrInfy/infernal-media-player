@@ -36,11 +36,10 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonClosePanel, BtnNumber.Exit_);
             styleLib.SetStyle(ButtonMaximizePanel, BtnNumber.Maximize);
 
-            styleLib.SetStyle(ButtonSavePlaylist, BtnNumber.Save);
             styleLib.SetStyle(ButtonRemoveFile, BtnNumber.Remove);
             styleLib.SetStyle(ButtonSort, "Sort");
 
-            styleLib.SetStyle(TextBoxPlaylistName);
+            styleLib.SetStyle(LabelTopic);
             styleLib.SetStyle(TextBoxFind);
             styleLib.SetStyle(ListPlaylist);
         }

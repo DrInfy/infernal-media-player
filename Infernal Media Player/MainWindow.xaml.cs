@@ -79,7 +79,6 @@ namespace Imp
             
 
             Styling.SetStyle(ButtonOpen, BtnNumber.Open);
-            Styling.SetStyle(ButtonSettings, BtnNumber.Settings);
             Styling.SetStyle(ButtonPlayList, BtnNumber.Playlist);
 
             Styling.SetStyle(ButtonMin, BtnNumber.Minimize);
@@ -87,10 +86,7 @@ namespace Imp
             Styling.SetStyle(ButtonExit, BtnNumber.Exit_);
 
             Styling.SetStyle(MenuList);
-            //LabelTopic.Background = styling.GetGridBrush(true);
             LabelTopic.Foreground = Styling.GetForeground();
-
-            //LabelEvent.Foreground = Styling.GetForeground();
 
             BarBottom.Fill = Styling.GetGridBrush(true);
             BarTop.Fill = Styling.GetGridBrush(true);
@@ -308,6 +304,7 @@ namespace Imp
                        ImageViewer.IsMouseDirectlyOver ||
                        LogoViewer.IsMouseDirectlyOver ||
                        PanelOpen.LabelTopic.IsMouseOver ||
+                       PanelPlaylist.LabelTopic.IsMouseOver ||
                        PlayerBottom.LabelPosition.IsMouseOver;
             }
         }
@@ -425,7 +422,6 @@ namespace Imp
         private bool IsMouseOverTextbox()
         {
             if (PanelOpen.TextBoxFind.IsMouseOver ||
-                PanelPlaylist.TextBoxPlaylistName.IsMouseOver ||
                 PanelPlaylist.TextBoxFind.IsMouseOver)
                 return true;
             return false;

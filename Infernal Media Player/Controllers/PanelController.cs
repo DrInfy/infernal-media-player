@@ -985,10 +985,9 @@ namespace Imp.Controllers
                 window.ButtonMin.Margin = new Thickness(0, 0, 80, 20);
 
                 window.ButtonPlayList.Margin = new Thickness(0, 0, 120, 20);
-                window.ButtonSettings.Margin = new Thickness(0, 0, 160, 20);
-                window.ButtonOpen.Margin = new Thickness(0, 0, 200, 20);
+                window.ButtonOpen.Margin = new Thickness(0, 0, 160, 20);
 
-                window.BarTop.Margin = new Thickness(0, 0, 240, 20);
+                window.BarTop.Margin = new Thickness(0, 0, 200, 20);
                 window.BarTop2.Margin = new Thickness(0, 20, 0, 0);
                 window.BarTop2.Visibility = Visibility.Visible;
             }
@@ -1002,10 +1001,9 @@ namespace Imp.Controllers
                 window.ButtonMin.Margin = new Thickness(0, 0, 80, 0);
 
                 window.ButtonPlayList.Margin = new Thickness(0, 0, 120, 0);
-                window.ButtonSettings.Margin = new Thickness(0, 0, 160, 0);
-                window.ButtonOpen.Margin = new Thickness(0, 0, 200, 0);
+                window.ButtonOpen.Margin = new Thickness(0, 0, 160, 0);
 
-                window.BarTop.Margin = new Thickness(0, 0, 240, 0);
+                window.BarTop.Margin = new Thickness(0, 0, 200, 0);
 
                 window.BarTop2.Visibility = Visibility.Hidden;
             }
