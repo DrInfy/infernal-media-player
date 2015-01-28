@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Base.FileData.FileReading.Tools;
 
 namespace Base.FileData.FileReading
 {
@@ -23,7 +22,7 @@ namespace Base.FileData.FileReading
 				// Read Flac marker
 				totalsize = fs.Length;
 				headersize = Value_Calculation(buf);
-				if (Value_Calculation(buf) != IDENTIFIER | ReadString(br, 4, Character_set.UTF8) != "ftyp") {
+				if (Value_Calculation(buf) != IDENTIFIER | Tools.ReadString(br, 4, Tools.Character_set.UTF8) != "ftyp") {
 					throw new InvalidDataException("No header found");
 				}
 				// Skip to header size info now that we know we have the correct format
@@ -40,25 +39,25 @@ namespace Base.FileData.FileReading
 					//Dim tagData As String
 					buf = br.ReadBytes(4);
 					blockSize = (int) Value_Calculation(buf);
-					tagType = ReadString(br, 4, Character_set.ISO88591);
+					tagType = Tools.ReadString(br, 4, Tools.Character_set.ISO88591);
 					switch (tagType) {
 						case "©nam":
 							fs.Seek(8, SeekOrigin.Current);
-							Title = FixBrokenText(ReadString(br, blockSize - 16, Character_set.UTF8));
+							Title = FixBrokenText(Tools.ReadString(br, blockSize - 16, Tools.Character_set.UTF8));
 							break;
 						case "©alb":
 							fs.Seek(8, SeekOrigin.Current);
-							Album = FixBrokenText(ReadString(br, blockSize - 16, Character_set.UTF8));
+							Album = FixBrokenText(Tools.ReadString(br, blockSize - 16, Tools.Character_set.UTF8));
 							break;
 						case "©art":
 						case "aART":
 						case "©ART":
 							fs.Seek(8, SeekOrigin.Current);
-							Artist = FixBrokenText(ReadString(br, blockSize - 16, Character_set.UTF8));
+							Artist = FixBrokenText(Tools.ReadString(br, blockSize - 16, Tools.Character_set.UTF8));
 							break;
 						case "trkn":
 							fs.Seek(8, SeekOrigin.Current);
-					        var text = FixBrokenText(ReadString(br, blockSize - 16, Character_set.UTF8));
+					        var text = FixBrokenText(Tools.ReadString(br, blockSize - 16, Tools.Character_set.UTF8));
                             if (text.Length > 0)
 							    sTrack =text[0];
 							break;
@@ -85,7 +84,7 @@ namespace Base.FileData.FileReading
 
 		private string FixBrokenText(string text)
 		{
-		    return text.Replace(ZeroChar, "");
+		    return text.Replace(Tools.ZeroChar, "");
 		}
 
 		/// <summary>

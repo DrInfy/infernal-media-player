@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Base.FileData.FileReading.Tools;
 
 namespace Base.FileData.FileReading
 {
@@ -31,7 +30,7 @@ namespace Base.FileData.FileReading
 
                 //Dim flacmarker(3) As Byte
                 //fs.Read(flacmarker, 0, 4)
-                startstring = ReadString(br, 4, Character_set.ISO88591);
+                startstring = Tools.ReadString(br, 4, Tools.Character_set.ISO88591);
                 if (startstring != FLAC_MARKER & startstring != OGG_MARKER)
                 {
                     // (Tools.ByteCompare(flacmarker, FLAC_MARKER)) = False Then
@@ -111,10 +110,10 @@ namespace Base.FileData.FileReading
                     do
                     {
                         string merkki = null;
-                        merkki = ReadString(br, 1, Character_set.UTF8);
+                        merkki = Tools.ReadString(br, 1, Tools.Character_set.UTF8);
                         if (merkki == "v")
                         {
-                            merkki += ReadString(br, 5, Character_set.UTF8);
+                            merkki += Tools.ReadString(br, 5, Tools.Character_set.UTF8);
                             if (merkki == "vorbis")
                             {
                                 i += 1;
@@ -138,7 +137,7 @@ namespace Base.FileData.FileReading
                 for (int i = 0; i <= comment_number - 1; i++)
                 {
                     comment_length = br.ReadUInt32();
-                    comment2 = ReadString(br, (int) comment_length, Character_set.UTF8);
+                    comment2 = Tools.ReadString(br, (int) comment_length, Tools.Character_set.UTF8);
                     // Vorbis comments are all in a format like "TITLE=Best song ever"
                     int sepindex = comment2.IndexOf("=");
                     string name = comment2.Substring(0, sepindex);
