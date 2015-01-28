@@ -93,8 +93,8 @@ namespace Imp.Controllers
                 (Settings.LastFileTypes & FileTypes.Music) == FileTypes.Music ? 1 : 0;
             window.PanelOpen.ButtonFilterPictures.CurrentState =
                 Settings.LastFileTypes.HasFlag(FileTypes.Pictures) ? 1 : 0;
-            window.PanelOpen.ButtonFilterPlaylist.CurrentState =
-                (Settings.LastFileTypes & FileTypes.Playlist) == FileTypes.Playlist ? 1 : 0;
+            //window.PanelOpen.ButtonFilterPlaylist.CurrentState =
+            //    (Settings.LastFileTypes & FileTypes.Playlist) == FileTypes.Playlist ? 1 : 0;
 
             window.PanelOpen.GetFilters();
         }

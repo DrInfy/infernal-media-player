@@ -260,23 +260,23 @@ namespace Base.FileData.FileReading
                 fs.Seek(-128, SeekOrigin.End);
 
                 // Do we have a tag?
-                if (Tools.ReadString(br, 3, Tools.Character_set.ISO88591) == "TAG")
+                if (Tools.ReadString(br, 3, Tools.CharacterSet.ISO88591) == "TAG")
                 {
                     string Str = null;
-                    Str = Tools.ReadString(br, 30, Tools.Character_set.ISO88591);
+                    Str = Tools.ReadString(br, 30, Tools.CharacterSet.ISO88591);
                     if (!Tools.Validify_ISO_Text(Str))
                         return false;
                     if (string.IsNullOrEmpty(Title))
                         Title = Str;
                     if (!Tools.Validify_ISO_Text(Str))
                         return false;
-                    Str = Tools.ReadString(br, 30, Tools.Character_set.ISO88591);
+                    Str = Tools.ReadString(br, 30, Tools.CharacterSet.ISO88591);
                     if (string.IsNullOrEmpty(Artist))
                         Artist = Str;
-                    Str = Tools.ReadString(br, 30, Tools.Character_set.ISO88591);
+                    Str = Tools.ReadString(br, 30, Tools.CharacterSet.ISO88591);
                     if (string.IsNullOrEmpty(Album))
                         Album = Str;
-                    string year = Tools.ReadString(br, 4, Tools.Character_set.ISO88591);
+                    string year = Tools.ReadString(br, 4, Tools.CharacterSet.ISO88591);
 
                     byte[] buf = null;
                     buf = new byte[30];
@@ -314,7 +314,7 @@ namespace Base.FileData.FileReading
         private bool get_ID3v2(ref FileStream fs, ref BinaryReader br)
         {
             // We have our tag if there is a ID3 marker
-            if (Tools.ReadString(br, 3, Tools.Character_set.ISO88591) == "ID3")
+            if (Tools.ReadString(br, 3, Tools.CharacterSet.ISO88591) == "ID3")
             {
                 ID3v2_versions version = default(ID3v2_versions);
                 byte[] buf = null;
@@ -359,7 +359,7 @@ namespace Base.FileData.FileReading
                             // read tags as long as we have more ID3 tag to be read
                             while (fs.Position < tagsize - 10)
                             {
-                                frame.Text = Tools.ReadString(br, 4, Tools.Character_set.ISO88591);
+                                frame.Text = Tools.ReadString(br, 4, Tools.CharacterSet.ISO88591);
                                 frame.Size = size_calculation(br.ReadBytes(4));
                                 frame.flags = (Frame_flags) br.ReadUInt16();
 
@@ -375,12 +375,12 @@ namespace Base.FileData.FileReading
                                 //    'fs.Position += frame.Size
                                 //End If
                                 string str = "";
-                                Tools.Character_set unibyte = (Tools.Character_set) br.ReadByte();
+                                Tools.CharacterSet unibyte = (Tools.CharacterSet) br.ReadByte();
 
                                 if (frame.Text == Frames3.Length | frame.Text == Frames3.Track)
                                 {
                                     // we want to read numeric values from the string
-                                    unibyte = Tools.Character_set.Numeric8;
+                                    unibyte = Tools.CharacterSet.Numeric8;
                                 }
 
                                 str = Tools.ReadString(br, (int) (frame.Size - 1), unibyte);
@@ -431,7 +431,7 @@ namespace Base.FileData.FileReading
                         // read tags as long as we have more ID3 tag to be read
                         while (fs.Position < tagsize - 10)
                         {
-                            frame.Text = Tools.ReadString(br, 3, Tools.Character_set.ISO88591);
+                            frame.Text = Tools.ReadString(br, 3, Tools.CharacterSet.ISO88591);
                             frame.Size = size_calculation(br.ReadBytes(3));
 
                             if (frame.Size + fs.Position > tagsize)
@@ -440,12 +440,12 @@ namespace Base.FileData.FileReading
                             }
 
                             string str = "";
-                            Tools.Character_set unibyte = (Tools.Character_set) br.ReadByte();
+                            Tools.CharacterSet unibyte = (Tools.CharacterSet) br.ReadByte();
 
                             if (frame.Text == Frames3.Length | frame.Text == Frames3.Track)
                             {
                                 // we want to read numeric values from the string
-                                unibyte = Tools.Character_set.Numeric8;
+                                unibyte = Tools.CharacterSet.Numeric8;
                             }
 
                             str = Tools.ReadString(br, (int) (frame.Size - 1), unibyte);

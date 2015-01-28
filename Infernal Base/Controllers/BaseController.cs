@@ -84,11 +84,15 @@ namespace Base.Controllers
                     cmdList.Add(new ImpTextAndCommand("Play Folder", ImpCommand.PlaySelectedFolderFiles));
                     cmdList.Add(new ImpTextAndCommand("Add files inside folder", ImpCommand.AddSelectedFolderFiles));
                     cmdList.Add(new ImpTextAndCommand("Add files and folders in folder", ImpCommand.AddSelectedFolderFolders));
-                    cmdList.Add(new ImpTextAndCommand("Remember selected folder", ImpCommand.AddSelectedFolderToPaths));
                     cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
-                    cmdList.Add(new ImpTextAndCommand("Delete Selected Folder (NYI)", ImpCommand.DeleteOpenFolder));
+                    cmdList.Add(new ImpTextAndCommand("Remember selected folder", ImpCommand.AddSelectedFolderToPaths));
+                    //cmdList.Add(new ImpTextAndCommand("Delete Selected Folder (NYI)", ImpCommand.DeleteOpenFolder));
                     break;
                 case ContextMenuEnum.PlacesList:
+                    cmdList.Add(new ImpTextAndCommand("Play Folder", ImpCommand.PlaySelectedFolderFiles));
+                    cmdList.Add(new ImpTextAndCommand("Add files inside folder", ImpCommand.AddSelectedFolderFiles));
+                    cmdList.Add(new ImpTextAndCommand("Add files and folders in folder", ImpCommand.AddSelectedFolderFolders));
+                    cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
                     cmdList.Add(new ImpTextAndCommand("Remove selected path", ImpCommand.RemoveSelectedPath));
                     break;
                 default:

@@ -117,7 +117,7 @@ namespace Base.ListLogic
         /// <summary>
         /// Updates the items in find list.
         /// </summary>
-        protected void UpdateItems()
+        public void UpdateItems()
         {
             if (SearchActive)
             {

@@ -56,8 +56,8 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonFilterVideo, "video");
             styleLib.SetStyle(ButtonFilterMusic, "audio");
             styleLib.SetStyle(ButtonFilterPictures, "image");
-            styleLib.SetStyle(ButtonFilterPlaylist, "playlist");
-            styleLib.SetStyle(ButtonFilterStream, "stream");
+            styleLib.SetStyle(ButtonFilterFolder, "filter folders");
+            //styleLib.SetStyle(ButtonFilterStream, "stream");
 
             styleLib.SetStyle(ButtonClearPlaylist, BtnNumber.ClearList);
 
@@ -158,11 +158,11 @@ namespace Imp.Panels
         {
             var filter = FileTypes.Any;
             int filterCount = 0;
-            if (ButtonFilterPlaylist.CurrentState != 0)
-            {
-                filter |= FileTypes.Playlist;
-                filterCount++;
-            }
+            //if (ButtonFilterPlaylist.CurrentState != 0)
+            //{
+            //    filter |= FileTypes.Playlist;
+            //    filterCount++;
+            //}
             if (ButtonFilterVideo.CurrentState != 0)
             {
                 filter |= FileTypes.Videos;
@@ -190,7 +190,15 @@ namespace Imp.Panels
             GetFilters();
             Refresh(null);
         }
-
+        private void ButtonFolderFilter_Clicked(object sender)
+        {
+            (sender as ImpButton).CurrentState++;
+            if (ButtonFilterFolder.CurrentState == 1)
+                ListDirectories.FindText = TextBoxFind.Text;
+            else
+                ListDirectories.FindText = string.Empty;
+            //Refresh(null);
+        }
 
         public void Refresh(object sender)
         {
@@ -206,12 +214,23 @@ namespace Imp.Panels
         private void TextBoxFind_TextChanged(object sender, TextChangedEventArgs e)
         {
             ListFiles.FindText = TextBoxFind.Text;
+            if (ButtonFilterFolder.CurrentState == 1)
+                ListDirectories.FindText = TextBoxFind.Text;
+            else
+                ListDirectories.FindText = string.Empty;
+            
         }
 
 
         private void ButtonAddSubFolder_Clicked(object sender)
         {
-            PrepareFolderLoader(new DirectoryLoadOptions(ListDirectories.GetSelected().Value,
+            var path = ListDirectories.GetSelected()?.Value;
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = ListFiles.CurrentPath;
+            }
+            
+            PrepareFolderLoader(new DirectoryLoadOptions(path,
                 SearchOption.AllDirectories,
                 GetFileTypes(), TextBoxFind.Text));
         }
@@ -219,7 +238,12 @@ namespace Imp.Panels
 
         private void ButtonAddFolder_Clicked(object sender)
         {
-            PrepareFolderLoader(new DirectoryLoadOptions(ListDirectories.GetSelected().Value,
+            var path = ListDirectories.GetSelected()?.Value;
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = ListFiles.CurrentPath;
+            }
+            PrepareFolderLoader(new DirectoryLoadOptions(path,
                 SearchOption.TopDirectoryOnly,
                 GetFileTypes(), TextBoxFind.Text));
         }

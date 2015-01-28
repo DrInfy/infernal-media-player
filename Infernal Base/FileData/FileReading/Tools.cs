@@ -10,7 +10,7 @@ namespace Base.FileData.FileReading
         public static readonly string OneChar = '\u0001'.ToString();
 
 
-        internal enum Character_set : byte
+        internal enum CharacterSet : byte
         {
             /// <summary>
             /// ISO-8859-1 [ISO-8859-1]. Terminated with $00.
@@ -58,7 +58,7 @@ namespace Base.FileData.FileReading
                 return false;
             }
 
-            for (int i = 0; i <= a.GetUpperBound(0); i++)
+            for (int i = 0; i < a.Length; i++)
             {
                 if (a[i] != b[i])
                 {
@@ -99,12 +99,7 @@ namespace Base.FileData.FileReading
         /// <summary>
         /// Reads bytes with a BinaryReader and converts then to a string
         /// </summary>
-        /// <param name="br"></param>
-        /// <param name="length"></param>
-        /// <param name="CS"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        static internal string ReadString(BinaryReader br, int length, Character_set CS)
+        static internal string ReadString(BinaryReader br, int length, CharacterSet CS)
         {
             if (length <= 0)
                 return "";
@@ -115,11 +110,11 @@ namespace Base.FileData.FileReading
             br.Read(byteArray, 0, length);
             switch (CS)
             {
-                case Character_set.ISO88591:
+                case CharacterSet.ISO88591:
                     str = ISO88591.GetString(byteArray);
 
                     break;
-                case Character_set.UTF16:
+                case CharacterSet.UTF16:
                     // FF FE defines little ending UTF16
                     if (byteArray.GetUpperBound(0) > 1 && byteArray[0] == 0xff & byteArray[1] == 0xfe)
                     {
@@ -139,15 +134,15 @@ namespace Base.FileData.FileReading
                         str = UTF16.GetString(byteArray);
                     }
                     break;
-                case Character_set.UTF16BE:
+                case CharacterSet.UTF16BE:
                     str = UTF16BE.GetString(byteArray);
 
                     break;
-                case Character_set.UTF8:
+                case CharacterSet.UTF8:
                     str = UTF8.GetString(byteArray);
 
                     break;
-                case Character_set.Numeric8:
+                case CharacterSet.Numeric8:
 
                     for (int i = 0; i <= byteArray.GetUpperBound(0); i++)
                     {

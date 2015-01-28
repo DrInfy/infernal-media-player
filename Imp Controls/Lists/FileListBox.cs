@@ -29,7 +29,6 @@ namespace ImpControls
         private IEnumerable<string> filtersPictures;
         private IEnumerable<string> filtersPlaylist;
 
-
         public FileSortMode SortMode
         {
             get { return sortMode; }
@@ -43,6 +42,7 @@ namespace ImpControls
             }
         }
 
+        public string CurrentPath => currentPath;
 
         protected override void GetTooltip()
         {

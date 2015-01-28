@@ -774,94 +774,49 @@ namespace Imp.Controllers
             
         }
 
+        private double GetPercentage(ColumnDefinition current, double actualWidth, ColumnDefinitionCollection columnDefinitions)
+        {
+            double percentage;
+            if (current.Width.IsAbsolute)
+                percentage = current.Width.Value / actualWidth;
+            else
+            {
+                double percentageWidthPixels;
+                double totalPercentage = current.Width.Value;
+                percentageWidthPixels = actualWidth;
+
+                foreach (var column in columnDefinitions)
+                {
+                    if (column == current) continue;
+
+                    if (column.Width.IsAbsolute)
+                        percentageWidthPixels -= column.Width.Value;
+                    else
+                        totalPercentage += column.Width.Value;
+                }
+
+                percentage = percentageWidthPixels / actualWidth *
+                                  current.Width.Value / totalPercentage;
+            }
+            return percentage;
+        }
 
         private double GetRightPercentage()
         {
-            double rightPercentage;
-            if (window.grid.ColumnDefinitions[4].Width.IsAbsolute)
-                rightPercentage = window.grid.ColumnDefinitions[4].Width.Value / window.ActualWidth;
-            else
-            {
-                double percentageWidthPixels;
-                double totalPercentage = window.grid.ColumnDefinitions[4].Width.Value;
-                percentageWidthPixels = window.ActualWidth;
-                percentageWidthPixels -= window.grid.ColumnDefinitions[1].Width.Value;
-                percentageWidthPixels -= window.grid.ColumnDefinitions[3].Width.Value;
-
-                if (window.grid.ColumnDefinitions[0].Width.IsAbsolute)
-                    percentageWidthPixels -= window.grid.ColumnDefinitions[0].Width.Value;
-                else
-                    totalPercentage += window.grid.ColumnDefinitions[0].Width.Value;
-
-                if (window.grid.ColumnDefinitions[2].Width.IsAbsolute)
-                    percentageWidthPixels -= window.grid.ColumnDefinitions[2].Width.Value;
-                else
-                    totalPercentage += window.grid.ColumnDefinitions[2].Width.Value;
-
-                rightPercentage = percentageWidthPixels / window.ActualWidth *
-                                  window.grid.ColumnDefinitions[4].Width.Value / totalPercentage;
-            }
-            return rightPercentage;
+            return GetPercentage(window.grid.ColumnDefinitions[4], window.ActualWidth, window.grid.ColumnDefinitions);
         }
 
+        
 
         private double GetLeftPercentage()
         {
-            double leftPercentage;
-            if (window.grid.ColumnDefinitions[0].Width.IsAbsolute)
-                leftPercentage = window.grid.ColumnDefinitions[0].Width.Value / window.ActualWidth;
-            else
-            {
-                double percentageWidthPixels;
-                double totalPercentage = window.grid.ColumnDefinitions[0].Width.Value;
-                percentageWidthPixels = window.ActualWidth;
-                percentageWidthPixels -= window.grid.ColumnDefinitions[1].Width.Value;
-                percentageWidthPixels -= window.grid.ColumnDefinitions[3].Width.Value;
-
-                if (window.grid.ColumnDefinitions[4].Width.IsAbsolute)
-                    percentageWidthPixels -= window.grid.ColumnDefinitions[4].Width.Value;
-                else
-                    totalPercentage += window.grid.ColumnDefinitions[4].Width.Value;
-
-                if (window.grid.ColumnDefinitions[2].Width.IsAbsolute)
-                    percentageWidthPixels -= window.grid.ColumnDefinitions[2].Width.Value;
-                else
-                    totalPercentage += window.grid.ColumnDefinitions[2].Width.Value;
-
-                leftPercentage = percentageWidthPixels / window.ActualWidth *
-                                  window.grid.ColumnDefinitions[0].Width.Value / totalPercentage;
-            }
-            return leftPercentage;
+            return GetPercentage(window.grid.ColumnDefinitions[0], window.ActualWidth, window.grid.ColumnDefinitions);
         }
 
 
         private double GetMiddlePercentage()
         {
-            double middlePercentage;
-            if (window.grid.ColumnDefinitions[2].Width.IsAbsolute)
-                middlePercentage = window.grid.ColumnDefinitions[2].Width.Value / window.ActualWidth;
-            else
-            {
-                double percentageWidthPixels;
-                double totalPercentage = window.grid.ColumnDefinitions[2].Width.Value;
-                percentageWidthPixels = window.ActualWidth;
-                percentageWidthPixels -= window.grid.ColumnDefinitions[1].Width.Value;
-                percentageWidthPixels -= window.grid.ColumnDefinitions[3].Width.Value;
-
-                if (window.grid.ColumnDefinitions[4].Width.IsAbsolute)
-                    percentageWidthPixels -= window.grid.ColumnDefinitions[4].Width.Value;
-                else
-                    totalPercentage += window.grid.ColumnDefinitions[4].Width.Value;
-
-                if (window.grid.ColumnDefinitions[0].Width.IsAbsolute)
-                    percentageWidthPixels -= window.grid.ColumnDefinitions[0].Width.Value;
-                else
-                    totalPercentage += window.grid.ColumnDefinitions[0].Width.Value;
-
-                middlePercentage = percentageWidthPixels / window.ActualWidth *
-                                  window.grid.ColumnDefinitions[2].Width.Value / totalPercentage;
-            }
-            return middlePercentage;
+            return GetPercentage(window.grid.ColumnDefinitions[2], window.ActualWidth, window.grid.ColumnDefinitions);
         }
 
 

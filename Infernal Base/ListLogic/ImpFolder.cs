@@ -10,5 +10,10 @@ namespace Base.ListLogic
         {
             SmartPath = StringHandler.GetSmartName(fullPath);
         }
+
+        //public override string ToString()
+        //{
+        //    return SmartPath;
+        //}
     }
 }

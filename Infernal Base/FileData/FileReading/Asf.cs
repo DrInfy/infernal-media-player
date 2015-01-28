@@ -289,23 +289,23 @@ namespace Base.FileData.FileReading
             lRating = br.ReadUInt16();
             if (lTitle > 0)
             {
-                Title = Tools.ReadString(br, lTitle, Tools.Character_set.UTF16);
+                Title = Tools.ReadString(br, lTitle, Tools.CharacterSet.UTF16);
             }
             if (lAuthor > 0)
             {
-                Artist = Tools.ReadString(br, lAuthor, Tools.Character_set.UTF16);
+                Artist = Tools.ReadString(br, lAuthor, Tools.CharacterSet.UTF16);
             }
             if (lCopyright > 0)
             {
-                string copyright = Tools.ReadString(br, lCopyright, Tools.Character_set.UTF16);
+                string copyright = Tools.ReadString(br, lCopyright, Tools.CharacterSet.UTF16);
             }
             if (lDescription > 0)
             {
-                string description = Tools.ReadString(br, lDescription, Tools.Character_set.UTF16);
+                string description = Tools.ReadString(br, lDescription, Tools.CharacterSet.UTF16);
             }
             if (lRating > 0)
             {
-                string rating = Tools.ReadString(br, lRating, Tools.Character_set.UTF16);
+                string rating = Tools.ReadString(br, lRating, Tools.CharacterSet.UTF16);
             }
         }
         /// <summary>
@@ -341,7 +341,7 @@ namespace Base.FileData.FileReading
                 switch (dataType)
                 {
                     case ValueDataTypes.Unicode:
-                        Tools.ReadString(br, dataLen, Tools.Character_set.UTF16);
+                        Tools.ReadString(br, dataLen, Tools.CharacterSet.UTF16);
 
                         break;
                     case ValueDataTypes.BYTEarray:
@@ -382,7 +382,7 @@ namespace Base.FileData.FileReading
         {
             var len = br.ReadUInt16();
 
-            return Tools.ReadString(br, len, Tools.Character_set.UTF16);
+            return Tools.ReadString(br, len, Tools.CharacterSet.UTF16);
         }
     }
 }

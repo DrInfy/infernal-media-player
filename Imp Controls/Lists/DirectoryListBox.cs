@@ -27,7 +27,7 @@ namespace ImpControls
 
 
 
-        public DirectoryListBox() : base(false, false)
+        public DirectoryListBox() : base(true, false)
         {
             MouseDoubleClick += OnDoubleClick;
             
@@ -135,7 +135,7 @@ namespace ImpControls
 
                 controller.Select(SelectionMode.One, select);
             }
-            
+            controller.UpdateItems();
         }
 
 
