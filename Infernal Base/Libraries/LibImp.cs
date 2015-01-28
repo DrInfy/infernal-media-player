@@ -1,12 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
-using System;
-using System.Collections.Generic;
 using Base.FileData;
-using Base.ListLogic;
 
 namespace Base.Libraries
 {
@@ -265,14 +265,10 @@ namespace Base.Libraries
             {
                 var e = Path.GetExtension(p.Name);
                 if (!string.IsNullOrWhiteSpace(e))
-                    foreach (string f in extensions)
+                    if (extensions.Any(f => String.Compare(e, f, StringComparison.OrdinalIgnoreCase) == 0))
                     {
-                        if (String.Compare(e, f, StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            infos[foundItems] = p;
-                            foundItems += 1;
-                            break;
-                        }
+                        infos[foundItems] = p;
+                        foundItems += 1;
                     }
             }
             // Array.Resize(ref paths, i + 1);

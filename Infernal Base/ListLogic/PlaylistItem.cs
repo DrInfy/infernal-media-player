@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.IO;
-using System.Windows;
+﻿using System.IO;
 using Base.FileData;
 using Base.FileData.FileReading;
 using Base.Libraries;
-
 
 namespace Base.ListLogic
 {
@@ -62,7 +59,7 @@ namespace Base.ListLogic
         /// </summary>
         public void ReadFileData()
         {
-            var extension = Path.GetExtension(FullPath).ToLowerInvariant();
+            var extension = Path.GetExtension(FullPath)?.ToLowerInvariant();
             if (extension == ".mp3")
             {
                 var mp3Reader = new Mp3(FullPath);

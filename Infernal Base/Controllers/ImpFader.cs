@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using Base.Libraries;
 
 namespace Base.Controllers
@@ -151,7 +150,7 @@ namespace Base.Controllers
         {
             dynamic pause_ = false;
 
-            if ((volume == double.NaN | volume <= 0))
+            if ((double.IsNaN(volume) | volume <= 0))
             {
                 volume = 0;
             }
@@ -179,14 +178,7 @@ namespace Base.Controllers
                             LastPositionSetTime = DateTime.Now.Ticks;
                             position = posTarget;
 
-                            if ((paused))
-                            {
-                                fade = FadeType.MoveRising;
-                            }
-                            else
-                            {
-                                fade = FadeType.MovePaused;
-                            }
+                            fade = (paused) ? FadeType.MoveRising : FadeType.MovePaused;
                         }
                     }
 

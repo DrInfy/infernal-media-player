@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Base.FileData.FileReading.Tools;
 
 namespace Base.FileData.FileReading
 {
@@ -202,6 +203,7 @@ namespace Base.FileData.FileReading
             Grouping_identity = 32
         }
 
+        [Flags]
         internal enum ID3v2_3_flags : byte
         {
             Unsynchronisation = 128,
@@ -259,23 +261,23 @@ namespace Base.FileData.FileReading
                 fs.Seek(-128, SeekOrigin.End);
 
                 // Do we have a tag?
-                if (Tools.ReadString(br, 3, Tools.Character_set.ISO88591) == "TAG")
+                if (ReadString(br, 3, Character_set.ISO88591) == "TAG")
                 {
                     string Str = null;
-                    Str = Tools.ReadString(br, 30, Tools.Character_set.ISO88591);
-                    if (!Tools.Validify_ISO_Text(Str))
+                    Str = ReadString(br, 30, Character_set.ISO88591);
+                    if (!Validify_ISO_Text(Str))
                         return false;
-                    if (string.IsNullOrEmpty(sTitle))
-                        sTitle = Str;
-                    if (!Tools.Validify_ISO_Text(Str))
+                    if (string.IsNullOrEmpty(Title))
+                        Title = Str;
+                    if (!Validify_ISO_Text(Str))
                         return false;
-                    Str = Tools.ReadString(br, 30, Tools.Character_set.ISO88591);
-                    if (string.IsNullOrEmpty(sArtist))
-                        sArtist = Str;
-                    Str = Tools.ReadString(br, 30, Tools.Character_set.ISO88591);
-                    if (string.IsNullOrEmpty(sAlbum))
-                        sAlbum = Str;
-                    string year = Tools.ReadString(br, 4, Tools.Character_set.ISO88591);
+                    Str = ReadString(br, 30, Character_set.ISO88591);
+                    if (string.IsNullOrEmpty(Artist))
+                        Artist = Str;
+                    Str = ReadString(br, 30, Character_set.ISO88591);
+                    if (string.IsNullOrEmpty(Album))
+                        Album = Str;
+                    string year = ReadString(br, 4, Character_set.ISO88591);
 
                     byte[] buf = null;
                     buf = new byte[30];
@@ -313,7 +315,7 @@ namespace Base.FileData.FileReading
         private bool get_ID3v2(ref FileStream fs, ref BinaryReader br)
         {
             // We have our tag if there is a ID3 marker
-            if (Tools.ReadString(br, 3, Tools.Character_set.ISO88591) == "ID3")
+            if (ReadString(br, 3, Character_set.ISO88591) == "ID3")
             {
                 ID3v2_versions version = default(ID3v2_versions);
                 byte[] buf = null;
@@ -358,7 +360,7 @@ namespace Base.FileData.FileReading
                             // read tags as long as we have more ID3 tag to be read
                             while (fs.Position < tagsize - 10)
                             {
-                                frame.Text = Tools.ReadString(br, 4, Tools.Character_set.ISO88591);
+                                frame.Text = ReadString(br, 4, Character_set.ISO88591);
                                 frame.Size = size_calculation(br.ReadBytes(4));
                                 frame.flags = (Frame_flags) br.ReadUInt16();
 
@@ -374,37 +376,37 @@ namespace Base.FileData.FileReading
                                 //    'fs.Position += frame.Size
                                 //End If
                                 string str = "";
-                                Tools.Character_set unibyte = (Tools.Character_set) br.ReadByte();
+                                Character_set unibyte = (Character_set) br.ReadByte();
 
                                 if (frame.Text == Frames3.Length | frame.Text == Frames3.Track)
                                 {
                                     // we want to read numeric values from the string
-                                    unibyte = Tools.Character_set.Numeric8;
+                                    unibyte = Character_set.Numeric8;
                                 }
 
-                                str = Tools.ReadString(br, (int) (frame.Size - 1), unibyte);
+                                str = ReadString(br, (int) (frame.Size - 1), unibyte);
                                 if (frame.Size <= 100)
                                 {
-                                    str = str.Replace(Tools.ZeroChar, "");
+                                    str = str.Replace(ZeroChar, "");
                                     if (frame.Text == Frames3.Title)
                                     {
-                                        if (unibyte == 0 && !Tools.Validify_ISO_Text(str))
+                                        if (unibyte == 0 && !Validify_ISO_Text(str))
                                             return false;
-                                        sTitle = str;
+                                        Title = str;
                                     }
                                     else if (frame.Text == Frames3.Artist)
                                     {
-                                        if (unibyte == 0 && !Tools.Validify_ISO_Text(str))
+                                        if (unibyte == 0 && !Validify_ISO_Text(str))
                                             return false;
-                                        sArtist = str;
+                                        Artist = str;
                                     }
                                     else if (frame.Text == Frames3.Album)
                                     {
-                                        sAlbum = str;
+                                        Album = str;
                                     }
                                     else if (frame.Text == Frames3.Length)
                                     {
-                                        sTotalSeconds = Convert.ToDouble(long.Parse(str)) / 1000;
+                                        TotalSeconds = Convert.ToDouble(long.Parse(str)) / 1000;
                                     }
                                     else if (frame.Text == Frames3.Track)
                                     {
@@ -430,7 +432,7 @@ namespace Base.FileData.FileReading
                         // read tags as long as we have more ID3 tag to be read
                         while (fs.Position < tagsize - 10)
                         {
-                            frame.Text = Tools.ReadString(br, 3, Tools.Character_set.ISO88591);
+                            frame.Text = ReadString(br, 3, Character_set.ISO88591);
                             frame.Size = size_calculation(br.ReadBytes(3));
 
                             if (frame.Size + fs.Position > tagsize)
@@ -439,35 +441,35 @@ namespace Base.FileData.FileReading
                             }
 
                             string str = "";
-                            Tools.Character_set unibyte = (Tools.Character_set) br.ReadByte();
+                            Character_set unibyte = (Character_set) br.ReadByte();
 
                             if (frame.Text == Frames3.Length | frame.Text == Frames3.Track)
                             {
                                 // we want to read numeric values from the string
-                                unibyte = Tools.Character_set.Numeric8;
+                                unibyte = Character_set.Numeric8;
                             }
 
-                            str = Tools.ReadString(br, (int) (frame.Size - 1), unibyte);
+                            str = ReadString(br, (int) (frame.Size - 1), unibyte);
 
                             if (frame.Text == Frames3.Title)
                             {
-                                if (unibyte == 0 && !Tools.Validify_ISO_Text(str))
+                                if (unibyte == 0 && !Validify_ISO_Text(str))
                                     return false;
-                                sTitle = str;
+                                Title = str;
                             }
                             else if (frame.Text == Frames3.Artist)
                             {
-                                if (unibyte == 0 && !Tools.Validify_ISO_Text(str))
+                                if (unibyte == 0 && !Validify_ISO_Text(str))
                                     return false;
-                                sArtist = str;
+                                Artist = str;
                             }
                             else if (frame.Text == Frames3.Album)
                             {
-                                sAlbum = str;
+                                Album = str;
                             }
                             else if (frame.Text == Frames3.Length)
                             {
-                                sTotalSeconds = Convert.ToDouble(long.Parse(str)) / 1000;
+                                TotalSeconds = Convert.ToDouble(long.Parse(str)) / 1000;
                             }
                             else if (frame.Text == Frames3.Track)
                             {

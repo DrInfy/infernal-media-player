@@ -8,7 +8,6 @@ namespace Base.Controllers
     public interface IControllerContextMenu<TCmdType, in TMenuType> : IBaseController<TCmdType>
     {
         void ContextMenu(Point cursorPositionInDesktop, TMenuType menuPosition);
-        void Exec(TCmdType cmd, object arg = null);
 
         void CreateContextMenu(Point cursorPositionInDesktop, List<TextAndCommand<TCmdType>> cmdList);
     }

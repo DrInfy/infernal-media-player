@@ -56,7 +56,7 @@ namespace Base.FileData
         {
             try
             {
-                System.IO.FileInfo info = new System.IO.FileInfo(Path);
+                FileInfo info = new FileInfo(Path);
                 if (info.Exists)
                     DateModified = info.LastWriteTimeUtc.Ticks;
             }

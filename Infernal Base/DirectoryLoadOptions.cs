@@ -32,12 +32,7 @@ namespace Base
             private set
             {
                 findText = value;
-                if (!string.IsNullOrWhiteSpace(findText))
-                    findWords = StringHandler.GetFindWords(findText);
-                else
-                {
-                    findWords = null;
-                }
+                findWords = string.IsNullOrWhiteSpace(findText) ? null : StringHandler.GetFindWords(findText);
             }
         }
 

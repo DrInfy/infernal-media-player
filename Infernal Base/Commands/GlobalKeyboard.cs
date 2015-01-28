@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace Base.Commands
 {
@@ -16,9 +11,6 @@ namespace Base.Commands
             modKeys = _modKeys;
         }
 
-        public static ModifierKeys ModKeys
-        {
-            get { return modKeys; }
-        }
+        public static ModifierKeys ModKeys => modKeys;
     }
 }

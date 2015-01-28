@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Base.Libraries;
-
-namespace Base.ListLogic
+﻿namespace Base.ListLogic
 {
     public class DoubleString
     {
-        public string Value;
-        public string DisplayName;
+        protected bool Equals(DoubleString other)
+        {
+            return string.Equals(Value, other.Value) && string.Equals(DisplayName, other.DisplayName);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked { return ((Value?.GetHashCode() ?? 0) * 397) ^ (DisplayName?.GetHashCode() ?? 0); }
+        }
+
+        public readonly string Value;
+        public readonly string DisplayName;
 
 
         public DoubleString(string value, string displayName)
@@ -27,8 +30,10 @@ namespace Base.ListLogic
 
         public override bool Equals(object obj)
         {
-            var dString = obj as DoubleString;
-            return dString != null && String.Compare(Value, dString.Value, StringComparison.InvariantCultureIgnoreCase) == 0;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DoubleString) obj);
         }
     }
 }

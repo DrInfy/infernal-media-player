@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Base.ListLogic
+﻿namespace Base.ListLogic
 {
     /// <summary>
     /// Search string structure for taking account for how many times a piece of string

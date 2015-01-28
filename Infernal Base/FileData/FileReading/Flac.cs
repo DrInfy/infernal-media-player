@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Base.FileData.FileReading.Tools;
 
 namespace Base.FileData.FileReading
 {
@@ -30,7 +31,7 @@ namespace Base.FileData.FileReading
 
                 //Dim flacmarker(3) As Byte
                 //fs.Read(flacmarker, 0, 4)
-                startstring = Tools.ReadString(br, 4, Tools.Character_set.ISO88591);
+                startstring = ReadString(br, 4, Character_set.ISO88591);
                 if (startstring != FLAC_MARKER & startstring != OGG_MARKER)
                 {
                     // (Tools.ByteCompare(flacmarker, FLAC_MARKER)) = False Then
@@ -69,7 +70,7 @@ namespace Base.FileData.FileReading
                     // of the number of channels. A value of zero here means the number of
                     // total samples is unknown.
 
-                    sTotalSeconds = Convert.ToDouble(sSamples) / sFrequency;
+                    TotalSeconds = Convert.ToDouble(sSamples) / sFrequency;
 
                     //########## TAG #################
 
@@ -79,22 +80,14 @@ namespace Base.FileData.FileReading
                     do
                     {
                         startHeader = br.ReadByte();
-                        bool last_block = false;
-                        if ((startHeader >> 7) == 1)
-                        {
-                            last_block = true;
-                        }
-                        else
-                        {
-                            last_block = false;
-                        }
+                        var lastBlock = (startHeader >> 7) == 1;
 
                         int blockType = startHeader & 127;
                         // end of these blocks with no usable information
                         if (blockType == 4)
                             break; // TODO: might not be correct. Was : Exit Do
 
-                        if (last_block)
+                        if (lastBlock)
                         {
                             throw new InvalidDataException();
                         }
@@ -106,8 +99,8 @@ namespace Base.FileData.FileReading
                     br.ReadBytes(3);
 
                     // Read Vorbis comment block
-                    dynamic vendor_lenght = br.ReadInt32();
-                    buf = br.ReadBytes(vendor_lenght);
+                    dynamic vendorLength = br.ReadInt32();
+                    buf = br.ReadBytes(vendorLength);
                     // We are not interested in vendor, so discard that information
 
                     // File is of ogg type instead
@@ -118,10 +111,10 @@ namespace Base.FileData.FileReading
                     do
                     {
                         string merkki = null;
-                        merkki = Tools.ReadString(br, 1, Tools.Character_set.UTF8);
+                        merkki = ReadString(br, 1, Character_set.UTF8);
                         if (merkki == "v")
                         {
-                            merkki += Tools.ReadString(br, 5, Tools.Character_set.UTF8);
+                            merkki += ReadString(br, 5, Character_set.UTF8);
                             if (merkki == "vorbis")
                             {
                                 i += 1;
@@ -145,7 +138,7 @@ namespace Base.FileData.FileReading
                 for (int i = 0; i <= comment_number - 1; i++)
                 {
                     comment_length = br.ReadUInt32();
-                    comment2 = Tools.ReadString(br, (int) comment_length, Tools.Character_set.UTF8);
+                    comment2 = ReadString(br, (int) comment_length, Character_set.UTF8);
                     // Vorbis comments are all in a format like "TITLE=Best song ever"
                     int sepindex = comment2.IndexOf("=");
                     string name = comment2.Substring(0, sepindex);
@@ -170,11 +163,11 @@ namespace Base.FileData.FileReading
             totalsize -= songStart;
             if (TotalSeconds <= 0)
             {
-                sBitrate = 0;
+                Bitrate = 0;
             }
             else
             {
-                sBitrate = totalsize / (sTotalSeconds * 125);
+                Bitrate = totalsize / (TotalSeconds * 125);
             }
         }
 
@@ -186,13 +179,13 @@ namespace Base.FileData.FileReading
             switch (key)
             {
                 case "TITLE":
-                    sTitle = val;
+                    Title = val;
                     break;
                 case "ARTIST":
-                    sArtist = val;
+                    Artist = val;
                     break;
                 case "ALBUM":
-                    sAlbum = val;
+                    Album = val;
                     break;
                 case "TRACKNUMBER":
                     sTrack = int.Parse(val);

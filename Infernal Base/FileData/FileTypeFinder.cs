@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Base.Libraries;
-using Base.ListLogic;
 
 namespace Base.FileData
 {
@@ -11,20 +8,15 @@ namespace Base.FileData
     {
         private readonly static List<FileTypeFinder> globalFileTypes = CreateExtensions();
         private readonly List<string> acceptableExtensions;
-        private readonly FileTypes type;
 
 
         public FileTypeFinder(List<string> acceptableExtensions, FileTypes type)
         {
             this.acceptableExtensions = acceptableExtensions;
-            this.type = type;
+            this.Type = type;
         }
 
-
-        public FileTypes Type
-        {
-            get { return type; }
-        }
+        public FileTypes Type { get; }
 
 
         public bool IsFileType(string e)
@@ -67,11 +59,13 @@ namespace Base.FileData
 
         public static List<FileTypeFinder> CreateExtensions()
         {
-            var types = new List<FileTypeFinder>();
-            types.Add(new FileTypeFinder(VideoFilters(), FileTypes.Videos));
-            types.Add(new FileTypeFinder(MusicFilters(), FileTypes.Music));
-            types.Add(new FileTypeFinder(PictureFilters(), FileTypes.Pictures));
-            types.Add(new FileTypeFinder(PlaylistFilters(), FileTypes.Playlist));
+            var types = new List<FileTypeFinder>
+            {
+                new FileTypeFinder(VideoFilters(), FileTypes.Videos),
+                new FileTypeFinder(MusicFilters(), FileTypes.Music),
+                new FileTypeFinder(PictureFilters(), FileTypes.Pictures),
+                new FileTypeFinder(PlaylistFilters(), FileTypes.Playlist)
+            };
             return types;
         }
 

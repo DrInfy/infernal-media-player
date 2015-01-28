@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Base.FileData;
 using Base.Libraries;
 
@@ -12,7 +9,7 @@ namespace Base.ListLogic
     {
         public int Compare(Selectable<FileImpInfo> x, Selectable<FileImpInfo> y)
         {
-            return System.String.Compare(x.Content.SmartName, y.Content.SmartName, System.StringComparison.Ordinal);
+            return String.Compare(x.Content.SmartName, y.Content.SmartName, StringComparison.Ordinal);
         }
     }
 
@@ -28,7 +25,7 @@ namespace Base.ListLogic
     {
         public int Compare(FileImpInfo x, FileImpInfo y)
         {
-            return System.String.Compare(x.SmartName, y.SmartName, System.StringComparison.Ordinal);
+            return String.Compare(x.SmartName, y.SmartName, StringComparison.Ordinal);
         }
     }
 
@@ -44,7 +41,7 @@ namespace Base.ListLogic
     {
         public int Compare(ImpFolder x, ImpFolder y)
         {
-            return System.String.Compare(x.SmartPath, y.SmartPath, System.StringComparison.Ordinal);
+            return String.Compare(x.SmartPath, y.SmartPath, StringComparison.Ordinal);
         }
     }
 
@@ -52,7 +49,7 @@ namespace Base.ListLogic
     {
         public int Compare(Selectable<PlaylistItem> x, Selectable<PlaylistItem> y)
         {
-            return String.Compare(x.Content.FullPath, y.Content.FullPath, System.StringComparison.Ordinal);
+            return String.Compare(x.Content.FullPath, y.Content.FullPath, StringComparison.Ordinal);
         }
     }
 
@@ -68,7 +65,7 @@ namespace Base.ListLogic
     {
         public int Compare(Selectable<PlaylistItem> x, Selectable<PlaylistItem> y)
         {
-            return System.String.Compare(x.Content.SmartName, y.Content.SmartName, System.StringComparison.Ordinal);
+            return String.Compare(x.Content.SmartName, y.Content.SmartName, StringComparison.Ordinal);
         }
     }
 }

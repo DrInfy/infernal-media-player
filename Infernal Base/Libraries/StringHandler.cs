@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Base.ListLogic;
 
 namespace Base.Libraries
@@ -41,7 +39,7 @@ namespace Base.Libraries
 
         public static bool IsSpecialFolder(string pathData)
         {
-            return (System.String.Compare(pathData.Substring(0, 1), "$", System.StringComparison.Ordinal) == 0);
+            return (String.Compare(pathData.Substring(0, 1), "$", StringComparison.Ordinal) == 0);
         }
         public static string FullFillText(string text, int length, string fillChar)
         {
@@ -140,12 +138,7 @@ namespace Base.Libraries
 
         private static bool IsNumeral(char number)
         {
-            for (int i = 0; i < numeral.Length; i++)
-            {
-                if (number == numeral[i])
-                    return true;
-            }
-            return false;
+            return numeral.Any(t => number == t);
         }
 
 

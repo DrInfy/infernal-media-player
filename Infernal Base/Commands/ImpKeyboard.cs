@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace Base.Commands
@@ -20,10 +19,7 @@ namespace Base.Commands
             activeCommands = new List<KeyCommand<TCmdType>>(5);
         }
 
-        public ModifierKeys ModKeys
-        {
-            get { return modifierKeys; }
-        }
+        public ModifierKeys ModKeys => modifierKeys;
 
         public void Add(KeyCommand<TCmdType> command)
         {

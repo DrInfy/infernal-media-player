@@ -49,11 +49,11 @@ namespace Base.FileData.FileReading
         /// <remarks></remarks>
         public static object ByteCompare(byte[] a, byte[] b)
         {
-            if (a == null & b == null)
+            if (a == null && b == null)
             {
                 return true;
             }
-            else if (a == null | b == null | a.Length != b.Length)
+            if (a == null || b == null || a.Length != b.Length)
             {
                 return false;
             }

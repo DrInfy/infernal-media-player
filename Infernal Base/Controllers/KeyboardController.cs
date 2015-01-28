@@ -30,11 +30,11 @@ namespace Base.Controllers
 
         public abstract List<KeyCommand<TCmdType>> GenerateDefaultKeyCommands();
 
-        public virtual void Initialize(bool globalKeyboard)
+        public virtual void Initialize(bool isGlobalKeyboard)
         {
             keyboard = new ImpKeyboard<TCmdType>();
             keyboard.Add(GenerateDefaultKeyCommands());
-            if (globalKeyboard)
+            if (isGlobalKeyboard)
             {
                 globalKeyboard = true;
                 GlobalKeyboard.SetModifierKeys(keyboard.ModKeys); 

@@ -924,14 +924,11 @@ namespace Base.ListLogic
 
         public void Sort(IComparer<Selectable<T>> comparer)
         {
-            T lastSelected = default(T);
+            var lastSelected = default(T);
             if (selectedIndex >= 0)
             {
                 // store selection
-                if (SearchActive)
-                    lastSelected = items[findlist[selectedIndex]].Content;
-                else
-                    lastSelected = items[selectedIndex].Content;
+                lastSelected = SearchActive ? items[findlist[selectedIndex]].Content : items[selectedIndex].Content;
             }
 
             items.Sort(comparer);

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using Base.Commands;
 using Base.FileData;
@@ -10,7 +9,6 @@ using Base.Interfaces;
 using Base.Libraries;
 using Base.ListLogic;
 using Imp.Controllers;
-using System.IO;
 
 namespace Base.Controllers
 {
@@ -22,7 +20,7 @@ namespace Base.Controllers
         public MediaController MediaC;
         public Settings Settings;
 
-        private readonly string settingsPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\settings.xml";
+        private readonly string settingsPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\settings.xml";
 
         private long lastExitAttempt = 0;
         protected PlaylistItem loadingItem;
@@ -60,13 +58,13 @@ namespace Base.Controllers
             var cmdList = new List<ImpTextAndCommand>();
             switch (menuEnumPosition)
             {
-                case Base.ContextMenuEnum.None:
+                case ContextMenuEnum.None:
                     cmdList.Add(new ImpTextAndCommand("Play Next", ImpCommand.OpenNext));
                     cmdList.Add(new ImpTextAndCommand("Play Previous", ImpCommand.OpenPrev));
                     cmdList.Add(new ImpTextAndCommand("Play Random", ImpCommand.OpenRandom));
                     cmdList.Add(new ImpTextAndCommand("Copy to clipboard", ImpCommand.CopyName));
                     break;
-                case Base.ContextMenuEnum.Playlist:
+                case ContextMenuEnum.Playlist:
                     cmdList.Add(new ImpTextAndCommand("Play this", ImpCommand.OpenPl));
                     cmdList.Add(new ImpTextAndCommand("Remove selected", ImpCommand.RemoveSelected));
                     cmdList.Add(new ImpTextAndCommand("Sort files", ImpCommand.Sort));
@@ -76,13 +74,13 @@ namespace Base.Controllers
                     cmdList.Add(new ImpTextAndCommand("Open path in file browser", ImpCommand.ShowInExplorer));
                     cmdList.Add(new ImpTextAndCommand("Delete Selected Files", ImpCommand.DeletePlFiles));
                     break;
-                case Base.ContextMenuEnum.FileList:
+                case ContextMenuEnum.FileList:
                     cmdList.Add(new ImpTextAndCommand("Play selected files", ImpCommand.PlaySelectedOpenFiles));
                     cmdList.Add(new ImpTextAndCommand("Add selected files", ImpCommand.AddSelectedOpenFiles));
                     cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
                     cmdList.Add(new ImpTextAndCommand("Delete Selected Files", ImpCommand.DeleteOpenFiles));
                     break;
-                case Base.ContextMenuEnum.FolderList:
+                case ContextMenuEnum.FolderList:
                     cmdList.Add(new ImpTextAndCommand("Play Folder", ImpCommand.PlaySelectedFolderFiles));
                     cmdList.Add(new ImpTextAndCommand("Add files inside folder", ImpCommand.AddSelectedFolderFiles));
                     cmdList.Add(new ImpTextAndCommand("Add files and folders in folder", ImpCommand.AddSelectedFolderFolders));
@@ -90,7 +88,7 @@ namespace Base.Controllers
                     cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
                     cmdList.Add(new ImpTextAndCommand("Delete Selected Folder (NYI)", ImpCommand.DeleteOpenFolder));
                     break;
-                case Base.ContextMenuEnum.PlacesList:
+                case ContextMenuEnum.PlacesList:
                     cmdList.Add(new ImpTextAndCommand("Remove selected path", ImpCommand.RemoveSelectedPath));
                     break;
                 default:

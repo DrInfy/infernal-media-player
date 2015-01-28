@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Threading;
 using Base.Libraries;
 
@@ -267,6 +264,7 @@ namespace Base.ListLogic
         /// Plays the next item from the overall list, ignoring any and all searches
         /// </summary>
         /// <param name="i"></param>
+        /// <param name="loopMode"></param>
         private void PlayNextListItem(int i, LoopMode loopMode)
         {
             if (i >= items.Count - 1)
@@ -335,6 +333,7 @@ namespace Base.ListLogic
         /// Plays the next item from the overall list, ignoring any and all searches
         /// </summary>
         /// <param name="i"></param>
+        /// <param name="loopMode"></param>
         private void PlayPreviousListItem(int i, LoopMode loopMode)
         {
             if (i <= 0)
