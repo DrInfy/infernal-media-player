@@ -7,7 +7,7 @@ namespace ImpControls.Gui
     {
         private StyleClass BaseStyle;
         private StyleClass ButtonStyle;
-        
+
         //private StyleClass BarStyle;
 
         private StyleClass ListStyle;
@@ -135,13 +135,23 @@ namespace ImpControls.Gui
             button.SetStyle(ButtonStyle);
         }
 
+        public void SetStyle(ImpButton button, params string[] content)
+        {
+            button.CheckStates = content.Length;
+            for (int i = 0; i < content.Length; i++)
+            {
+                button.SetContent(content[i], i);
+            }
+            button.SetStyle(ButtonStyle);
+        }
+
         public void SetStyle(ImpButton button, BtnNumber btnNumber)
         {
             for (int i = 0; i < button.CheckStates; i++)
             {
                 button.SetContent(GeometryCreator.GetGeometry(btnNumber, i), i);
             }
-            
+
             button.SetStyle(ButtonStyle);
         }
 
@@ -152,6 +162,7 @@ namespace ImpControls.Gui
             textBox.BorderBrush = BaseStyle.BorderBrush;
             textBox.Foreground = BaseStyle.NormalBrush;
         }
+
         public void SetStyle(Label label)
         {
             label.Background = GetGridBrush(true);

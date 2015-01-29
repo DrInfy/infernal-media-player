@@ -10,6 +10,7 @@ namespace ImpControls
 
     public class ImpButton : ImpBaseControl, IStateButton
     {
+        public int? GeometryMargin { get; set; } = null;
         protected object[] sContent;
         protected int sCheckStates = 1;
 
@@ -67,7 +68,15 @@ namespace ImpControls
 
         protected override void DrawContent(DrawingContext drawingContext)
         {
-            int Margin = (int) ((ActualHeight - 5) / 5);
+            int margin;
+            if (GeometryMargin.HasValue)
+            {
+                margin = GeometryMargin.Value;
+            }
+            else
+            {
+                margin = (int) ((ActualHeight - 5) / 5);
+            }
             // Margin
             const double bottom = 100;
             const double right = 100;
@@ -114,20 +123,20 @@ namespace ImpControls
 
                 if (right / this.ActualWidth > bottom / this.ActualHeight) 
                 {
-                    geometry.Transform = new MatrixTransform((this.ActualWidth - Margin * 2) / right, 
+                    geometry.Transform = new MatrixTransform((this.ActualWidth - margin * 2) / right, 
                         0,
                         0,
-                        (this.ActualWidth - Margin * 2) / right, Margin + x, 
-                        (this.ActualHeight - bottom * (this.ActualWidth - Margin * 2) / right) / 2 + y);
+                        (this.ActualWidth - margin * 2) / right, margin + x, 
+                        (this.ActualHeight - bottom * (this.ActualWidth - margin * 2) / right) / 2 + y);
                 } 
                 else 
                 {
-                    geometry.Transform = new MatrixTransform((this.ActualHeight - Margin * 2) / bottom, 
+                    geometry.Transform = new MatrixTransform((this.ActualHeight - margin * 2) / bottom, 
                         0,
                         0, 
-                        (this.ActualHeight - Margin * 2) / bottom,
-                        (this.ActualWidth - right * (this.ActualHeight - Margin * 2) / bottom) / 2 + x, 
-                        Margin + y);
+                        (this.ActualHeight - margin * 2) / bottom,
+                        (this.ActualWidth - right * (this.ActualHeight - margin * 2) / bottom) / 2 + x, 
+                        margin + y);
                 }
                 drawingContext.DrawGeometry(null, new System.Windows.Media.Pen(renderData.FrontBrush, 1), geometry);
             } 
@@ -136,7 +145,7 @@ namespace ImpControls
                 FormattedText text = new FormattedText((string)content, System.Globalization.CultureInfo.CurrentCulture,
                     FlowDirection.LeftToRight, new Typeface("Arial"), 12, renderData.FrontBrush);
 
-                text.MaxTextWidth = this.ActualWidth - 6;
+                text.MaxTextWidth = Math.Max(0, this.ActualWidth - 6);
                 //text.MaxTextHeight = Me.ActualHeight
                 text.MaxLineCount = 1;
                 text.TextAlignment = TextAlignment.Center;

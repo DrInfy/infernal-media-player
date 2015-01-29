@@ -64,7 +64,7 @@ namespace ImpControls
         public void SetPath(string pathData)
         {
             path = pathData;
-            int select = -1;
+            ImpFolder select = null;
             // it's rather rare to have smaller structure than 10, so skip start list capacity at 16
             var list = new List<ImpFolder>(16);
 
@@ -72,7 +72,8 @@ namespace ImpControls
             if (specialFolder != null)
             {
                 // special folder
-                list.Add(new ImpFolder(pathData, pathData.Replace("$", "")));
+                select = new ImpFolder(pathData, pathData.Replace("$", ""));
+                list.Add(select);
 
                 foreach (string folderPath in specialFolder.FolderPaths)
                     list.Add(new ImpFolder(folderPath, "  " + StringHandler.GetFilename(folderPath)));
@@ -80,9 +81,6 @@ namespace ImpControls
                 list.Sort(new ComparerFolderSmart());
                 controller.Clear();
                 controller.AddItems(list);
-
-                controller.Select(SelectionMode.One, 0);
-                
             }
             else
             {
@@ -111,11 +109,12 @@ namespace ImpControls
 
                     if (path[index - 1] != '\\')
                     {
-                        list.Add(CreatePathItem(path, index, depth, lastIndex));
+                        select = CreatePathItem(path, index, depth, lastIndex);
+                        list.Add(select);
                         depth++;
                     }
                 }
-                select = list.Count - 1;
+                
                 try
                 {
                     foreach (var directory in Directory.GetDirectories(path))
@@ -132,10 +131,9 @@ namespace ImpControls
                 list.Sort(new ComparerFolderSmart());
                 controller.Clear();
                 controller.AddItems(list);
-
-                controller.Select(SelectionMode.One, select);
             }
             controller.UpdateItems();
+            controller.Select(select);
         }
 
 

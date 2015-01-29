@@ -34,8 +34,6 @@ namespace Imp.Panels
         public OpenPanel()
         {
             InitializeComponent();
-
-
         }
 
 
@@ -56,8 +54,10 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonFilterVideo, "video");
             styleLib.SetStyle(ButtonFilterMusic, "audio");
             styleLib.SetStyle(ButtonFilterPictures, "image");
-            styleLib.SetStyle(ButtonFilterFolder, "filter folders");
-            //styleLib.SetStyle(ButtonFilterStream, "stream");
+            styleLib.SetStyle(ButtonFilterFolder, "Files", "Folder");
+
+            styleLib.SetStyle(ButtonEnlargeDownwards, BtnNumber.EnlargeDown);
+            styleLib.SetStyle(ButtonEnlargeUpwards, BtnNumber.EnlargeUp);
 
             styleLib.SetStyle(ButtonClearPlaylist, BtnNumber.ClearList);
 
@@ -137,7 +137,6 @@ namespace Imp.Panels
             {
                 ListFiles.SetPath(ListDirectories.GetSelected().Value, filterList);
             }
-
         }
 
 
@@ -189,6 +188,7 @@ namespace Imp.Panels
             GetFilters();
             Refresh(null);
         }
+
         private void ButtonFolderFilter_Clicked(object sender)
         {
             (sender as ImpButton).CurrentState++;
@@ -234,7 +234,7 @@ namespace Imp.Panels
             {
                 path = ListFiles.CurrentPath;
             }
-            
+
             PrepareFolderLoader(new DirectoryLoadOptions(path,
                 SearchOption.AllDirectories,
                 GetFileTypes(), TextBoxFind.Text));
@@ -285,7 +285,6 @@ namespace Imp.Panels
             var loadOptions = (DirectoryLoadOptions) options;
             AddFolderToPlayList(loadOptions, loadOptions.RootPath);
             Dispatcher.Invoke(FixFolderButtons);
-
         }
 
 
@@ -327,7 +326,6 @@ namespace Imp.Panels
                     mainC.EventC.ShowError(error);
                     return;
                 }
-
             }
             if (fileInfos.Length < 1)
                 return;
@@ -408,11 +406,35 @@ namespace Imp.Panels
         }
 
 
-
-
         private void ButtonMaximizePanel_Clicked(object sender)
         {
             mainC.Exec(ImpCommand.PanelOpen, PanelCommand.MaxToggle);
+        }
+
+        private void EnlargeDownwards_Clicked(object sender)
+        {
+            if (MainGrid.RowDefinitions[1].ActualHeight < 1)
+            {
+                MainGrid.RowDefinitions[1].Height = new GridLength(2, GridUnitType.Star);
+            }
+            else if (MainGrid.RowDefinitions[4].ActualHeight < 1) {}
+            else
+            {
+                MainGrid.RowDefinitions[4].Height = new GridLength(0);
+            }
+        }
+
+        private void EnlargeUpwards_Clicked(object sender)
+        {
+            if (MainGrid.RowDefinitions[1].ActualHeight < 1) {}
+            else if (MainGrid.RowDefinitions[4].ActualHeight < 1)
+            {
+                MainGrid.RowDefinitions[4].Height = new GridLength(3, GridUnitType.Star);
+            }
+            else
+            {
+                MainGrid.RowDefinitions[1].Height = new GridLength(0);
+            }
         }
     }
 }

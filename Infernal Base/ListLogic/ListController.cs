@@ -877,12 +877,19 @@ namespace Base.ListLogic
                         }
                     }
                 }
-                else if (selectedIndex >= 0)
+                else
                 {
-                    if (items[selectedIndex].SelectedIndex || !items[findlist[visibleIndex]].SelectedIndex)
-                        changed = true;
+                    if (items[findlist[visibleIndex]].SelectedIndex) return false;
 
-                    items[selectedIndex].SelectedIndex = false;
+                    changed = true;
+                    if (selectedIndex >= 0)
+                    { 
+                        foreach (var item in items)
+                        {
+                            item.Selected = false;
+                            item.SelectedIndex = false;
+                        }
+                    }
                     items[findlist[visibleIndex]].SelectedIndex = true;
                 }
                 selectedIndex = visibleIndex;

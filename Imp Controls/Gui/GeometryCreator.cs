@@ -26,7 +26,9 @@ namespace ImpControls.Gui
 
         Remove,
         Save,
-        AddFile
+        AddFile,
+        EnlargeUp,
+        EnlargeDown,
     }
 
 
@@ -100,6 +102,10 @@ namespace ImpControls.Gui
                     return Refresh(pFC, pG);
                 case BtnNumber.Remove:
                     return Remove(pFC, pG);
+                case BtnNumber.EnlargeUp:
+                    return EnlargeUp(pFC, pG);
+                case BtnNumber.EnlargeDown:
+                    return EnlargeDown(pFC, pG);
                 default:
 
                     throw new Exception("Unidentified button");
@@ -107,6 +113,29 @@ namespace ImpControls.Gui
             return null;
         }
 
+        private static Geometry EnlargeUp(PathFigureCollection pFC, PathGeometry pG)
+        {
+            AddLine(new Point(20, 50), new Point(50, 5), pFC);
+            AddLine(new Point(80, 50), new Point(50, 5), pFC);
+
+            AddLine(new Point(20, 95), new Point(50, 50), pFC);
+            AddLine(new Point(80, 95), new Point(50, 50), pFC); ;
+
+            pG.Figures = pFC;
+            return pG;
+        }
+
+        private static Geometry EnlargeDown(PathFigureCollection pFC, PathGeometry pG)
+        {
+            AddLine(new Point(20, 50), new Point(50, 95), pFC);
+            AddLine(new Point(80, 50), new Point(50, 95), pFC);
+
+            AddLine(new Point(20, 5), new Point(50, 50), pFC);
+            AddLine(new Point(80, 5), new Point(50, 50), pFC); ;
+
+            pG.Figures = pFC;
+            return pG;
+        }
 
         private static Geometry AddFile(PathFigureCollection pFC, PathGeometry pG)
         {
