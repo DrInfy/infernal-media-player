@@ -126,7 +126,7 @@ namespace Base.ListLogic
                 int added = 0;
                 for (int i = 0; i < items.Count; i++)
                 {
-                    bool found = StringHandler.FindFound(items[i].PresentText, findWords);
+                    bool found = items[i].NeverFilter || StringHandler.FindFound(items[i].PresentText, findWords);
 
                     if (found)
                     {
@@ -191,9 +191,10 @@ namespace Base.ListLogic
         /// Adds the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        public virtual void AddItem(T item)
+        /// <param name="neverFilter">set true if this item needs to unfilterable. </param>
+        public virtual void AddItem(T item, bool neverFilter = false)
         {
-            items.Add(new Selectable<T>(item));
+            items.Add(new Selectable<T>(item) { NeverFilter = neverFilter });
             OnListSizeChanged(true);
         }
 

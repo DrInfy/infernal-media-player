@@ -71,25 +71,29 @@ namespace ImpControls
             var specialFolder = SpecialFolderLoader.LoadSpecialFolder(pathData);
             if (specialFolder != null)
             {
+                controller.Clear();
+
                 // special folder
                 select = new ImpFolder(pathData, pathData.Replace("$", ""));
-                list.Add(select);
+                controller.AddItem(select, true);
+                //list.Add(select);
 
                 foreach (string folderPath in specialFolder.FolderPaths)
                     list.Add(new ImpFolder(folderPath, "  " + StringHandler.GetFilename(folderPath)));
 
                 list.Sort(new ComparerFolderSmart());
-                controller.Clear();
+                
                 controller.AddItems(list);
             }
             else
             {
                 // normal folders:    
+                controller.Clear();
 
                 // add drive
                 string firstCharacter = pathData.Substring(0, 1);
                 var newPath = firstCharacter.ToUpper() + @":\";
-                list.Add(new ImpFolder(newPath, newPath));
+                controller.AddItem(new ImpFolder(newPath, newPath), true);
 
                 int index = 3;
                 int lastIndex = 2;
@@ -100,7 +104,8 @@ namespace ImpControls
                     {
                         if (path[index] == '\\')
                         {
-                            list.Add(CreatePathItem(path, index, depth, lastIndex));
+                            controller.AddItem(CreatePathItem(path, index, depth, lastIndex), true);
+                            //list.Add(CreatePathItem(path, index, depth, lastIndex));
                             lastIndex = index;
                             depth++;
                         }
@@ -110,7 +115,8 @@ namespace ImpControls
                     if (path[index - 1] != '\\')
                     {
                         select = CreatePathItem(path, index, depth, lastIndex);
-                        list.Add(select);
+                        controller.AddItem(select, true);
+                        //list.Add(select);
                         depth++;
                     }
                 }
@@ -129,7 +135,6 @@ namespace ImpControls
                 }
 
                 list.Sort(new ComparerFolderSmart());
-                controller.Clear();
                 controller.AddItems(list);
             }
             controller.UpdateItems();

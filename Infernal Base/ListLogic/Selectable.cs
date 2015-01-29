@@ -5,6 +5,8 @@ namespace Base.ListLogic
         public bool Selected { get; set; }
         public bool SelectedIndex { get; set; }
 
+        public bool NeverFilter { get; set; }
+
         public T Content { get; set; }
 
 
