@@ -208,6 +208,8 @@ namespace Base.Libraries
 
         public static bool FindFound(string text, FindString[] findWords)
         {
+            if (findWords == null) return true;
+
             // if even a single word not found, item is no longer identified as found
             bool found = true;
 

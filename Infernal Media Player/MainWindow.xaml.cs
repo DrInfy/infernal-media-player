@@ -10,6 +10,7 @@ using System.Windows.Threading;
 using Base;
 using Base.Commands;
 using Base.FileData;
+using Base.FileLoading;
 using Base.Libraries;
 using Base.ListLogic;
 using Imp.Controllers;
@@ -446,7 +447,7 @@ namespace Imp
         }
 
 
-        private bool OpenLines( IEnumerable<string> list)
+        private bool OpenLines(IEnumerable<string> list)
         {
             List<FileImpInfo> files = new List<FileImpInfo>();
             foreach (var path in list)
@@ -477,7 +478,7 @@ namespace Imp
                     if (fileInfos.Length < 1)
                         return true;
 
-                    files.AddRange(options.FilterFiles(fileInfos));
+                    files.AddRange(options.FilterFiles(fileInfos, false));
                 }
                 else if (File.Exists(path))
                 {

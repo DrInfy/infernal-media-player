@@ -47,9 +47,6 @@ namespace ImpControls.Lists
         }
 
 
-        
-
-
         /// <summary>
         /// Attempts to put the index specified to view. Values smaller than 0 are ignored.
         /// </summary>

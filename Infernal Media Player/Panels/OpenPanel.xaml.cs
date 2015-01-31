@@ -10,6 +10,7 @@ using Base;
 using Base.Commands;
 using Base.Controllers;
 using Base.FileData;
+using Base.FileLoading;
 using Base.Libraries;
 using Base.ListLogic;
 using Imp.Controllers;
@@ -17,6 +18,8 @@ using ImpControls;
 using ImpControls.Gui;
 using ImpControls.SpecialFolder;
 using Ipv;
+//using Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
+using System.Threading.Tasks;
 
 namespace Imp.Panels
 {
@@ -27,7 +30,7 @@ namespace Imp.Panels
     {
         private MainController mainC;
         private List<string> filterList = null; // store filters, reload only when required
-        private Thread loader;
+        private Task loader;
         private bool refreshing = false;
 
 
@@ -237,7 +240,7 @@ namespace Imp.Panels
 
             PrepareFolderLoader(new DirectoryLoadOptions(path,
                 SearchOption.AllDirectories,
-                GetFileTypes(), TextBoxFind.Text));
+                GetFileTypes()));
         }
 
 
@@ -250,23 +253,23 @@ namespace Imp.Panels
             }
             PrepareFolderLoader(new DirectoryLoadOptions(path,
                 SearchOption.TopDirectoryOnly,
-                GetFileTypes(), TextBoxFind.Text));
+                GetFileTypes()));
         }
 
 
         public void PrepareFolderLoader(DirectoryLoadOptions options)
         {
-            if (loader != null && loader.IsAlive)
+            if (loader != null && !loader.IsCompleted)
             {
                 mainC.EventC.SetEvent(new EventText("Folder load already active", 1, EventType.Delayed));
                 return;
             }
+            options.FindText = TextBoxFind.Text;
+            options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
 
             ButtonAddSubFolder.IsEnabled = false;
             ButtonAddFolder.IsEnabled = false;
-
-            loader = new Thread(LoadDirectories);
-            loader.Start(options);
+            loader = Task.Factory.StartNew(() => LoadDirectories(options));
         }
 
 
@@ -280,10 +283,9 @@ namespace Imp.Panels
         }
 
 
-        private void LoadDirectories(object options)
+        private void LoadDirectories(DirectoryLoadOptions options)
         {
-            var loadOptions = (DirectoryLoadOptions) options;
-            AddFolderToPlayList(loadOptions, loadOptions.RootPath);
+            AddFolderToPlayList(options, options.RootPath);
             Dispatcher.Invoke(FixFolderButtons);
         }
 
@@ -300,6 +302,7 @@ namespace Imp.Panels
             if (options.SearchOption == SearchOption.AllDirectories)
             {
                 if (LoadSubDirectories(options, path)) return;
+                if (options.FilterOptions.HasFlag(FilterOptions.ChildFolders) && path == options.RootPath) return;
             }
 
             FileInfo[] fileInfos;
@@ -330,7 +333,7 @@ namespace Imp.Panels
             if (fileInfos.Length < 1)
                 return;
 
-            var files = options.FilterFiles(fileInfos);
+            var files =  options.FilterFiles(fileInfos, options.FilterOptions.HasFlag(FilterOptions.Files));
 
             IComparer<FileImpInfo> comparer;
             switch ((FileSortMode) ButtonSort.CurrentState)
@@ -391,11 +394,25 @@ namespace Imp.Panels
                 }
             }
 
-
-            foreach (var folderinfo in folderinfos)
+            if (path == options.RootPath && options.FilterOptions.HasFlag(FilterOptions.ChildFolders))
             {
-                AddFolderToPlayList(options, folderinfo.FullName);
+                foreach (var folderinfo in folderinfos)
+                {
+                    if (StringHandler.FindFound(folderinfo.FullName, options.FindWords))
+                    {
+                        // Add only when going through filter
+                        AddFolderToPlayList(options, folderinfo.FullName);
+                    }
+                }
             }
+            else
+            {
+                foreach (var folderinfo in folderinfos)
+                {
+                    AddFolderToPlayList(options, folderinfo.FullName);
+                }
+            }
+            
             return false;
         }
 

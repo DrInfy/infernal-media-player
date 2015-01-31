@@ -60,7 +60,7 @@ namespace Base.ListLogic
         /// Adds the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        public void AddItem(PlaylistItem item)
+        public override void AddItem(PlaylistItem item)
         {
             //base.AddItem(item);
             if (!updater.ExistingPaths.Contains(item.FullPath))

@@ -75,7 +75,7 @@ namespace ImpControls
 
                 // special folder
                 select = new ImpFolder(pathData, pathData.Replace("$", ""));
-                controller.AddItem(select, true);
+                controller.AddItemUnfiltered(@select);
                 //list.Add(select);
 
                 foreach (string folderPath in specialFolder.FolderPaths)
@@ -93,7 +93,7 @@ namespace ImpControls
                 // add drive
                 string firstCharacter = pathData.Substring(0, 1);
                 var newPath = firstCharacter.ToUpper() + @":\";
-                controller.AddItem(new ImpFolder(newPath, newPath), true);
+                controller.AddItemUnfiltered(new ImpFolder(newPath, newPath));
 
                 int index = 3;
                 int lastIndex = 2;
@@ -104,7 +104,7 @@ namespace ImpControls
                     {
                         if (path[index] == '\\')
                         {
-                            controller.AddItem(CreatePathItem(path, index, depth, lastIndex), true);
+                            controller.AddItemUnfiltered(CreatePathItem(path, index, depth, lastIndex));
                             //list.Add(CreatePathItem(path, index, depth, lastIndex));
                             lastIndex = index;
                             depth++;
@@ -115,7 +115,7 @@ namespace ImpControls
                     if (path[index - 1] != '\\')
                     {
                         select = CreatePathItem(path, index, depth, lastIndex);
-                        controller.AddItem(select, true);
+                        controller.AddItemUnfiltered(@select);
                         //list.Add(select);
                         depth++;
                     }

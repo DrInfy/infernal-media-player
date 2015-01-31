@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Base;
+using Base.FileLoading;
 using Base.Libraries;
 using Ipv.Image;
 

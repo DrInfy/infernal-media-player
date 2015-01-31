@@ -20,6 +20,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Base.FileLoading;
 
 namespace Imp.Controllers
 {
@@ -314,7 +315,7 @@ namespace Imp.Controllers
             window.PanelOpen.PrepareFolderLoader(
                 new DirectoryLoadOptions(window.PanelOpen.ListDirectories.GetSelected().Value,
                     SearchOption.AllDirectories,
-                    window.PanelOpen.GetFileTypes(), window.PanelOpen.TextBoxFind.Text));
+                    window.PanelOpen.GetFileTypes()));
         }
 
         protected override void AddSelectedFolderFiles()
@@ -322,7 +323,7 @@ namespace Imp.Controllers
             window.PanelOpen.PrepareFolderLoader(
                 new DirectoryLoadOptions(window.PanelOpen.ListDirectories.GetSelected().Value,
                     SearchOption.TopDirectoryOnly,
-                    window.PanelOpen.GetFileTypes(), window.PanelOpen.TextBoxFind.Text));
+                    window.PanelOpen.GetFileTypes()));
         }
 
         protected override void PlaySelectedFolderFiles()
@@ -331,7 +332,7 @@ namespace Imp.Controllers
             window.PanelOpen.PrepareFolderLoader(
                 new DirectoryLoadOptions(window.PanelOpen.ListDirectories.GetSelected().Value,
                     SearchOption.AllDirectories,
-                    window.PanelOpen.GetFileTypes(), window.PanelOpen.TextBoxFind.Text) {PlayFirstFile = true});
+                    window.PanelOpen.GetFileTypes()) {PlayFirstFile = true});
         }
 
         protected override void RequestDeleteOpenFiles()

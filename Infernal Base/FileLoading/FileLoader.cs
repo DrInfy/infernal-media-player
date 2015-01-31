@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Windows.Threading;
 
-namespace Base
+namespace Base.FileLoading
 {
     public abstract class FileLoader<T>
     {

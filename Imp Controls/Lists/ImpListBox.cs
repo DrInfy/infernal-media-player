@@ -17,45 +17,26 @@ namespace ImpControls
 
     public class ImpListBox<T> : ImpBaseControl
     {
-        #region Delegates & Events
-
-        /// <summary>
-        /// This event is called when selectedindex changes
-        /// </summary>
-        public event ListSelectionChangedEventHandler SelectionChanged;
-        
-
-        #endregion
-
         protected const int SCROLLBARWIDTH = 10;
-        protected ToolTip toolTip = new ToolTip();
+        protected ListController<T> controller;
+        private bool dragActive;
 
         /// <summary>
-        /// Indicates where to drag current selection
+        ///     Indicates where to drag current selection
         /// </summary>
         /// <remarks>
-        /// DragTo equals -1 when the drag is inactive. 0 places selection to the first index in playlist.
+        ///     DragTo equals -1 when the drag is inactive. 0 places selection to the first index in playlist.
         /// </remarks>
         protected int DragTo = -1;
-
 
         private int HIndex;
         internal int ISize = 15;
         private int LIndex;
         //Mouse over index, the list box item that the mouse currently is over.
         private int MOIndex = -1;
-        protected ListController<T> controller;
-
-
         protected MouseStates mouseoverState = MouseStates.None;
         protected MouseStates pressedState = MouseStates.None;
-        private bool dragActive = false;
-
-        public string FindText
-        {
-            get { return controller.FindText; }
-            set { controller.FindText = value; }
-        }
+        protected ToolTip toolTip = new ToolTip();
 
         public ImpListBox(bool searchable, bool multiSelectable)
         {
@@ -78,31 +59,13 @@ namespace ImpControls
 
             ToolTip = toolTip;
             //toolTip.StaysOpen = true;
-            
         }
 
-
-        ~ImpListBox()
+        public string FindText
         {
-            //if (toolTip != null)
-            //    toolTip.StaysOpen = false;
+            get { return controller.FindText; }
+            set { controller.FindText = value; }
         }
-
-        protected virtual void CreateController(bool searchable, bool multiSelectable)
-        {
-            controller = new ListController<T>(searchable, multiSelectable);
-        }
-
-
-        private void OnSelectionChanged()
-        {
-            if (SelectionChanged != null)
-            {
-                SelectionChanged();
-            }
-            InvalidateVisual();
-        }
-
 
         // height of one single row
 
@@ -110,16 +73,15 @@ namespace ImpControls
         public virtual bool ItemsDragable { get; set; }
         public bool AcceptsNullSelection { get; set; }
 
-
         /// <summary>
-        /// Lowest index number visible to user
+        ///     Lowest index number visible to user
         /// </summary>
         public virtual int LowIndex
         {
             get { return LIndex; }
             set
             {
-                int TIndex = LIndex;
+                var TIndex = LIndex;
                 if (LIndex == value)
                     return;
                 if (controller.VisibleCount <= 0)
@@ -147,14 +109,14 @@ namespace ImpControls
         }
 
         /// <summary>
-        /// Highest index number visible to user
+        ///     Highest index number visible to user
         /// </summary>
         public virtual int HighIndex
         {
             get { return HIndex; }
             set
             {
-                int TIndex = HIndex;
+                var TIndex = HIndex;
                 if (HIndex == value)
                     return;
                 if (controller.VisibleCount <= 0)
@@ -176,9 +138,8 @@ namespace ImpControls
             }
         }
 
-
         /// <summary>
-        /// Index that mouse is over, -1 if none.
+        ///     Index that mouse is over, -1 if none.
         /// </summary>
         public virtual int MouseoverIndex
         {
@@ -203,6 +164,34 @@ namespace ImpControls
             get { return HighIndex - LowIndex < controller.VisibleCount - 1; }
         }
 
+        #region Delegates & Events
+
+        /// <summary>
+        ///     This event is called when selectedindex changes
+        /// </summary>
+        public event ListSelectionChangedEventHandler SelectionChanged;
+
+        #endregion
+
+        ~ImpListBox()
+        {
+            //if (toolTip != null)
+            //    toolTip.StaysOpen = false;
+        }
+
+        protected virtual void CreateController(bool searchable, bool multiSelectable)
+        {
+            controller = new ListController<T>(searchable, multiSelectable);
+        }
+
+        private void OnSelectionChanged()
+        {
+            if (SelectionChanged != null)
+            {
+                SelectionChanged();
+            }
+            InvalidateVisual();
+        }
 
         private void ListSizeChanged(bool enlargement)
         {
@@ -210,19 +199,16 @@ namespace ImpControls
             UpdateItems();
         }
 
-
         protected override void ControlGetsHidden()
         {
             base.ControlGetsHidden();
             pressedState = MouseStates.None;
         }
 
-
         public void Select(int index)
         {
             controller.Select(SelectionMode.One, index);
         }
-
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
@@ -230,20 +216,19 @@ namespace ImpControls
 
             if (MouseoverIndex > -1 && MouseoverIndex < controller.VisibleCount)
             {
-                
-                var p = GetDpiSafeLocation( PointToScreen(e.GetPosition(this)));
+                var p = GetDpiSafeLocation(PointToScreen(e.GetPosition(this)));
 
                 toolTip.HorizontalOffset = p.X + 10;
                 toolTip.VerticalOffset = p.Y + 10;
                 toolTip.Placement = PlacementMode.AbsolutePoint;
-                
+
                 GetTooltip();
                 if (!string.IsNullOrEmpty(toolTip.Content as string))
                 {
                     toolTip.IsOpen = true;
                     toolTip.Visibility = Visibility.Visible;
                 }
-                    
+
                 //toolTip.IsReallyOpen = true;
             }
             else
@@ -258,9 +243,7 @@ namespace ImpControls
             }
         }
 
-
-        protected virtual void GetTooltip(){ }
-
+        protected virtual void GetTooltip() {}
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
@@ -303,14 +286,14 @@ namespace ImpControls
 
 
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Left), new Point(0.5, 0.5),
-                                    new Point(0.5, ActualHeight - 0.5));
+                new Point(0.5, ActualHeight - 0.5));
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Top), new Point(0.5, 0.5),
-                                    new Point(GetSW(false), 0.5));
+                new Point(GetSW(false), 0.5));
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Right), new Point(GetSW(false), 0.5),
-                                    new Point(GetSW(false), ActualHeight - 0.5));
+                new Point(GetSW(false), ActualHeight - 0.5));
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Bottom),
-                                    new Point(0.5, ActualHeight - 0.5),
-                                    new Point(GetSW(false), ActualHeight - 0.5));
+                new Point(0.5, ActualHeight - 0.5),
+                new Point(GetSW(false), ActualHeight - 0.5));
 
             DrawScrollbar(drawingContext);
 
@@ -318,7 +301,7 @@ namespace ImpControls
                 return;
 
             // Actual loop for drawing list items
-            for (int i = LowIndex; i <= Math.Min(HighIndex, controller.VisibleCount - 1); i++)
+            for (var i = LowIndex; i <= Math.Min(HighIndex, controller.VisibleCount - 1); i++)
             {
                 brush = getBrush(i, drawingContext, brush);
                 DrawText(i, drawingContext, brush);
@@ -329,15 +312,14 @@ namespace ImpControls
             {
                 if (DragTo < controller.GetSelectedIndex())
                     drawingContext.DrawLine(new Pen(sStyle.PressedBrush, 1),
-                                            new Point(0, (DragTo - LowIndex) * ISize + 3),
-                                            new Point(GetSW(), (DragTo - LowIndex) * ISize + 3));
+                        new Point(0, (DragTo - LowIndex) * ISize + 3),
+                        new Point(GetSW(), (DragTo - LowIndex) * ISize + 3));
                 else
                     drawingContext.DrawLine(new Pen(sStyle.PressedBrush, 1),
-                                            new Point(0, (DragTo - LowIndex + 1) * ISize + 3),
-                                            new Point(GetSW(), (DragTo - LowIndex + 1) * ISize + 3));
+                        new Point(0, (DragTo - LowIndex + 1) * ISize + 3),
+                        new Point(GetSW(), (DragTo - LowIndex + 1) * ISize + 3));
             }
         }
-
 
         private void DrawScrollbar(DrawingContext drawingContext)
         {
@@ -374,41 +356,39 @@ namespace ImpControls
             drawingContext.DrawRectangle(brush, null, SafeRect(GetSW() + 0.5, 1, SCROLLBARWIDTH - 1, GetSH(true, false) - 1.5));
 
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Left), new Point(GetSW(), GetSH()),
-                                    new Point(GetSW(), GetSH(true, false)));
+                new Point(GetSW(), GetSH(true, false)));
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Top), new Point(GetSW(), GetSH()),
-                                    new Point(GetSW(false), GetSH()));
+                new Point(GetSW(false), GetSH()));
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Right),
-                                    new Point(GetSW(false), GetSH()), new Point(GetSW(false), GetSH(true, false)));
+                new Point(GetSW(false), GetSH()), new Point(GetSW(false), GetSH(true, false)));
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Bottom),
-                                    new Point(GetSW(), GetSH(true, false)), new Point(GetSW(false), GetSH(true, false)));
+                new Point(GetSW(), GetSH(true, false)), new Point(GetSW(false), GetSH(true, false)));
 
 
             drawingContext.DrawLine(new Pen(borderbrush, 1), new Point(GetSW(), GetSH(false)),
-                                    new Point(GetSW(false), GetSH(false)));
+                new Point(GetSW(false), GetSH(false)));
 
             drawingContext.DrawLine(new Pen(borderbrush, 1), new Point(GetSW(), GetSH(false, false)),
-                                    new Point(GetSW(false), GetSH(false, false)));
-            
+                new Point(GetSW(false), GetSH(false, false)));
+
 
             if (GetSH(false) - GetSH(false, false) + 1 < 0)
                 drawingContext.DrawRectangle(scrollerbrush, null,
-                                             new Rect(GetSW() + 1, GetSH(false) + 0.5, SCROLLBARWIDTH - 2,
-                                                      GetSH(false, false) - GetSH(false) - 1));
+                    new Rect(GetSW() + 1, GetSH(false) + 0.5, SCROLLBARWIDTH - 2,
+                        GetSH(false, false) - GetSH(false) - 1));
         }
-
 
         private Rect SafeRect(double x, double y, double height, double width)
         {
             if (width < 0) width = 0;
             if (height < 0) height = 0;
             var rect = new Rect(x, y, height, width);
-            
+
             return rect;
         }
 
-
         /// <summary>
-        /// Get Scroller height, as in position where to draw
+        ///     Get Scroller height, as in position where to draw
         /// </summary>
         /// <param name="bounds">outer bounds of the scroller</param>
         /// <param name="upper">upper as in lower value of Y</param>
@@ -432,9 +412,8 @@ namespace ImpControls
             return value;
         }
 
-
         /// <summary>
-        /// Get Scroller width, as in position where to draw
+        ///     Get Scroller width, as in position where to draw
         /// </summary>
         /// <param name="left">left as in lower value of x</param>
         /// <returns></returns>
@@ -448,7 +427,6 @@ namespace ImpControls
 
             return value;
         }
-
 
         protected virtual Brush getBrush(int i, DrawingContext drawingContext, Brush brush)
         {
@@ -465,7 +443,7 @@ namespace ImpControls
                 else
                 {
                     drawingContext.DrawRectangle(sStyle.BackPressedBrush, null,
-                                                 new Rect(0, (i - LowIndex) * ISize + 3, ActualWidth, ISize));
+                        new Rect(0, (i - LowIndex) * ISize + 3, ActualWidth, ISize));
                 }
             }
 
@@ -482,17 +460,17 @@ namespace ImpControls
                 if (HighIndex - LowIndex < controller.VisibleCount - 1)
                 {
                     drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * ISize + 3),
-                                            new Point(ActualWidth - SCROLLBARWIDTH, (i - LowIndex) * ISize + 3));
+                        new Point(ActualWidth - SCROLLBARWIDTH, (i - LowIndex) * ISize + 3));
                     drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * ISize + 3 - 1f),
-                                            new Point(ActualWidth - SCROLLBARWIDTH,
-                                                      (i - LowIndex + 1) * ISize + 3 - 1f));
+                        new Point(ActualWidth - SCROLLBARWIDTH,
+                            (i - LowIndex + 1) * ISize + 3 - 1f));
                 }
                 else
                 {
                     drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * ISize + 3),
-                                            new Point(ActualWidth, (i - LowIndex) * ISize + 3));
+                        new Point(ActualWidth, (i - LowIndex) * ISize + 3));
                     drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * ISize + 3 - 1f),
-                                            new Point(ActualWidth, (i - LowIndex + 1) * ISize + 3 - 1f));
+                        new Point(ActualWidth, (i - LowIndex + 1) * ISize + 3 - 1f));
                 }
 
                 brush = sStyle.PressedBrush;
@@ -508,24 +486,22 @@ namespace ImpControls
             return brush;
         }
 
-
         protected virtual void DrawText(int index, DrawingContext drawingContext, Brush brush)
         {
             if (ActualWidth - SCROLLBARWIDTH < 0)
                 return;
 
-            FormattedText text = FormatText(controller.GetText(index), ref brush);
+            var text = FormatText(controller.GetText(index), ref brush);
             if (text.MaxTextWidth > 0)
                 drawingContext.DrawText(text, new Point(3, (index - LowIndex) * ISize + 3));
         }
 
-
         protected virtual FormattedText FormatText(string text, ref Brush brush)
         {
             var fText = new FormattedText(text, CultureInfo.CurrentCulture,
-                                          FlowDirection.LeftToRight, new Typeface("Arial"), 12, brush);
+                FlowDirection.LeftToRight, new Typeface("Arial"), 12, brush);
 
-            
+
             var width = ActualWidth - 6;
             if (ScrollBarVisible)
             {
@@ -537,13 +513,11 @@ namespace ImpControls
             return fText;
         }
 
-
         public void SetList(ref T[] contentList)
         {
             controller.Clear();
             controller.AddItems(contentList);
         }
-
 
         public void SetList(ICollection<T> contentList)
         {
@@ -556,18 +530,15 @@ namespace ImpControls
             controller.AddItem(content);
         }
 
-
         public void ClearList()
         {
             controller.Clear();
         }
 
-
         public void RemoveSelected()
         {
             controller.RemoveSelected();
         }
-
 
         public List<T> GetSelectedList()
         {
@@ -582,21 +553,19 @@ namespace ImpControls
         protected virtual string getText(int index, bool indexNumber)
         {
             if (indexNumber)
-                return index.ToString() + ". " + controller.GetText(index);
+                return index + ". " + controller.GetText(index);
 
             return controller.GetText(index);
         }
-
 
         private void ImpListBoxBase_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             Pressed = false;
         }
 
-
         private void ImpListBoxBase_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            base.OnMouseDown(e);
+            OnMouseDown(e);
             if (Pressed)
             {
                 if (e.GetPosition(this).X >= ActualWidth - SCROLLBARWIDTH && ScrollBarVisible)
@@ -618,10 +587,9 @@ namespace ImpControls
                             controller.Select(SelectionMode.Add, MouseoverIndex);
                             DragShow(MouseoverIndex);
                         }
-                            
+
                         else
                             controller.Select(SelectionMode.One, MouseoverIndex);
-                        
                     }
                     else if (GlobalKeyboard.ModKeys == ModifierKeys.None)
                         controller.Select(SelectionMode.One, MouseoverIndex);
@@ -635,18 +603,15 @@ namespace ImpControls
             }
         }
 
-
         private void ImpListBoxBase_MouseEnter(object sender, MouseEventArgs e)
         {
             CaptureMouse();
         }
 
-
         private void ImpListBoxBase_MouseLeave(object sender, MouseEventArgs e)
         {
             ClearMouse();
         }
-
 
         protected virtual void ImpListBoxBase_MouseMove(object sender, MouseEventArgs e)
         {
@@ -696,7 +661,6 @@ namespace ImpControls
             }
         }
 
-
         protected virtual void DragShow(int index)
         {
             if (controller.IsSelectedIndex(index))
@@ -710,37 +674,33 @@ namespace ImpControls
             }
         }
 
-
         /// <summary>
-        /// Selects all visible indexes
+        ///     Selects all visible indexes
         /// </summary>
         public virtual void SelectALL()
         {
             controller.Select(SelectionMode.All);
         }
 
-
         /// <summary>
-        /// inverses selection on all visible indexes
+        ///     inverses selection on all visible indexes
         /// </summary>
         public virtual void SelectInverse()
         {
             controller.Select(SelectionMode.InverseAll);
         }
 
-
         /// <summary>
-        /// Updates the items.
+        ///     Updates the items.
         /// </summary>
         protected virtual void UpdateItems()
         {
-            int t = LIndex;
+            var t = LIndex;
             LIndex = -2;
             LowIndex = t;
             //SelectedIndex = SelectedIndex
             InvalidateVisual();
         }
-
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
@@ -764,7 +724,6 @@ namespace ImpControls
             DragTo = -1;
         }
 
-
         private void ImpListBoxBase_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             var sign = Math.Sign(e.Delta);
@@ -776,19 +735,16 @@ namespace ImpControls
                 LowIndex -= Math.Min((int) (sign * (HighIndex - LowIndex) * 0.2f), -1);
         }
 
-
         private void ImpListBoxBase_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateItems();
         }
-
 
         private void ClearMouse()
         {
             MouseoverIndex = -1;
             mouseoverState = MouseStates.None;
         }
-
 
         private void ScrollBarMove(double p1)
         {

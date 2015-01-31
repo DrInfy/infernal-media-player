@@ -191,10 +191,19 @@ namespace Base.ListLogic
         /// Adds the item.
         /// </summary>
         /// <param name="item">The item.</param>
-        /// <param name="neverFilter">set true if this item needs to unfilterable. </param>
-        public virtual void AddItem(T item, bool neverFilter = false)
+        public virtual void AddItem(T item)
         {
-            items.Add(new Selectable<T>(item) { NeverFilter = neverFilter });
+            items.Add(new Selectable<T>(item));
+            OnListSizeChanged(true);
+        }
+
+        /// <summary>
+        /// Adds the item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public virtual void AddItemUnfiltered(T item)
+        {
+            items.Add(new Selectable<T>(item) { NeverFilter = true });
             OnListSizeChanged(true);
         }
 
