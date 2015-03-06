@@ -265,7 +265,8 @@ namespace Imp.Panels
                 return;
             }
             options.FindText = TextBoxFind.Text;
-            options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
+            //options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
+            options.FilterOptions = FilterOptions.Files;
 
             ButtonAddSubFolder.IsEnabled = false;
             ButtonAddFolder.IsEnabled = false;
