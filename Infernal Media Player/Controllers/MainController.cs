@@ -171,21 +171,9 @@ namespace Imp.Controllers
             playingItem = null;
             loadingItem = null;
 
-            if (window.UriPlayer.Controller != null)
-            {
-                window.UriPlayer.Controller.Command(MediaCommand.Close);
-            }
-            window.ImageViewer.Source = null;
-            //playingItem = itemOnPlayer;
-            //window.PanelPlaylist.ListPlaylist.PlayingThis(playingItem);
-            //if (playingItem != null)
-            //{
-            //    SetPlayingTitle();    
-            //}
-            //else
-            //{
+            ClearPlayers();
+
             ResetTitle();
-            //}
         }
 
         private void ResetTitle()
@@ -282,6 +270,22 @@ namespace Imp.Controllers
             ContentMenu.VerticalOffset = Math.Max(Math.Min(cursorPositionInDesktop.Y - 5, area.Bottom - size.Height),
                 area.Top);
             ContentMenu.IsOpen = true;
+        }
+
+        protected override void Shuffle()
+        {
+            ClearPlayers();
+            playingItem = null;
+            window.PanelPlaylist.ListPlaylist.SelectNone();
+            window.PanelPlaylist.ListPlaylist.PlayingThis(null);
+            Exec(ImpCommand.SortByrandom);
+            EventC.SetEvent(new EventText("Shuffled!"));
+        }
+
+        protected override void ClearPlayers()
+        {
+            window.ImageViewer.Source = null;
+            window.UriPlayer.Controller?.Command(MediaCommand.Close);
         }
 
         protected override void RemoveSelectedPath()

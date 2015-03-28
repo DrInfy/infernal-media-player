@@ -80,7 +80,8 @@ namespace Imp.Controllers
 
 
             // play random
-            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.OpenRandom, Key = Key.R, ModifierKeys = ModifierKeys.Control });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.OpenRandom, Key = Key.R, ModifierKeys = ModifierKeys.Control, NeedRelease = true });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.Shuffle, Key = Key.S, ModifierKeys = ModifierKeys.Control, NeedRelease = true });
 
             return cmds;
         }

@@ -63,6 +63,7 @@ namespace Base.Controllers
                     cmdList.Add(new ImpTextAndCommand("Play Previous", ImpCommand.OpenPrev));
                     cmdList.Add(new ImpTextAndCommand("Play Random", ImpCommand.OpenRandom));
                     cmdList.Add(new ImpTextAndCommand("Copy to clipboard", ImpCommand.CopyName));
+                    cmdList.Add(new ImpTextAndCommand("Shuffle playlist", ImpCommand.Shuffle));
                     break;
                 case ContextMenuEnum.Playlist:
                     cmdList.Add(new ImpTextAndCommand("Play this", ImpCommand.OpenPl));
@@ -323,10 +324,17 @@ namespace Base.Controllers
                 case ImpCommand.RemoveSelectedPath:
                     RemoveSelectedPath();
                     break;
+                case ImpCommand.Shuffle:
+                    Shuffle();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("cmd");
             }
         }
+
+        protected abstract void Shuffle();
+
+        protected abstract void ClearPlayers();
 
 
         protected abstract void RemoveSelectedPath();

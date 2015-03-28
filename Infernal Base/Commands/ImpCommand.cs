@@ -132,6 +132,7 @@
         AddSelectedFolderToPaths,
         DeleteOpenFolder,
 
-        RemoveSelectedPath
+        RemoveSelectedPath,
+        Shuffle
     }
 }

@@ -146,6 +146,10 @@ namespace Base.ListLogic
             if (item == null)
             {
                 PlayingFullPath = null;
+                for (int i = 0; i < items.Count; i++)
+                {
+                    items[i].Content.Playing = false;
+                }
                 return -1;
             }
             PlayingFullPath = item.FullPath;

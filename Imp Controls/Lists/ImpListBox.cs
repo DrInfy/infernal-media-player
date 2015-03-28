@@ -210,6 +210,11 @@ namespace ImpControls
             controller.Select(SelectionMode.One, index);
         }
 
+        public void SelectNone()
+        {
+            controller.Select(SelectionMode.None);
+        }
+
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
