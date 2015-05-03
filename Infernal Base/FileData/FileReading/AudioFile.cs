@@ -17,7 +17,7 @@
         public double Bitrate { get; protected set; }
 
         /// <summary>
-        /// Gets the total seconds.
+        /// Gets the duration in total seconds.
         /// </summary>
         public double TotalSeconds { get; protected set; }
 

@@ -1,31 +1,38 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.IO;
+
+#endregion
 
 namespace Base.FileData
 {
     public class FileTypeFinder
     {
-        private readonly static List<FileTypeFinder> globalFileTypes = CreateExtensions();
+        #region Fields
+
         private readonly List<string> acceptableExtensions;
 
+        #endregion
+
+        #region Properties
+
+        public FileTypes Type { get; }
+
+        #endregion
 
         public FileTypeFinder(List<string> acceptableExtensions, FileTypes type)
         {
             this.acceptableExtensions = acceptableExtensions;
-            this.Type = type;
+            Type = type;
         }
-
-        public FileTypes Type { get; }
-
 
         public bool IsFileType(string e)
         {
             return acceptableExtensions.Exists(
                 extension => String.Compare(e, extension, StringComparison.OrdinalIgnoreCase) == 0);
         }
-
-
 
         public static List<string> GetFiltersList(FileTypes allowedFileTypes)
         {
@@ -36,7 +43,6 @@ namespace Base.FileData
 
             return filtersList;
         }
-
 
         /// <summary>
         /// Determines the correct filetype(s) that this file fits in
@@ -89,7 +95,6 @@ namespace Base.FileData
             return filters;
         }
 
-
         private static List<string> MusicFilters()
         {
             var filters = new List<string>();
@@ -103,7 +108,6 @@ namespace Base.FileData
             filters.Add(".aac");
             return filters;
         }
-
 
         private static List<string> PictureFilters()
         {
@@ -121,12 +125,13 @@ namespace Base.FileData
             return filters;
         }
 
-
         private static List<string> PlaylistFilters()
         {
             var filters = new List<string>();
             filters.Add(".iml");
             return filters;
         }
+
+        private static readonly List<FileTypeFinder> globalFileTypes = CreateExtensions();
     }
 }

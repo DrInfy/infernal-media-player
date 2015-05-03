@@ -1,16 +1,24 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.IO;
 using Base.Libraries;
+
+#endregion
 
 namespace Base.FileData
 {
     public class FileImpInfo
     {
+        #region Fields
+
         public string Path;
         public string Name;
         public string SmartName;
         public long DateModified;
         public FileTypes FileType = FileTypes.Any;
+
+        #endregion
 
         public FileImpInfo(ErrorType result)
         {
@@ -26,7 +34,6 @@ namespace Base.FileData
                 default:
                     throw new ArgumentOutOfRangeException("result");
             }
-            
         }
 
         public FileImpInfo(string path)
@@ -51,12 +58,11 @@ namespace Base.FileData
             return Name;
         }
 
-
         public void CheckDate()
         {
             try
             {
-                FileInfo info = new FileInfo(Path);
+                var info = new FileInfo(Path);
                 if (info.Exists)
                     DateModified = info.LastWriteTimeUtc.Ticks;
             }
@@ -64,7 +70,6 @@ namespace Base.FileData
             {
                 return;
             }
-            
         }
     }
 }

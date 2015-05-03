@@ -1,14 +1,16 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.IO;
 using System.Text;
 
+#endregion
+
 namespace Base.FileData.FileReading
 {
-    static internal class Tools
+    internal static class Tools
     {
-        public static readonly string ZeroChar = '\0'.ToString();
-        public static readonly string OneChar = '\u0001'.ToString();
-
+        #region Helpers
 
         internal enum CharacterSet : byte
         {
@@ -16,32 +18,44 @@ namespace Base.FileData.FileReading
             /// ISO-8859-1 [ISO-8859-1]. Terminated with $00.
             /// </summary>
             ISO88591 = 0,
+
             /// <summary>
             /// UTF-16 [UTF-16] encoded Unicode [UNICODE] with BOM. All
             /// strings in the same frame SHALL have the same byteorder.
             /// Terminated with $00 00.
             /// </summary>
             UTF16 = 1,
+
             /// <summary>
             /// UTF-16BE [UTF-16] encoded Unicode [UNICODE] without BOM.
             /// Terminated with $00 00.
             /// </summary>
             UTF16BE = 2,
+
             /// <summary>
             /// UTF-8 [UTF-8] encoded Unicode [UNICODE]. Terminated with $00.
             /// </summary>
             UTF8 = 3,
+
             /// <summary>
             /// Special case that can be used for reading numeric strings
             /// </summary>
             Numeric8 = 255
         }
 
-        static readonly Encoding ISO88591 = Encoding.GetEncoding(28591);
-        static readonly Encoding UTF16 = Encoding.Unicode;
-        static readonly Encoding UTF8 = Encoding.UTF8;
+        #endregion
 
-        static readonly Encoding UTF16BE = Encoding.BigEndianUnicode;
+        #region Static Fields and Constants
+
+        public static readonly string ZeroChar = '\0'.ToString();
+        public static readonly string OneChar = '\u0001'.ToString();
+        private static readonly Encoding ISO88591 = Encoding.GetEncoding(28591);
+        private static readonly Encoding UTF16 = Encoding.Unicode;
+        private static readonly Encoding UTF8 = Encoding.UTF8;
+        private static readonly Encoding UTF16BE = Encoding.BigEndianUnicode;
+
+        #endregion
+
         /// <summary>
         /// compares two array of bytes
         /// </summary>
@@ -58,7 +72,7 @@ namespace Base.FileData.FileReading
                 return false;
             }
 
-            for (int i = 0; i < a.Length; i++)
+            for (var i = 0; i < a.Length; i++)
             {
                 if (a[i] != b[i])
                 {
@@ -84,9 +98,9 @@ namespace Base.FileData.FileReading
                 return false;
             }
 
-            int Length = Math.Min(Math.Min(a.Length, b.Length), maxLength) - 1;
+            var Length = Math.Min(Math.Min(a.Length, b.Length), maxLength) - 1;
 
-            for (int i = 0; i <= Length; i++)
+            for (var i = 0; i <= Length; i++)
             {
                 if (a[i] != b[i])
                 {
@@ -99,12 +113,12 @@ namespace Base.FileData.FileReading
         /// <summary>
         /// Reads bytes with a BinaryReader and converts then to a string
         /// </summary>
-        static internal string ReadString(BinaryReader br, int length, CharacterSet CS)
+        internal static string ReadString(BinaryReader br, int length, CharacterSet CS)
         {
             if (length <= 0)
                 return "";
             byte[] byteArray = null;
-            string str = "";
+            var str = "";
 
             byteArray = new byte[length];
             br.Read(byteArray, 0, length);
@@ -144,7 +158,7 @@ namespace Base.FileData.FileReading
                     break;
                 case CharacterSet.Numeric8:
 
-                    for (int i = 0; i <= byteArray.GetUpperBound(0); i++)
+                    for (var i = 0; i <= byteArray.GetUpperBound(0); i++)
                     {
                         if (byteArray[i] < 58 & byteArray[i] > 47)
                         {
@@ -163,14 +177,14 @@ namespace Base.FileData.FileReading
             return str.Trim('\0').Trim();
         }
 
-        public static bool Validify_ISO_Text(string text)
+        public static bool ValidateIsoText(string text)
         {
-            foreach (char c in text)
+            foreach (var c in text)
             {
-                if (c >= 0 && c <= 0x1f )
+                if (c >= 0 && c <= 0x1f)
                     return false;
-                if (c >= 0x7F && c <= 0xBF )
-                        return false;
+                if (c >= 0x7F && c <= 0xBF)
+                    return false;
             }
             return true;
         }

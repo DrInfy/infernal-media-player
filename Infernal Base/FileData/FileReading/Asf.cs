@@ -1,63 +1,84 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections;
 using System.IO;
 
+#endregion
+
 namespace Base.FileData.FileReading
 {
+    /// <summary>
+    ///     Windows media and asf files are generallt tagged with this type
+    /// </summary>
     internal class Asf : AudioFile
     {
+        #region Helpers
 
-        // ASF GUIDs
-        private readonly Guid ASF_Header_Object = new Guid("75B22630-668E-11CF-A6D9-00AA0062CE6C");
-        private readonly Guid ASF_Content_Description_Object = new Guid("75B22633-668E-11CF-A6D9-00AA0062CE6C");
-        private readonly Guid ASF_Extended_Content_Description_Object = new Guid("D2D0A440-E307-11D2-97F0-00A0C95EA850");
-
-        private readonly Guid ASF_File_Properties_Object = new Guid("8CABDCA1-A947-11CF-8EE4-00C00C205365");
-        private Hashtable attrs = new Hashtable();
-
-        private ArrayList attrValues = new ArrayList();
         private enum ValueDataTypes : ushort
         {
             /// <summary>
-            /// Unicode string,lenght varies
+            ///     Unicode string,lenght varies
             /// </summary>
             Unicode = 0,
+
             /// <summary>
-            /// Array of bytes, lenght varies
-            /// </summary>
+            ///     Array of bytes, lenght varies
             BYTEarray = 1,
+
             /// <summary>
-            /// Boolean, 32 bits - 0 = false and the rest are true
+            ///     Boolean, 32 bits - 0 = false and the rest are true
             /// </summary>
             BOOL = 2,
+
             /// <summary>
-            /// Int32
+            ///     Int32
             /// </summary>
             DWORD = 3,
+
             /// <summary>
-            /// Int64
+            ///     Int64
             /// </summary>
             QWORD = 4,
+
             /// <summary>
-            /// Int16
+            ///     Int16
             /// </summary>
             WORD = 5
         }
 
         private struct value
         {
+            #region Fields
+
             public Int16 dataType;
             public int index;
+
+            #endregion
         }
+
+        #endregion
+
+        #region Fields
+
+        // ASF GUIDs
+        private readonly Guid ASF_Header_Object = new Guid("75B22630-668E-11CF-A6D9-00AA0062CE6C");
+        private readonly Guid ASF_Content_Description_Object = new Guid("75B22633-668E-11CF-A6D9-00AA0062CE6C");
+        private readonly Guid ASF_Extended_Content_Description_Object = new Guid("D2D0A440-E307-11D2-97F0-00A0C95EA850");
+        private readonly Guid ASF_File_Properties_Object = new Guid("8CABDCA1-A947-11CF-8EE4-00C00C205365");
+        private readonly Hashtable attrs = new Hashtable();
+        private readonly ArrayList attrValues = new ArrayList();
+
+        #endregion
 
         public Asf(string path)
         {
-            Guid g = default(Guid);
-            bool CBDone = false;
-            bool ECBDone = false;
+            var g = default(Guid);
+            var CBDone = false;
+            var ECBDone = false;
             long sizeBlock = 0;
             string s = null;
-            int i = 0;
+            var i = 0;
 
             FileStream fs = null;
             BinaryReader br = null;
@@ -96,14 +117,14 @@ namespace Base.FileData.FileReading
                     // shouldn't happen, but at least fail gracefully
                     if (br.BaseStream.Position + sizeBlock > fs.Length)
                     {
-                        break; // TODO: might not be correct. Was : Exit While
+                        break;
                     }
                     if (g == ASF_Content_Description_Object)
                     {
                         processContentBlock(ref br);
                         if (ECBDone)
                         {
-                            break; // TODO: might not be correct. Was : Exit While
+                            break;
                         }
                         CBDone = true;
                     }
@@ -112,12 +133,11 @@ namespace Base.FileData.FileReading
                         processExtendedContentBlock(ref br);
                         if (CBDone)
                         {
-                            break; // TODO: might not be correct. Was : Exit While
+                            break;
                         }
                         ECBDone = true;
 
                         // File properties are here
-
                     }
                     else if (g == ASF_File_Properties_Object)
                     {
@@ -144,7 +164,6 @@ namespace Base.FileData.FileReading
                         TotalSeconds = Convert.ToDouble(temp64 - temp64_2) / 10000000;
 
                         fs.Position = tempPos;
-
                     }
                     else
                     {
@@ -157,10 +176,10 @@ namespace Base.FileData.FileReading
 
                 // Get the attributes we're interested in
                 Album = getStringAttribute("WM/AlbumTitle");
-                string genre = getStringAttribute("WM/Genre");
+                var genre = getStringAttribute("WM/Genre");
                 s = getStringAttribute("WM/Year");
                 int value;
-                bool result = int.TryParse(s, out value);
+                var result = int.TryParse(s, out value);
                 if (result)
                 {
                     // not used
@@ -195,9 +214,7 @@ namespace Base.FileData.FileReading
                     }
                 }
             }
-            catch (Exception ex)
-            {
-            }
+            catch (Exception ex) {}
             finally
             {
                 if (fs != null)
@@ -206,8 +223,9 @@ namespace Base.FileData.FileReading
                 }
             }
         }
+
         /// <summary>
-        /// Reads a 128 bit GUID
+        ///     Reads a 128 bit GUID
         /// </summary>
         /// <param name="g"></param>
         /// <param name="br"></param>
@@ -215,10 +233,10 @@ namespace Base.FileData.FileReading
         /// <remarks></remarks>
         private bool readGUID(ref Guid g, ref BinaryReader br)
         {
-            int int1 = 0;
+            var int1 = 0;
             short shrt1 = 0;
             short shrt2 = 0;
-            byte[] b = new byte[7];
+            var b = new byte[7];
 
             try
             {
@@ -240,20 +258,20 @@ namespace Base.FileData.FileReading
         }
 
         /// <summary>
-        /// Gets information out of the Hashtable
+        ///     Gets information out of the Hashtable
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         /// <remarks></remarks>
         public string getStringAttribute(string name)
         {
-            value v = default(value);
+            var v = default(value);
 
             if (!attrs.Contains(name))
             {
                 return "";
             }
-            v = (value)attrs[name];
+            v = (value) attrs[name];
             if (!(v.dataType == 0))
             {
                 // it's not a string type
@@ -266,11 +284,11 @@ namespace Base.FileData.FileReading
         }
 
         /// <summary>
-        /// The Content Description Object lets authors record well-known data 
-        /// describing the file and its contents. This object is used to store 
-        /// standard bibliographic information such as title, author, copyright,
-        /// description, and rating information. This information is pertinent 
-        /// to the entire file.
+        ///     The Content Description Object lets authors record well-known data
+        ///     describing the file and its contents. This object is used to store
+        ///     standard bibliographic information such as title, author, copyright,
+        ///     description, and rating information. This information is pertinent
+        ///     to the entire file.
         /// </summary>
         /// <param name="br"></param>
         /// <remarks></remarks>
@@ -297,42 +315,43 @@ namespace Base.FileData.FileReading
             }
             if (lCopyright > 0)
             {
-                string copyright = Tools.ReadString(br, lCopyright, Tools.CharacterSet.UTF16);
+                var copyright = Tools.ReadString(br, lCopyright, Tools.CharacterSet.UTF16);
             }
             if (lDescription > 0)
             {
-                string description = Tools.ReadString(br, lDescription, Tools.CharacterSet.UTF16);
+                var description = Tools.ReadString(br, lDescription, Tools.CharacterSet.UTF16);
             }
             if (lRating > 0)
             {
-                string rating = Tools.ReadString(br, lRating, Tools.CharacterSet.UTF16);
+                var rating = Tools.ReadString(br, lRating, Tools.CharacterSet.UTF16);
             }
         }
+
         /// <summary>
-        /// The Extended Content Description Object lets authors record data describing
-        /// the file and its contents that is beyond the standard bibliographic 
-        /// information such as title, author, copyright, description, or rating information.
-        /// This information is pertinent to the whole file.
-        /// Each Content Descriptor stored in this object uses a name/value pair metaphor.
+        ///     The Extended Content Description Object lets authors record data describing
+        ///     the file and its contents that is beyond the standard bibliographic
+        ///     information such as title, author, copyright, description, or rating information.
+        ///     This information is pertinent to the whole file.
+        ///     Each Content Descriptor stored in this object uses a name/value pair metaphor.
         /// </summary>
         /// <param name="br"></param>
         /// <remarks></remarks>
         private void processExtendedContentBlock(ref BinaryReader br)
         {
-            Int16 numAttrs = default(Int16);
-            Int16 dataLen = default(Int16);
-            ValueDataTypes dataType = default(ValueDataTypes);
+            var numAttrs = default(Int16);
+            var dataLen = default(Int16);
+            var dataType = default(ValueDataTypes);
             string attrName = null;
             byte[] bValue = null;
-            int index = 0;
+            var index = 0;
 
 
             object Value = null;
 
-            value valueObject = default(value);
+            var valueObject = default(value);
 
             numAttrs = br.ReadInt16();
-            for (int i = 0; i <= numAttrs - 1; i++)
+            for (var i = 0; i <= numAttrs - 1; i++)
             {
                 attrName = readUnicodeString(ref br);
                 dataType = (ValueDataTypes) br.ReadUInt16();
@@ -375,8 +394,6 @@ namespace Base.FileData.FileReading
                 index += 1;
             }
         }
-
-
 
         private string readUnicodeString(ref BinaryReader br)
         {

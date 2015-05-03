@@ -1,14 +1,23 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.IO;
+
+#endregion
 
 namespace Base.FileData.FileReading
 {
+    /// <summary>
+    ///     Flac tag, generally flac and ogg vorbis files use these
+    /// </summary>
     internal class FlacOgg : AudioFile
     {
+        #region Static Fields and Constants
 
         private const string FLAC_MARKER = "fLaC";
-
         private const string OGG_MARKER = "OggS";
+
+        #endregion
 
         public FlacOgg(string path)
         {
@@ -44,7 +53,7 @@ namespace Base.FileData.FileReading
                     // Skip straight to the METADATA_BLOCK_STREAMINFO and sample rate
                     fs.Seek(14, SeekOrigin.Current);
 
-                    byte[] buf = br.ReadBytes(3);
+                    var buf = br.ReadBytes(3);
 
 
                     sFrequency = buf[0];
@@ -81,7 +90,7 @@ namespace Base.FileData.FileReading
                         startHeader = br.ReadByte();
                         var lastBlock = (startHeader >> 7) == 1;
 
-                        int blockType = startHeader & 127;
+                        var blockType = startHeader & 127;
                         // end of these blocks with no usable information
                         if (blockType == 4)
                             break; // TODO: might not be correct. Was : Exit Do
@@ -106,7 +115,7 @@ namespace Base.FileData.FileReading
                 }
                 else if (startstring == OGG_MARKER)
                 {
-                    int i = 0;
+                    var i = 0;
                     do
                     {
                         string merkki = null;
@@ -127,34 +136,30 @@ namespace Base.FileData.FileReading
                         if (fs.Position > 300)
                             return;
                     } while (true);
-
                 }
 
-                uint comment_number = br.ReadUInt32();
-                uint comment_length = 0;
-                string comment2 = null;
+                var commentNumber = br.ReadUInt32();
                 // Read for Vorbis comments
-                for (int i = 0; i <= comment_number - 1; i++)
+                for (var i = 0; i <= commentNumber - 1; i++)
                 {
-                    comment_length = br.ReadUInt32();
-                    comment2 = Tools.ReadString(br, (int) comment_length, Tools.CharacterSet.UTF8);
+                    var commentLength = br.ReadUInt32();
+                    var comment2 = Tools.ReadString(br, (int) commentLength, Tools.CharacterSet.UTF8);
                     // Vorbis comments are all in a format like "TITLE=Best song ever"
-                    int sepindex = comment2.IndexOf("=");
-                    string name = comment2.Substring(0, sepindex);
-                    string value = comment2.Substring(sepindex + 1);
+                    var sepindex = comment2.IndexOf("=", StringComparison.Ordinal);
+                    var name = comment2.Substring(0, sepindex);
+                    var value = comment2.Substring(sepindex + 1);
                     AddTag(name, value);
                 }
 
                 songStart = fs.Position;
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
                 //Throw New InvalidDataException(String.Format("Cannot read .Flac file '{0}'", path), ex)
             }
             finally
             {
-                if (fs != null)
-                    fs.Close();
+                fs?.Close();
             }
 
             //########## Bit rate ############
@@ -172,8 +177,8 @@ namespace Base.FileData.FileReading
 
         private void AddTag(string name, string value)
         {
-            string key = name.Trim(' ', '\0').ToUpperInvariant();
-            string val = value.Trim(' ', '\0');
+            var key = name.Trim(' ', '\0').ToUpperInvariant();
+            var val = value.Trim(' ', '\0');
 
             switch (key)
             {
@@ -192,22 +197,16 @@ namespace Base.FileData.FileReading
             }
         }
 
-
         /// <summary>
-        /// Converts bytes to framesize
+        ///     Converts bytes to framesize
         /// </summary>
-        /// <param name="buf">
-        /// </param>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        private static UInt32 size_calculation(byte[] buf)
+        private static uint size_calculation(byte[] buf)
         {
-            UInt32 size = default(UInt32);
             // Use custom amount of bytes to do a size calculation
             if (buf.GetUpperBound(0) > -1)
             {
-                size = buf[0];
-                for (int i = 1; i <= buf.GetUpperBound(0); i++)
+                uint size = buf[0];
+                for (var i = 1; i <= buf.GetUpperBound(0); i++)
                 {
                     size = size << 8 | buf[i];
                 }
@@ -218,7 +217,6 @@ namespace Base.FileData.FileReading
                 return 0;
                 // Invalid size buffer
             }
-
         }
     }
 }

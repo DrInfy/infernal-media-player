@@ -1,205 +1,62 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.IO;
+
+#endregion
 
 namespace Base.FileData.FileReading
 {
+    /// <summary>
+    /// Mp3 tags, most common tag, with several different versions
+    /// </summary>
     internal class Mp3 : AudioFile
     {
-
-
-        private enum ID3v2_versions : byte
-        {
-            ID3v2_2 = 2,
-            ID3v2_3 = 3,
-            ID3v2_4 = 4
-        }
+        #region Helpers
 
         /// <summary>
-        /// Contains ID3v2.2 Header Strings
-        /// </summary>
-        /// <remarks>Enums in VB.NET do not support strings, so we need to use structure</remarks>
-        internal struct Frames2
-        {
-            /// <summary>
-            /// 4 Byte long text containing frameinfo converted to string
-            /// </summary>
-            public string Text;
-            /// <summary>
-            /// Size of the frame
-            /// </summary>
-            public uint Size;
-            public Frame_flags flags;
-            /// <summary>
-            /// The 'Title/Songname/Content description' frame is the actual name of
-            /// the piece (e.g. "Adagio", "Hurricane Donna").
-            /// </summary>
-            public static readonly string Title = "TT2";
-            /// <summary>
-            /// The 'Subtitle/Description refinement' frame is used for information
-            /// directly related to the contents title (e.g. "Op. 16" or "Performed
-            /// live at Wembley").
-            /// </summary>
-            public static readonly string SubTitle = "TT3";
-            /// <summary>
-            /// The 'Lead artist(s)/Lead performer(s)/Soloist(s)/Performing group' is
-            /// used for the main artist(s). They are seperated with the "/"
-            /// character.
-            /// </summary>
-            public static readonly string Artist = "TP1";
-            /// <summary>
-            /// The 'Band/Orchestra/Accompaniment' frame is used for additional
-            /// information about the performers in the recording.
-            /// </summary>
-            public static readonly string Band = "TP2";
-            /// <summary>
-            /// The 'Conductor' frame is used for the name of the conductor.
-            /// </summary>
-            public static readonly string Conductor = "TP3";
-            /// <summary>
-            /// The 'Interpreted, remixed, or otherwise modified by' frame contains
-            /// more information about the people behind a remix and similar
-            /// interpretations of another existing piece.
-            /// </summary>
-            /// <remarks></remarks>
-            public static readonly string Modified = "TP4";
-            /// <summary>
-            /// The 'Length' frame contains the length of the audiofile in
-            /// milliseconds, represented as a numeric string.
-            /// </summary>
-            public static readonly string Length = "TLEN";
-            /// <summary>
-            /// The 'Year' frame is a numeric string with a year of the recording.
-            /// This frames is always four characters long (until the year 10000).
-            /// </summary>
-            public static readonly string Year = "TYE";
-            /// <summary>
-            /// The 'Track number/Position in set' frame is a numeric string
-            /// containing the order number of the audio-file on its original
-            /// recording. This may be extended with a "/" character and a numeric
-            /// string containing the total numer of tracks/elements on the original
-            /// recording. E.g. "4/9".
-            /// </summary>
-            public static readonly string Track = "TRK";
-            /// <summary>
-            /// The 'Album/Movie/Show title' frame is intended for the title of the
-            /// recording(/source of sound) which the audio in the file is taken
-            /// from.
-            /// </summary>
-            public static readonly string Album = "TAL";
-        }
-
-        /// <summary>
-        /// Contains some ID3v2.3 and ID3v2.4 Header Strings
-        /// </summary>
-        /// <remarks>Enums in VB.NET do not support strings, so we need to use structure</remarks>
-        internal struct Frames3
-        {
-            /// <summary>
-            /// 4 Byte long text containing frameinfo converted to string
-            /// </summary>
-            public string Text;
-            /// <summary>
-            /// Size of the frame
-            /// </summary>
-            public uint Size;
-            public Frame_flags flags;
-            /// <summary>
-            /// The 'Title/Songname/Content description' frame is the actual name of
-            /// the piece (e.g. "Adagio", "Hurricane Donna").
-            /// </summary>
-            public static readonly string Title = "TIT2";
-            /// <summary>
-            /// The 'Subtitle/Description refinement' frame is used for information
-            /// directly related to the contents title (e.g. "Op. 16" or "Performed
-            /// live at Wembley").
-            /// </summary>
-            public static readonly string SubTitle = "TIT3";
-            /// <summary>
-            /// The 'Lead artist(s)/Lead performer(s)/Soloist(s)/Performing group' is
-            /// used for the main artist(s). They are seperated with the "/"
-            /// character.
-            /// </summary>
-            public static readonly string Artist = "TPE1";
-            /// <summary>
-            /// The 'Band/Orchestra/Accompaniment' frame is used for additional
-            /// information about the performers in the recording.
-            /// </summary>
-            public static readonly string Band = "TPE2";
-            /// <summary>
-            /// The 'Conductor' frame is used for the name of the conductor.
-            /// </summary>
-            public static readonly string Conductor = "TPE3";
-            /// <summary>
-            /// The 'Interpreted, remixed, or otherwise modified by' frame contains
-            /// more information about the people behind a remix and similar
-            /// interpretations of another existing piece.
-            /// </summary>
-            /// <remarks></remarks>
-            public static readonly string Modified = "TPE5";
-            /// <summary>
-            /// The 'Length' frame contains the length of the audiofile in
-            /// milliseconds, represented as a numeric string.
-            /// </summary>
-            public static readonly string Length = "TLEN";
-            /// <summary>
-            /// The 'Year' frame is a numeric string with a year of the recording.
-            /// This frames is always four characters long (until the year 10000).
-            /// </summary>
-            public static readonly string Year = "TYER";
-            /// <summary>
-            /// The 'Track number/Position in set' frame is a numeric string
-            /// containing the order number of the audio-file on its original
-            /// recording. This may be extended with a "/" character and a numeric
-            /// string containing the total numer of tracks/elements on the original
-            /// recording. E.g. "4/9".
-            /// </summary>
-            public static readonly string Track = "TRCK";
-            /// <summary>
-            /// The 'Album/Movie/Show title' frame is intended for the title of the
-            /// recording(/source of sound) which the audio in the file is taken
-            /// from.
-            /// </summary>
-            public static readonly string Album = "TALB";
-        }
-
-        /// <summary>
-        /// These flags appear in ID3v2.3 and ID3v2.4 tags
+        ///     These flags appear in ID3v2.3 and ID3v2.4 tags
         /// </summary>
         /// <remarks></remarks>
-        internal enum Frame_flags : ushort
+        internal enum FrameFlags : ushort
         {
             /// <summary>
-            /// This flag tells the software what to do with this frame if it is
-            /// unknown and the tag is altered in any way.
+            ///     This flag tells the software what to do with this frame if it is
+            ///     unknown and the tag is altered in any way.
             /// </summary>
             /// <remarks></remarks>
-            Tag_alter_preservation = 32768,
+            TagAlterPreservation = 32768,
+
             /// <summary>
-            /// This flag tells the software what to do with this frame if it is
-            /// unknown and the file, excluding the tag, is altered.
+            ///     This flag tells the software what to do with this frame if it is
+            ///     unknown and the file, excluding the tag, is altered.
             /// </summary>
             /// <remarks></remarks>
-            File_alter_preservation = 16384,
+            FileAlterPreservation = 16384,
+
             /// <summary>
-            /// This flag, if set, tells the software that the contents of this
-            /// frame is intended to be read only.
+            ///     This flag, if set, tells the software that the contents of this
+            ///     frame is intended to be read only.
             /// </summary>
-            read_only = 8192,
+            ReadOnly = 8192,
+
             /// <summary>
-            /// This flag indicates whether or not the frame is compressed.
+            ///     This flag indicates whether or not the frame is compressed.
             /// </summary>
-            compression = 128,
+            Compression = 128,
+
             /// <summary>
-            /// This flag indicates wether or not the frame is enrypted.
+            ///     This flag indicates wether or not the frame is enrypted.
             /// </summary>
             Encyption = 64,
+
             /// <summary>
-            /// This flag indicates whether or not this frame belongs in a group
-            /// with other frames. If set a group identifier byte is added to the
-            /// frame header. Every frame with the same group identifier belongs
-            /// to the same group.
+            ///     This flag indicates whether or not this frame belongs in a group
+            ///     with other frames. If set a group identifier byte is added to the
+            ///     frame header. Every frame with the same group identifier belongs
+            ///     to the same group.
             /// </summary>
-            Grouping_identity = 32
+            GroupingIdentity = 32
         }
 
         [Flags]
@@ -215,6 +72,202 @@ namespace Base.FileData.FileReading
             // no flags set
         }
 
+        private enum ID3v2_versions : byte
+        {
+            ID3v2_2 = 2,
+            ID3v2_3 = 3,
+            ID3v2_4 = 4
+        }
+
+        /// <summary>
+        ///     Contains ID3v2.2 Header Strings
+        /// </summary>
+        /// <remarks>Enums in VB.NET do not support strings, so we need to use structure</remarks>
+        internal struct Frames2
+        {
+            #region Static Fields and Constants
+
+            /// <summary>
+            ///     The 'Title/Songname/Content description' frame is the actual name of
+            ///     the piece (e.g. "Adagio", "Hurricane Donna").
+            /// </summary>
+            public static readonly string Title = "TT2";
+
+            /// <summary>
+            ///     The 'Subtitle/Description refinement' frame is used for information
+            ///     directly related to the contents title (e.g. "Op. 16" or "Performed
+            ///     live at Wembley").
+            /// </summary>
+            public static readonly string SubTitle = "TT3";
+
+            /// <summary>
+            ///     The 'Lead artist(s)/Lead performer(s)/Soloist(s)/Performing group' is
+            ///     used for the main artist(s). They are seperated with the "/"
+            ///     character.
+            /// </summary>
+            public static readonly string Artist = "TP1";
+
+            /// <summary>
+            ///     The 'Band/Orchestra/Accompaniment' frame is used for additional
+            ///     information about the performers in the recording.
+            /// </summary>
+            public static readonly string Band = "TP2";
+
+            /// <summary>
+            ///     The 'Conductor' frame is used for the name of the conductor.
+            /// </summary>
+            public static readonly string Conductor = "TP3";
+
+            /// <summary>
+            ///     The 'Interpreted, remixed, or otherwise modified by' frame contains
+            ///     more information about the people behind a remix and similar
+            ///     interpretations of another existing piece.
+            /// </summary>
+            /// <remarks></remarks>
+            public static readonly string Modified = "TP4";
+
+            /// <summary>
+            ///     The 'Length' frame contains the length of the audiofile in
+            ///     milliseconds, represented as a numeric string.
+            /// </summary>
+            public static readonly string Length = "TLEN";
+
+            /// <summary>
+            ///     The 'Year' frame is a numeric string with a year of the recording.
+            ///     This frames is always four characters long (until the year 10000).
+            /// </summary>
+            public static readonly string Year = "TYE";
+
+            /// <summary>
+            ///     The 'Track number/Position in set' frame is a numeric string
+            ///     containing the order number of the audio-file on its original
+            ///     recording. This may be extended with a "/" character and a numeric
+            ///     string containing the total numer of tracks/elements on the original
+            ///     recording. E.g. "4/9".
+            /// </summary>
+            public static readonly string Track = "TRK";
+
+            /// <summary>
+            ///     The 'Album/Movie/Show title' frame is intended for the title of the
+            ///     recording(/source of sound) which the audio in the file is taken
+            ///     from.
+            /// </summary>
+            public static readonly string Album = "TAL";
+
+            #endregion
+
+            #region Fields
+
+            /// <summary>
+            ///     4 Byte long text containing frameinfo converted to string
+            /// </summary>
+            public string Text;
+
+            /// <summary>
+            ///     Size of the frame
+            /// </summary>
+            public uint Size;
+
+            public FrameFlags flags;
+
+            #endregion
+        }
+
+        /// <summary>
+        ///     Contains some ID3v2.3 and ID3v2.4 Header Strings
+        /// </summary>
+        /// <remarks>Enums in VB.NET do not support strings, so we need to use structure</remarks>
+        internal struct Frames3
+        {
+            #region Static Fields and Constants
+
+            /// <summary>
+            ///     The 'Title/Songname/Content description' frame is the actual name of
+            ///     the piece (e.g. "Adagio", "Hurricane Donna").
+            /// </summary>
+            public static readonly string Title = "TIT2";
+
+            /// <summary>
+            ///     The 'Subtitle/Description refinement' frame is used for information
+            ///     directly related to the contents title (e.g. "Op. 16" or "Performed
+            ///     live at Wembley").
+            /// </summary>
+            public static readonly string SubTitle = "TIT3";
+
+            /// <summary>
+            ///     The 'Lead artist(s)/Lead performer(s)/Soloist(s)/Performing group' is
+            ///     used for the main artist(s). They are seperated with the "/"
+            ///     character.
+            /// </summary>
+            public static readonly string Artist = "TPE1";
+
+            /// <summary>
+            ///     The 'Band/Orchestra/Accompaniment' frame is used for additional
+            ///     information about the performers in the recording.
+            /// </summary>
+            public static readonly string Band = "TPE2";
+
+            /// <summary>
+            ///     The 'Conductor' frame is used for the name of the conductor.
+            /// </summary>
+            public static readonly string Conductor = "TPE3";
+
+            /// <summary>
+            ///     The 'Interpreted, remixed, or otherwise modified by' frame contains
+            ///     more information about the people behind a remix and similar
+            ///     interpretations of another existing piece.
+            /// </summary>
+            /// <remarks></remarks>
+            public static readonly string Modified = "TPE5";
+
+            /// <summary>
+            ///     The 'Length' frame contains the length of the audiofile in
+            ///     milliseconds, represented as a numeric string.
+            /// </summary>
+            public static readonly string Length = "TLEN";
+
+            /// <summary>
+            ///     The 'Year' frame is a numeric string with a year of the recording.
+            ///     This frames is always four characters long (until the year 10000).
+            /// </summary>
+            public static readonly string Year = "TYER";
+
+            /// <summary>
+            ///     The 'Track number/Position in set' frame is a numeric string
+            ///     containing the order number of the audio-file on its original
+            ///     recording. This may be extended with a "/" character and a numeric
+            ///     string containing the total numer of tracks/elements on the original
+            ///     recording. E.g. "4/9".
+            /// </summary>
+            public static readonly string Track = "TRCK";
+
+            /// <summary>
+            ///     The 'Album/Movie/Show title' frame is intended for the title of the
+            ///     recording(/source of sound) which the audio in the file is taken
+            ///     from.
+            /// </summary>
+            public static readonly string Album = "TALB";
+
+            #endregion
+
+            #region Fields
+
+            /// <summary>
+            ///     4 Byte long text containing frameinfo converted to string
+            /// </summary>
+            public string Text;
+
+            /// <summary>
+            ///     Size of the frame
+            /// </summary>
+            public uint Size;
+
+            public FrameFlags flags;
+
+            #endregion
+        }
+
+        #endregion
 
         public Mp3(string path)
         {
@@ -229,11 +282,8 @@ namespace Base.FileData.FileReading
                 {
                     get_ID3v1(ref fs, ref br);
                 }
-
             }
-            catch (Exception ex)
-            {
-            }
+            catch {}
             finally
             {
                 if ((fs != null))
@@ -244,12 +294,9 @@ namespace Base.FileData.FileReading
             }
         }
 
-
         /// <summary>
-        /// Find out if the File has ID3v1 Tag and reads it if there is one
+        ///     Find out if the File has ID3v1 Tag and reads it if there is one
         /// </summary>
-        /// <param name="fs"></param>
-        /// <param name="br"></param>
         /// <returns>True is tag found</returns>
         /// <remarks></remarks>
         private bool get_ID3v1(ref FileStream fs, ref BinaryReader br)
@@ -264,11 +311,11 @@ namespace Base.FileData.FileReading
                 {
                     string Str = null;
                     Str = Tools.ReadString(br, 30, Tools.CharacterSet.ISO88591);
-                    if (!Tools.Validify_ISO_Text(Str))
+                    if (!Tools.ValidateIsoText(Str))
                         return false;
                     if (string.IsNullOrEmpty(Title))
                         Title = Str;
-                    if (!Tools.Validify_ISO_Text(Str))
+                    if (!Tools.ValidateIsoText(Str))
                         return false;
                     Str = Tools.ReadString(br, 30, Tools.CharacterSet.ISO88591);
                     if (string.IsNullOrEmpty(Artist))
@@ -276,7 +323,7 @@ namespace Base.FileData.FileReading
                     Str = Tools.ReadString(br, 30, Tools.CharacterSet.ISO88591);
                     if (string.IsNullOrEmpty(Album))
                         Album = Str;
-                    string year = Tools.ReadString(br, 4, Tools.CharacterSet.ISO88591);
+                    var year = Tools.ReadString(br, 4, Tools.CharacterSet.ISO88591);
 
                     byte[] buf = null;
                     buf = new byte[30];
@@ -288,7 +335,6 @@ namespace Base.FileData.FileReading
                     {
                         // comment is only 28 bytes now
                         sTrack = Convert.ToInt32(buf[29]);
-
                     }
                     else
                     {
@@ -305,7 +351,7 @@ namespace Base.FileData.FileReading
         }
 
         /// <summary>
-        /// Find out if the File has ID3v2 Tag and reads it if there is one
+        ///     Find out if the File has ID3v2 Tag and reads it if there is one
         /// </summary>
         /// <param name="fs"></param>
         /// <param name="br"></param>
@@ -316,13 +362,13 @@ namespace Base.FileData.FileReading
             // We have our tag if there is a ID3 marker
             if (Tools.ReadString(br, 3, Tools.CharacterSet.ISO88591) == "ID3")
             {
-                ID3v2_versions version = default(ID3v2_versions);
+                var version = default(ID3v2_versions);
                 byte[] buf = null;
                 buf = new byte[1];
                 version = (ID3v2_versions) br.ReadByte();
                 //read version number
                 buf[0] = br.ReadByte();
-                UInt32 tagsize = default(UInt32);
+                var tagsize = default(UInt32);
 
                 // The first byte of ID3 version is it's major version, while the second byte
                 // is its revision number. All revisions are backwards compatible while
@@ -337,15 +383,13 @@ namespace Base.FileData.FileReading
 
                         tag = br.ReadByte();
                         // 6th bit is set to mark extended header
-                        if (((ID3v2_3_flags)tag & ID3v2_3_flags.Extended) == ID3v2_3_flags.Extended)
+                        if (((ID3v2_3_flags) tag & ID3v2_3_flags.Extended) == ID3v2_3_flags.Extended)
                         {
                             return false;
                             // Not supported
-
                         }
                         else
                         {
-
                             tagsize = size_calculation(br.ReadBytes(4));
                             // read tag size
 
@@ -361,7 +405,7 @@ namespace Base.FileData.FileReading
                             {
                                 frame.Text = Tools.ReadString(br, 4, Tools.CharacterSet.ISO88591);
                                 frame.Size = size_calculation(br.ReadBytes(4));
-                                frame.flags = (Frame_flags) br.ReadUInt16();
+                                frame.flags = (FrameFlags) br.ReadUInt16();
 
                                 if (frame.Size + fs.Position > tagsize)
                                 {
@@ -374,8 +418,8 @@ namespace Base.FileData.FileReading
                                 //    ' We have no method for reading ZLib compressed or encrypted text
                                 //    'fs.Position += frame.Size
                                 //End If
-                                string str = "";
-                                Tools.CharacterSet unibyte = (Tools.CharacterSet) br.ReadByte();
+                                var str = "";
+                                var unibyte = (Tools.CharacterSet) br.ReadByte();
 
                                 if (frame.Text == Frames3.Length | frame.Text == Frames3.Track)
                                 {
@@ -389,13 +433,13 @@ namespace Base.FileData.FileReading
                                     str = str.Replace(Tools.ZeroChar, "");
                                     if (frame.Text == Frames3.Title)
                                     {
-                                        if (unibyte == 0 && !Tools.Validify_ISO_Text(str))
+                                        if (unibyte == 0 && !Tools.ValidateIsoText(str))
                                             return false;
                                         Title = str;
                                     }
                                     else if (frame.Text == Frames3.Artist)
                                     {
-                                        if (unibyte == 0 && !Tools.Validify_ISO_Text(str))
+                                        if (unibyte == 0 && !Tools.ValidateIsoText(str))
                                             return false;
                                         Artist = str;
                                     }
@@ -414,12 +458,9 @@ namespace Base.FileData.FileReading
                                     else
                                         return false;
                                 }
-                                
-                                        
-                                 
 
-                                    //End If
 
+                                //End If
                             }
                         }
                         break;
@@ -439,8 +480,8 @@ namespace Base.FileData.FileReading
                                 return true;
                             }
 
-                            string str = "";
-                            Tools.CharacterSet unibyte = (Tools.CharacterSet) br.ReadByte();
+                            var str = "";
+                            var unibyte = (Tools.CharacterSet) br.ReadByte();
 
                             if (frame.Text == Frames3.Length | frame.Text == Frames3.Track)
                             {
@@ -452,13 +493,13 @@ namespace Base.FileData.FileReading
 
                             if (frame.Text == Frames3.Title)
                             {
-                                if (unibyte == 0 && !Tools.Validify_ISO_Text(str))
+                                if (unibyte == 0 && !Tools.ValidateIsoText(str))
                                     return false;
                                 Title = str;
                             }
                             else if (frame.Text == Frames3.Artist)
                             {
-                                if (unibyte == 0 && !Tools.Validify_ISO_Text(str))
+                                if (unibyte == 0 && !Tools.ValidateIsoText(str))
                                     return false;
                                 Artist = str;
                             }
@@ -491,7 +532,7 @@ namespace Base.FileData.FileReading
         }
 
         /// <summary>
-        /// Converts bytes to UInt32 tag or framesize according to ID3v2 documentation
+        ///     Converts bytes to UInt32 tag or framesize according to ID3v2 documentation
         /// </summary>
         /// <param name="buf">
         /// </param>
@@ -499,7 +540,7 @@ namespace Base.FileData.FileReading
         /// <remarks></remarks>
         private UInt32 size_calculation(byte[] buf)
         {
-            UInt32 size = default(UInt32);
+            var size = default(UInt32);
             // The ID3v2 tag size is encoded with four bytes where the most
             // significant bit (bit 7) is set to zero in every byte, making a total
             // of 28 bits. The zeroed bits are ignored, so a 257 bytes long tag is
@@ -507,7 +548,7 @@ namespace Base.FileData.FileReading
             if (buf.GetUpperBound(0) > -1)
             {
                 size = buf[0];
-                for (int i = 1; i <= buf.GetUpperBound(0); i++)
+                for (var i = 1; i <= buf.GetUpperBound(0); i++)
                 {
                     size = size << 7 | buf[i];
                 }
@@ -518,7 +559,6 @@ namespace Base.FileData.FileReading
                 return 0;
                 // Invalid size buffer
             }
-
         }
     }
 }
