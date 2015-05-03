@@ -89,16 +89,20 @@ namespace ImpControls
                     fileInfos = directoryInfo.GetFiles();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // doesn't matter why path choosing failed, no files available in this folder
                 controller.Clear();
                 controller.AddItem(new FileImpInfo(ErrorType.FailedToOpenFolder));
                 return;
             }
+
+            FilterSort(fileInfos);
+        }
+
+        private void FilterSort(FileInfo[] fileInfos)
+        {
             var list = LibImp.FilterFiles(fileInfos, currentExtensions);
-
-
             foreach (var fileImpInfo in list)
                 fileImpInfo.FileType = FileTypeFinder.DetermineFileType(fileImpInfo.Path);
 
@@ -124,14 +128,8 @@ namespace ImpControls
                 controller.AddItem(new FileImpInfo(ErrorType.FailedToOpenFolder));
                 return;
             }
-            var list = LibImp.FilterFiles(fileInfos, currentExtensions);
 
-
-            foreach (var fileImpInfo in list)
-                fileImpInfo.FileType = FileTypeFinder.DetermineFileType(fileImpInfo.Path);
-
-            SetList(list);
-            Sort();
+            FilterSort(fileInfos);
         }
 
         protected override Brush getBrush(int i, DrawingContext drawingContext, Brush brush)

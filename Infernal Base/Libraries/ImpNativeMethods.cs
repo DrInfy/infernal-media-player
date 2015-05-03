@@ -154,33 +154,19 @@ namespace Base.Libraries
 
         public static Rect GetWorkArea(Window imp)
         {
-            var handle = (new WindowInteropHelper(imp)).Handle;
-            var monitor = MonitorFromWindow(handle, MONITOR_DEFAULTTONEAREST);
-            if ((monitor != IntPtr.Zero))
-            {
-                var monitorData = new MONITORINFO();
-                if (DllImporter.GetMonitorInfo(monitor, monitorData))
-                {
-                    Marshal.Release(handle);
-                    handle = IntPtr.Zero;
-                }
-                var area = new Rect(monitorData.rcWork.left, monitorData.rcWork.top,
-                    monitorData.rcWork.right - monitorData.rcWork.left,
-                    monitorData.rcWork.bottom - monitorData.rcWork.top);
-
-                return area;
-            }
-            else
-            {
-                return new Rect();
-            }
+            return GetMonitorArea(imp, false);
         }
 
         public static Rect GetMonitorArea(Window imp)
         {
+            return GetMonitorArea(imp, true);
+        }
+
+        private static Rect GetMonitorArea(Window imp, bool monitorArea)
+        {
             var handle = (new WindowInteropHelper(imp)).Handle;
             var monitor = MonitorFromWindow(handle, MONITOR_DEFAULTTONEAREST);
-            if ((monitor != IntPtr.Zero))
+            if (monitor != IntPtr.Zero)
             {
                 var monitorData = new MONITORINFO();
                 if (DllImporter.GetMonitorInfo(monitor, monitorData))
@@ -189,18 +175,16 @@ namespace Base.Libraries
                     handle = IntPtr.Zero;
                 }
 
-                var area = new Rect(monitorData.rcMonitor.left, monitorData.rcMonitor.top,
-                    monitorData.rcMonitor.right - monitorData.rcMonitor.left,
-                    monitorData.rcMonitor.bottom - monitorData.rcMonitor.top);
+                var rect = monitorArea ? monitorData.rcMonitor : monitorData.rcWork;
+                var area = new Rect(rect.left, rect.top,
+                    rect.right - rect.left,
+                    rect.bottom - rect.top);
 
                 return area;
             }
-            else
-            {
-                return new Rect();
-            }
-        }
 
+            return new Rect();
+        }
 
         public static Rect GetWindowRect(Window o)
         {

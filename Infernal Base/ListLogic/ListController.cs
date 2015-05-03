@@ -15,6 +15,14 @@ namespace Base.ListLogic
     /// <typeparam name="T"></typeparam>
     public class ListController<T>
     {
+        #region Helpers
+
+        public delegate void ListSelectionChangedEvent();
+
+        public delegate void ListSizeChangedEvent(bool enlargement);
+
+        #endregion
+
         #region Fields
 
         protected readonly bool multiSelectable;
@@ -51,8 +59,18 @@ namespace Base.ListLogic
         }
 
         protected bool SearchActive => searchable && !string.IsNullOrEmpty(findText);
-
         public int VisibleCount => SearchActive ? findlist.Length : items.Count;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when list size changes.
+        /// </summary>
+        public event ListSizeChangedEvent ListSizeChanged;
+
+        public event ListSelectionChangedEvent ListSelectionChanged;
 
         #endregion
 
@@ -96,11 +114,9 @@ namespace Base.ListLogic
                 {
                     var found = items[i].NeverFilter || StringHandler.FindFound(items[i].PresentText, findWords);
 
-                    if (found)
-                    {
-                        findlist[added] = i;
-                        added++;
-                    }
+                    if (!found) continue;
+                    findlist[added] = i;
+                    added++;
                 }
                 Array.Resize(ref findlist, added);
             }
@@ -209,7 +225,7 @@ namespace Base.ListLogic
         /// <summary>
         /// Removes the selected items from the list.
         /// </summary>
-        public virtual void RemoveSelected()
+        public void RemoveSelected()
         {
             if (multiSelectable)
             {
@@ -218,7 +234,7 @@ namespace Base.ListLogic
                 {
                     if (!items[i].Selected) continue;
 
-                    items.RemoveAt(i);
+                    RemoveItem(i);
 
                     if (selectedIndex == i)
                         selectedIndex = -1;
@@ -232,10 +248,15 @@ namespace Base.ListLogic
             else
             {
                 if (selectedIndex < 0) return;
-                items.RemoveAt(selectedIndex);
+                RemoveItem(selectedIndex);
                 selectedIndex = -1;
                 OnListSizeChanged(false);
             }
+        }
+
+        protected virtual void RemoveItem(int index)
+        {
+            items.RemoveAt(index);
         }
 
         /// <summary>
@@ -472,12 +493,12 @@ namespace Base.ListLogic
 
         public void OnListSizeChanged(bool enlargement)
         {
-            if (ListSizeChanged != null) ListSizeChanged(enlargement);
+            ListSizeChanged?.Invoke(enlargement);
         }
 
         public void OnListSelectionChanged()
         {
-            if (ListSelectionChanged != null) ListSelectionChanged();
+            ListSelectionChanged?.Invoke();
         }
 
         public void Sort(IComparer<Selectable<T>> comparer)
@@ -504,21 +525,6 @@ namespace Base.ListLogic
             return selectedIndex;
         }
 
-        #region Delegates and Events
-
-        public delegate void ListSelectionChangedEvent();
-
-        public delegate void ListSizeChangedEvent(bool enlargement);
-
-        /// <summary>
-        /// Occurs when list size changes.
-        /// </summary>
-        public event ListSizeChangedEvent ListSizeChanged;
-
-        public event ListSelectionChangedEvent ListSelectionChanged;
-
-        #endregion
-
         #region Selection private methods
 
         /// <summary>
@@ -532,22 +538,11 @@ namespace Base.ListLogic
             {
                 if (SearchActive)
                 {
-                    var visibleSelectedIndex = -1;
-                    for (var i = 0; i < findlist.Length; i++)
-                    {
-                        if (findlist[i] == selectedIndex)
-                        {
-                            visibleSelectedIndex = findlist[i];
-                            break;
-                        }
-                    }
-
-                    if (visibleSelectedIndex < 0)
+                    if (selectedIndex < 0)
                         return false; // no valid selection possible
 
-                    var lowBound = Math.Min(visibleSelectedIndex, visibleIndexTo);
-                    var highBound = Math.Max(visibleSelectedIndex, visibleIndexTo);
-
+                    var lowBound = Math.Min(selectedIndex, visibleIndexTo);
+                    var highBound = Math.Max(selectedIndex, visibleIndexTo);
 
                     for (var i = lowBound; i < highBound; i++)
                     {
@@ -572,7 +567,6 @@ namespace Base.ListLogic
             return changed;
         }
 
-
         /// <summary>
         /// Selects the group ranging from selectedIndex to specified index.
         /// </summary>
@@ -585,20 +579,11 @@ namespace Base.ListLogic
             {
                 if (SearchActive)
                 {
-                    var visibleSelectedIndex = -1;
-                    for (var i = 0; i < findlist.Length; i++)
-                    {
-                        if (findlist[i] == selectedIndex)
-                        {
-                            visibleSelectedIndex = findlist[i];
-                            break;
-                        }
-                    }
-                    if (visibleSelectedIndex < 0)
+                    if (selectedIndex < 0)
                         return false; // no valid selection possible
 
-                    var lowBound = Math.Min(visibleSelectedIndex, visibleIndexTo);
-                    var highBound = Math.Max(visibleSelectedIndex, visibleIndexTo);
+                    var lowBound = Math.Min(selectedIndex, visibleIndexTo);
+                    var highBound = Math.Max(selectedIndex, visibleIndexTo);
 
                     for (var i = 0; i < VisibleCount; i++)
                     {

@@ -72,6 +72,8 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonMaximizePanel, BtnNumber.Maximize);
             styleLib.SetStyle(ButtonRefresh, BtnNumber.Refresh);
 
+            styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
+
             styleLib.SetStyle(ButtonSort, "Name");
             ButtonSort.SetContent("Date", 1);
 
@@ -204,6 +206,8 @@ namespace Imp.Panels
 
         private void TextBoxFind_TextChanged(object sender, TextChangedEventArgs e)
         {
+            ButtonClearFind.Visibility = string.IsNullOrWhiteSpace(TextBoxFind.Text) ? Visibility.Hidden : Visibility.Visible;
+
             ListFiles.FindText = TextBoxFind.Text;
             ApplyWordFilter();
         }
@@ -438,6 +442,11 @@ namespace Imp.Panels
             {
                 MainGrid.RowDefinitions[1].Height = new GridLength(0);
             }
+        }
+
+        private void ButtonClearFind_Clicked(object sender)
+        {
+            TextBoxFind.Clear();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿#region Usings
 
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Base;
@@ -42,6 +43,8 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonRemoveFile, BtnNumber.Remove);
             styleLib.SetStyle(ButtonSort, "Sort");
 
+            styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
+
             styleLib.SetStyle(LabelTopic);
             styleLib.SetStyle(TextBoxFind);
             styleLib.SetStyle(ListPlaylist);
@@ -72,6 +75,7 @@ namespace Imp.Panels
 
         private void TextBoxFind_TextChanged(object sender, TextChangedEventArgs e)
         {
+            ButtonClearFind.Visibility = string.IsNullOrWhiteSpace(TextBoxFind.Text) ? Visibility.Hidden : Visibility.Visible;
             ListPlaylist.FindText = TextBoxFind.Text;
         }
 
@@ -89,6 +93,11 @@ namespace Imp.Panels
         private void ButtonMaximizePanel_Clicked(object sender)
         {
             mainC.Exec(ImpCommand.PanelPlaylist, PanelCommand.MaxToggle);
+        }
+
+        private void ButtonClearFind_OnClicked(object sender)
+        {
+            TextBoxFind.Clear();
         }
     }
 }

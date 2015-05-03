@@ -78,6 +78,9 @@
             </Grid.ColumnDefinitions>
             
             <TextBox x:Name="TextBoxFind" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="0" VerticalAlignment="Stretch"  Grid.Column="0" TextChanged="TextBoxFind_TextChanged" FontSize="14.667"/>
+            
+            <impControls:ImpButton x:Name="ButtonClearFind" Visibility="Hidden" HorizontalAlignment="Right" Width="15"  Grid.Column="0" Grid.Row="0" Margin="1,1,1,1" VerticalAlignment="Stretch" CheckStates="2" Clicked="ButtonClearFind_Clicked"/>
+            
             <impControls:ImpButton x:Name="ButtonFilterFolder" HorizontalAlignment="Stretch"  Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="2" Clicked="ButtonFolderFilter_Clicked"/>
             <impControls:ImpButton x:Name="ButtonAddSubFolder" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Column="2" VerticalAlignment="Stretch" Clicked="ButtonAddSubFolder_Clicked"/>
             <impControls:ImpButton x:Name="ButtonAddFolder"  HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Column="3" VerticalAlignment="Stretch"  Clicked="ButtonAddFolder_Clicked"/>

@@ -45,7 +45,6 @@ namespace Base.ListLogic
                         item.Playing = true;
                     }
                 }
-                //    items.Add(new Selectable<PlaylistItem>(item));
             }
             //UpdateItems();
             OnListSizeChanged(true);
@@ -57,7 +56,6 @@ namespace Base.ListLogic
         /// <param name="item">The item.</param>
         public override void AddItem(PlaylistItem item)
         {
-            //base.AddItem(item);
             if (!updater.ExistingPaths.Contains(item.FullPath))
             {
                 updater.ExistingPaths.Add(item.FullPath);
@@ -96,39 +94,10 @@ namespace Base.ListLogic
             base.Clear();
         }
 
-        public override void RemoveSelected()
+        protected override void RemoveItem(int index)
         {
-            if (multiSelectable)
-            {
-                var removed = false;
-                for (var i = items.Count - 1; i >= 0; i--)
-                {
-                    if (items[i].Selected)
-                    {
-                        updater.Remove(items[i].Content.FullPath);
-                        items.RemoveAt(i);
-
-                        if (selectedIndex == i)
-                            selectedIndex = -1;
-                        else if (selectedIndex > i)
-                            selectedIndex--;
-
-                        removed = true;
-                    }
-                }
-                if (removed)
-                    OnListSizeChanged(false);
-            }
-            else
-            {
-                if (selectedIndex >= 0)
-                {
-                    updater.Remove(items[selectedIndex].Content.FullPath);
-                    items.RemoveAt(selectedIndex);
-                    selectedIndex = -1;
-                    OnListSizeChanged(false);
-                }
-            }
+            updater.Remove(items[index].Content.FullPath);
+            base.RemoveItem(index);
         }
 
         public int PlayingThis(PlaylistItem item)
@@ -136,10 +105,12 @@ namespace Base.ListLogic
             if (item == null)
             {
                 PlayingFullPath = null;
-                for (var i = 0; i < items.Count; i++)
+
+                foreach (var playListItem in items)
                 {
-                    items[i].Content.Playing = false;
+                    playListItem.Content.Playing = false;
                 }
+
                 return -1;
             }
             PlayingFullPath = item.FullPath;
@@ -186,11 +157,7 @@ namespace Base.ListLogic
 
         public bool IsPlaying(int visibleIndex)
         {
-            if (SearchActive)
-            {
-                return items[findlist[visibleIndex]].Content.Playing;
-            }
-            return items[visibleIndex].Content.Playing;
+            return SearchActive ? items[findlist[visibleIndex]].Content.Playing : items[visibleIndex].Content.Playing;
         }
 
         /// <summary>

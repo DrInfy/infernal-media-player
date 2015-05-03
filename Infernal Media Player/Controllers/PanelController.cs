@@ -872,16 +872,15 @@ namespace Imp.Controllers
             }
         }
 
-        private double GetPercentage(ColumnDefinition current, double actualWidth, ColumnDefinitionCollection columnDefinitions)
+        private static double GetPercentage(ColumnDefinition current, double actualWidth, ColumnDefinitionCollection columnDefinitions)
         {
             double percentage;
             if (current.Width.IsAbsolute)
                 percentage = current.Width.Value / actualWidth;
             else
             {
-                double percentageWidthPixels;
                 var totalPercentage = current.Width.Value;
-                percentageWidthPixels = actualWidth;
+                var percentageWidthPixels = actualWidth;
 
                 foreach (var column in columnDefinitions)
                 {
