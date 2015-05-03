@@ -388,8 +388,7 @@ namespace MediaPlayer.Element
                 foreach (var rendererRef in m_clonedD3Drenderers)
                 {
                     var renderer = rendererRef.Target as D3DRenderer;
-                    if (renderer != null)
-                        renderer.InvalidateVideoImage();
+                    renderer?.InvalidateVideoImage();
                 }
             }
         }
@@ -415,10 +414,7 @@ namespace MediaPlayer.Element
             return finalSize;
         }
 
-        protected override int VisualChildrenCount
-        {
-            get { return 1; }
-        }
+        protected override int VisualChildrenCount => 1;
 
         protected override Visual GetVisualChild(int index)
         {
@@ -428,15 +424,9 @@ namespace MediaPlayer.Element
             return m_videoImage;
         }
 
-        protected D3DImage D3DImage
-        {
-            get { return m_d3dImage; }
-        }
+        protected D3DImage D3DImage => m_d3dImage;
 
-        protected Image VideoImage
-        {
-            get { return m_videoImage; }
-        }
+        protected Image VideoImage => m_videoImage;
 
         /// <summary>
         /// Renders the video with WPF's rendering using the CompositionTarget.Rendering event
@@ -506,7 +496,7 @@ namespace MediaPlayer.Element
             /* Ensure we run on the correct Dispatcher */
             if (!D3DImage.Dispatcher.CheckAccess())
             {
-                D3DImage.Dispatcher.Invoke((Action) (() => InvalidateVideoImage()));
+                D3DImage.Dispatcher.Invoke(InvalidateVideoImage);
                 return;
             }
 

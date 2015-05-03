@@ -31,11 +31,6 @@ namespace MediaPlayer.Element
                         return;
                     controller.Command(MediaCommand.Close);
 
-                    //while (!controller.Released)
-                    //{
-                    //    // wait for media player closure
-                    //    Thread.Sleep(1);
-                    //}
                     controller.NewAllocatorFrame -= OnMediaPlayerNewAllocatorFramePrivate;
                     controller.NewAllocatorSurface -= OnMediaPlayerNewAllocatorSurfacePrivate;
                     controller = null;
@@ -45,23 +40,16 @@ namespace MediaPlayer.Element
             }
         }
 
-        public bool IsPlaying
-        {
-            get { return controller != null; }
-        }
+        public bool IsPlaying => controller != null;
 
-        public double Duration
-        {
-            get { return controller != null ? LibImp.TicksToSeconds(controller.Duration) : 0; }
-        }
+        public double Duration => controller != null ? LibImp.TicksToSeconds(controller.Duration) : 0;
 
         public double Position
         {
             get { return controller != null ? LibImp.TicksToSeconds(controller.Position) : 0; }
             set
             {
-                if (controller != null)
-                    controller.MoveTo(LibImp.SecondsToTicks(value));
+                controller?.MoveTo(LibImp.SecondsToTicks(value));
             }
         }
 
@@ -76,39 +64,28 @@ namespace MediaPlayer.Element
             }
         }
 
-        public bool HasVideo
-        {
-            get
-            {
-                if (controller == null) return false;
-                return controller.HasVideo;
-            }
-        }
+        public bool HasVideo => controller != null && controller.HasVideo;
 
         #endregion
 
         public void Play()
         {
-            if (controller != null)
-                controller.Command(MediaCommand.Play);
+            controller?.Command(MediaCommand.Play);
         }
 
         public void Pause()
         {
-            if (controller != null)
-                controller.Command(MediaCommand.Pause);
+            controller?.Command(MediaCommand.Pause);
         }
 
         public void Stop()
         {
-            if (controller != null)
-                controller.Command(MediaCommand.Stop);
+            controller?.Command(MediaCommand.Stop);
         }
 
         public void Clear()
         {
-            if (controller != null)
-                controller.Command(MediaCommand.Close);
+            controller?.Command(MediaCommand.Close);
             controller = null;
         }
 
@@ -117,8 +94,6 @@ namespace MediaPlayer.Element
         protected virtual void InitializeMediaPlayer()
         {
             /* Hook into the normal .NET events */
-            //MediaPlayerBase.MediaClosed += OnMediaPlayerClosedPrivate;
-            //MediaPlayerBase.MediaFailed += OnMediaPlayerFailedPrivate;
             controller.MediaEnded += OnMediaPlayerEnded;
 
             /* These events fire when we get new D3Dsurfaces or frames */
@@ -126,9 +101,7 @@ namespace MediaPlayer.Element
             controller.NewAllocatorSurface += OnMediaPlayerNewAllocatorSurfacePrivate;
 
             controller.Volume = Volume;
-            var result = controller.Activate();
-
-            // TODO: raise event for error message
+            controller.Activate();
         }
 
         /// <summary>
@@ -147,8 +120,7 @@ namespace MediaPlayer.Element
 
         private void OnMediaPlayerEnded()
         {
-            if (MediaPlayerEnded != null)
-                MediaPlayerEnded.Invoke();
+            MediaPlayerEnded?.Invoke();
         }
     }
 }

@@ -77,6 +77,26 @@ namespace MediaPlayer.Player
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// Notifies when the media has completed
+        /// </summary>
+        public event Action MediaEnded;
+
+        /// <summary>
+        ///     Event notifies when there is a new video frame
+        ///     to be rendered
+        /// </summary>
+        public event Action NewAllocatorFrame;
+
+        /// <summary>
+        ///     Event notifies when there is a new surface allocated
+        /// </summary>
+        public event NewAllocatorSurfaceDelegate NewAllocatorSurface;
+
+        #endregion
+
         public PlayerController(string filePath, Dispatcher dispatcher)
         {
             graphs = new FilterGraphs(this);
@@ -170,25 +190,8 @@ namespace MediaPlayer.Player
             }
         }
 
-        /// <summary>
-        /// Notifies when the media has completed
-        /// </summary>
-        public event Action MediaEnded;
-
-        /// <summary>
-        ///     Event notifies when there is a new video frame
-        ///     to be rendered
-        /// </summary>
-        public event Action NewAllocatorFrame;
-
-        /// <summary>
-        ///     Event notifies when there is a new surface allocated
-        /// </summary>
-        public event NewAllocatorSurfaceDelegate NewAllocatorSurface;
-
         public virtual void OpenSource(out ImpError result)
         {
-            result = null;
             graphs.OpenSource(out result);
 
             graphs.RenderAudioStream(ref result);
@@ -197,10 +200,8 @@ namespace MediaPlayer.Player
             graphs.SetMediaSeekingInterface(graphs.GraphBuilder as IMediaSeeking);
         }
 
-        public ImpError Activate()
+        public void Activate()
         {
-            ImpError result = null;
-            //Dispatcher.DispatcherThread = Thread.CurrentThread;
             if (graphs.HasVideo)
             {
                 RegisterCustomAllocator(graphs.Allocator);
@@ -208,17 +209,12 @@ namespace MediaPlayer.Player
             }
             else
             {
-                NewAllocatorSurface.Invoke(this, IntPtr.Zero);
+                NewAllocatorSurface?.Invoke(this, IntPtr.Zero);
             }
 
             graphs.Audio.put_Volume(DShowHelper.DSHOW_VOLUME_SILENCE);
-            //graphs.MediaControl.Pause();
             queuedCommand = MediaCommand.Play;
-
-            /* This is generally a good place to start
-             * our polling timer */
             StartGraphPollTimer();
-            return result;
         }
 
         /// <summary>
@@ -236,24 +232,17 @@ namespace MediaPlayer.Player
             graphPollTimer.Enabled = true;
         }
 
-        private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            if (timerUpdating)
-                return;
+            if (timerUpdating) { return; }
             timerUpdating = true;
 
             HandleCommand();
-            if (currentCommand == MediaCommand.Close)
-                return;
+            if (currentCommand == MediaCommand.Close) { return; }
 
             UpdateFade();
-
-            //Dispatcher.BeginInvoke((Action)delegate
-            //{
-
             ProcessGraphEvents();
-            //OnGraphTimerTick();
-            //});
+
             graphs.Seeking.GetCurrentPosition(out graphs.Position);
             timerUpdating = false;
         }

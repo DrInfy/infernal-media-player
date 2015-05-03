@@ -312,13 +312,13 @@ namespace MediaPlayer.Player
         /// <param name="renderer">The video renderer</param>
         protected void SetNativePixelSizes(IBaseFilter renderer)
         {
-            var hv = false;
+            var hasVideo = false;
 
-            var size = GetVideoSize(renderer, PinDirection.Input, 0, ref hv, out FrameDuration);
+            var size = GetVideoSize(renderer, PinDirection.Input, 0, out hasVideo, out FrameDuration);
 
             NaturalVideoHeight = (int) size.Height;
             NaturalVideoWidth = (int) size.Width;
-            HasVideo = hv;
+            HasVideo = hasVideo;
         }
 
         /// <summary>
@@ -327,49 +327,45 @@ namespace MediaPlayer.Player
         /// <param name="renderer">The renderer to inspect</param>
         /// <param name="direction">The direction the pin is</param>
         /// <param name="pinIndex">The zero based index of the pin to inspect</param>
+        /// <param name="hasVideo"> Whether the media has video</param>
+        /// <param name="frameSpeed"> Speed of a frame</param>
         /// <returns>If successful a video resolution is returned.  If not, a 0x0 size is returned</returns>
-        protected static Size GetVideoSize(IBaseFilter renderer, PinDirection direction, int pinIndex, ref bool hasVid,
+        protected static Size GetVideoSize(IBaseFilter renderer, PinDirection direction, int pinIndex, out bool hasVideo,
             out long frameSpeed)
         {
             frameSpeed = 0; // safety check
 
-            hasVid = false;
+            hasVideo = false;
             var size = new Size();
 
             var mediaType = new AMMediaType();
             var pin = DsFindPin.ByDirection(renderer, direction, pinIndex);
 
+
             if (pin == null)
-                goto done;
+            {
+                DsUtils.FreeAMMediaType(mediaType);
+                return size;
+            }
 
             var hr = pin.ConnectionMediaType(mediaType);
 
-            if (hr != 0)
-                goto done;
-
             /* Check to see if its a video media type */
-            if (mediaType.formatType != FormatType.VideoInfo2 &&
-                mediaType.formatType != FormatType.VideoInfo)
+            if (hr == 0 && (mediaType.formatType == FormatType.VideoInfo2 || mediaType.formatType == FormatType.VideoInfo))
             {
-                goto done;
+                var videoInfo = new VideoInfoHeader();
+
+                /* Read the video info header struct from the native pointer */
+                Marshal.PtrToStructure(mediaType.formatPtr, videoInfo);
+
+                var rect = videoInfo.SrcRect.ToRectangle();
+                size = new Size(rect.Width, rect.Height);
+                hasVideo = true;
+                frameSpeed = videoInfo.AvgTimePerFrame;
             }
 
-            var videoInfo = new VideoInfoHeader();
-
-            /* Read the video info header struct from the native pointer */
-            Marshal.PtrToStructure(mediaType.formatPtr, videoInfo);
-
-            var rect = videoInfo.SrcRect.ToRectangle();
-            size = new Size(rect.Width, rect.Height);
-            hasVid = true;
-            frameSpeed = videoInfo.AvgTimePerFrame;
-
-            done:
-
             DsUtils.FreeAMMediaType(mediaType);
-
-            if (pin != null)
-                Marshal.ReleaseComObject(pin);
+            Marshal.ReleaseComObject(pin);
 
             return size;
         }
@@ -378,11 +374,11 @@ namespace MediaPlayer.Player
         {
             try
             {
-                /* Add our prefered audio renderer */
-                Audio = GraphBuilder as IBasicAudio;
-
                 if (GraphBuilder == null)
                     return;
+
+                /* Add our prefered audio renderer */
+                Audio = GraphBuilder as IBasicAudio;
 
                 AddFilterByName(GraphBuilder, FilterCategory.AudioRendererCategory, DShowHelper.DEFAULT_AUDIO_RENDERER_NAME);
                 if (Audio == null)
@@ -403,35 +399,13 @@ namespace MediaPlayer.Player
         /// <returns>Reference to the IBaseFilter that was added to the graph or returns null if unsuccessful</returns>
         protected static IBaseFilter AddFilterByName(IGraphBuilder graphBuilder, Guid deviceCategory, string friendlyName)
         {
-            var devices = DsDevice.GetDevicesOfCat(deviceCategory);
-
-            var deviceList = (from d in devices
-                where d.Name == friendlyName
-                select d);
-            DsDevice device = null;
-            if (deviceList.Count() > 0)
-                device = deviceList.Take(1).Single();
-
-            foreach (var item in deviceList)
-            {
-                if (item != device)
-                    item.Dispose();
-            }
-
+            var device = DsDevice.GetDevicesOfCat(deviceCategory).FirstOrDefault(x => x.Name == friendlyName);
             return AddFilterByDevice(graphBuilder, device);
         }
 
         protected static IBaseFilter AddFilterByDevicePath(IGraphBuilder graphBuilder, Guid deviceCategory, string devicePath)
         {
-            var devices = DsDevice.GetDevicesOfCat(deviceCategory);
-
-            var deviceList = (from d in devices
-                where d.DevicePath == devicePath
-                select d);
-            DsDevice device = null;
-            if (deviceList.Count() > 0)
-                device = deviceList.Take(1).Single();
-
+            var device = DsDevice.GetDevicesOfCat(deviceCategory).FirstOrDefault(x => x.DevicePath == devicePath);
             return AddFilterByDevice(graphBuilder, device);
         }
 
@@ -466,13 +440,12 @@ namespace MediaPlayer.Player
                 MediaControl.GetState(0, out filterState);
                 if (filterState == FilterState.Running)
                     MediaControl.Pause();
-                //return;
+                
                 MediaControl.GetState(0, out filterState);
 
                 while (filterState == FilterState.Running)
                     MediaControl.GetState(0, out filterState);
                 Marshal.ReleaseComObject(MediaControl);
-                //Marshal.FreeCoTaskMem(FilterGraph.);
             }
 
 
