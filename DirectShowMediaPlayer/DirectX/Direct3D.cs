@@ -857,10 +857,10 @@ namespace WPFMediaKit.DirectX
         [DllImport("d3d9.dll", EntryPoint = "Direct3DCreate9", CallingConvention = CallingConvention.StdCall),
         SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Interface)]
-        public static extern IDirect3D9 Direct3DCreate9(ushort SDKVersion);
+        internal static extern IDirect3D9 Direct3DCreate9(ushort SDKVersion);
 
         [DllImport("d3d9.dll", EntryPoint = "Direct3DCreate9Ex", CallingConvention = CallingConvention.StdCall),
         SuppressUnmanagedCodeSecurity]
-        public static extern int Direct3DCreate9Ex(ushort SDKVersion, [Out]out IDirect3D9Ex ex);
+        internal static extern int Direct3DCreate9Ex(ushort SDKVersion, [Out]out IDirect3D9Ex ex);
     }
 }

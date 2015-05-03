@@ -427,7 +427,7 @@ namespace Base.Controllers
         {
             try
             {
-                ImpSerializer.TryWriteFileXml(path, settings, settings.GetType());
+                ImpSerializer.WriteFileXml(path, settings, settings.GetType());
             }
             catch
             {

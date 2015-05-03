@@ -880,17 +880,6 @@ namespace Imp.Controllers
 
             if (!IsLeftOpen && !IsRightOpen)
                 NormalizePanelButtons();
-
-            //if (window.grid.ColumnDefinitions[0].ActualWidth < minLeftPanelWidth && window.grid.ColumnDefinitions[0].ActualWidth > 0 && (window.grid.ColumnDefinitions[0].Width.Value > 0))
-            //{
-            //    window.grid.ColumnDefinitions[0].Width = new GridLength(0, GridUnitType.Star);
-            //    //window.grid.ColumnDefinitions[1].Width = new GridLength(0, GridUnitType.Star);
-            //}
-            //if (window.grid.ColumnDefinitions[4].ActualWidth < minRightPanelWidth && window.grid.ColumnDefinitions[4].ActualWidth > 0 && (window.grid.ColumnDefinitions[4].Width.Value > 0))
-            //{
-            //    window.grid.ColumnDefinitions[3].Width = new GridLength(0, GridUnitType.Star);
-            //    //window.grid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);
-            //}
         }
 
 

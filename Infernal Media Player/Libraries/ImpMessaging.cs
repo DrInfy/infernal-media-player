@@ -151,15 +151,8 @@ namespace Imp.Libraries
                 if (e.DataGram.Message.Substring(0, 2) != "0 ")
                 {
                     lastMsg = DoNotDoAnythingMsg;
-                    //e.DataGram.Message
                 }
             }
-            //Try
-            //    Dim callback As New UpdateDisplay(AddressOf UpdateDisplayText)
-            //    imp.Invoke(callback, e.DataGram)
-            //Catch
-            //End Try
-
         }
 
         /// <summary>

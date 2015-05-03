@@ -18,6 +18,7 @@ namespace Imp.Image
         {
             ReadPng(uri.LocalPath);
         }
+
         public void ReadPng(string path)
         {
             var origData = File.ReadAllBytes(path);

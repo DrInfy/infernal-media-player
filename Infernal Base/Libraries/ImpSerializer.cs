@@ -12,7 +12,7 @@ namespace Base.Libraries
         /// <param name="filename">path to file to write</param>
         /// <param name="instance">object to trite</param>
         /// <param name="instanceType">type of object to write</param>
-        public static void TryWriteFileXml(string filename, object instance, Type instanceType)
+        public static void WriteFileXml(string filename, object instance, Type instanceType)
         {
             var serializer = new XmlSerializer(instanceType);
             using (var outputStream = new FileStream(filename, FileMode.Create))

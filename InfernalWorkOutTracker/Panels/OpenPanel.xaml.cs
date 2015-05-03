@@ -301,7 +301,7 @@ namespace Imp.Panels
             if (fileInfos.Length < 1)
                 return;
 
-            var files = options.FilterFiles(fileInfos);
+            var files = options.FilterFiles(fileInfos, true);
 
             IComparer<FileImpInfo> comparer;
             switch ((FileSortMode) ButtonSort.CurrentState)
