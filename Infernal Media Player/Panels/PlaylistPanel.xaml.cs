@@ -36,7 +36,7 @@ namespace Imp.Panels
 
             styleLib.SetStyle(ButtonClearPlaylist, BtnNumber.ClearList);
 
-            styleLib.SetStyle(ButtonClosePanel, BtnNumber.Exit_);
+            styleLib.SetStyle(ButtonClosePanel, BtnNumber.Close);
             styleLib.SetStyle(ButtonMaximizePanel, BtnNumber.Maximize);
 
             styleLib.SetStyle(ButtonRemoveFile, BtnNumber.Remove);

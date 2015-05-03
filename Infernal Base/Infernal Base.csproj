@@ -74,6 +74,7 @@
     <Compile Include="Interfaces\IPanelController.cs" />
     <Compile Include="Interfaces\IStateButton.cs" />
     <Compile Include="Libraries\ImpSerializer.cs" />
+    <Compile Include="Libraries\ImpNativeMethods.cs" />
     <Compile Include="ListLogic\Comparers.cs" />
     <Compile Include="FileData\FileImpInfo.cs" />
     <Compile Include="ListLogic\DoubleString.cs" />

@@ -68,7 +68,7 @@ namespace ImpControls
 
         #endregion
 
-        public ImpBaseControl()
+        protected ImpBaseControl()
         {
             IsEnabledChanged += OnEnabledChange;
             IsVisibleChanged += OnVisibilityChanged;

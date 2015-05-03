@@ -59,14 +59,10 @@ namespace ImpControls
         {
             System.Diagnostics.Debug.Print(String.Format(
                 "OnClosed: IsReallyOpen: {0}, StaysOpen: {1}", IsReallyOpen, StaysOpen));
+
             if (IsReallyOpen && StaysOpen)
             {
                 e.Handled = true;
-                // We cannot set this.IsOpen directly here.  Instead, send an event asynchronously.
-                // DispatcherPriority.Send is the highest priority possible.
-                //Dispatcher.CurrentDispatcher.BeginInvoke(
-                //    (Action)(() => this.IsOpen = true),
-                //    DispatcherPriority.Send);
             }
             else
             {

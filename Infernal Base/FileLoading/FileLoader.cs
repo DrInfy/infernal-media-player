@@ -35,14 +35,11 @@ namespace Base.FileLoading
 
         #region Properties
 
-        public bool IsLoading
-        {
-            get { return currentlyLoading; }
-        }
+        public bool IsLoading => currentlyLoading;
 
         #endregion
 
-        public FileLoader(Dispatcher dispatcher)
+        protected FileLoader(Dispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
             LoadedMainEvent = RaiseLoadedMainThread;
@@ -107,18 +104,18 @@ namespace Base.FileLoading
 
         public void Update()
         {
+            if (currentlyLoading) return;
+
             lock (loadLock)
             {
-                if (!currentlyLoading && !string.IsNullOrEmpty(fileInQueue))
-                {
-                    fileInLoading = fileInQueue;
-                    fileInQueue = string.Empty;
-                    //StartLoad();
+                if (currentlyLoading || string.IsNullOrEmpty(fileInQueue)) return;
 
-                    var thread = new Thread(StartLoad);
-                    thread.Name = "file loader";
-                    thread.Start();
-                }
+                fileInLoading = fileInQueue;
+                fileInQueue = string.Empty;
+
+                var thread = new Thread(StartLoad);
+                thread.Name = "file loader";
+                thread.Start();
             }
         }
 

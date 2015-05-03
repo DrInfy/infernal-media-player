@@ -42,10 +42,9 @@ namespace Base.FileData
             Name = StringHandler.GetFilename(path);
             SmartName = StringHandler.GetSmartName(Name);
             CheckDate();
-            //DateModified = dateModified;
         }
 
-        public FileImpInfo(FileInfo info)
+        public FileImpInfo(FileSystemInfo info)
         {
             Path = info.FullName;
             Name = StringHandler.GetFilename(Path);

@@ -264,13 +264,13 @@ namespace Imp.Controllers
         {
             Rect area;
 
-            if (window.ExtWindowState != ExtWindowState.Fullscreen)
+            if (window.ExtWindowState == ExtWindowState.Fullscreen)
             {
-                area = LibImp.GetWorkArea(window);
+                area = ImpNativeMethods.GetMonitorArea(window);
             }
             else
             {
-                area = LibImp.GetMonitorArea(window);
+                area = ImpNativeMethods.GetWorkArea(window);
             }
 
             window.MenuList.SetList(cmdList);
@@ -294,7 +294,7 @@ namespace Imp.Controllers
             playingItem = null;
             window.PanelPlaylist.ListPlaylist.SelectNone();
             window.PanelPlaylist.ListPlaylist.PlayingThis(null);
-            Exec(ImpCommand.SortByrandom);
+            Exec(ImpCommand.Sort, FileSortMode.Random);
             EventC.SetEvent(new EventText("Shuffled!"));
         }
 

@@ -23,9 +23,9 @@ namespace Base.Controllers
     {
         #region Static Fields and Constants
 
-        private const long FADEDOWNTIME = 30 * LibImp.NANOTOMILLI;
-        private const long FADEUPTIME = 50 * LibImp.NANOTOMILLI;
-        private const long MOVEINTERVALTIME = 200 * LibImp.NANOTOMILLI;
+        private const long FADEDOWNTIME = 30 * LibImp.NanoToMilli;
+        private const long FADEUPTIME = 50 * LibImp.NanoToMilli;
+        private const long MOVEINTERVALTIME = 200 * LibImp.NanoToMilli;
         private const double UPMINIMUMFADE = 0.005;
         private const double DOWNMINIMUMFADE = 0.005;
         private const double UPMAXFADE = 0.15;

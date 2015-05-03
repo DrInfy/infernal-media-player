@@ -76,9 +76,6 @@
 
         Sort,
 
-        SortBypath,
-        SortByrandom,
-
         DeletePlFiles,
 
 

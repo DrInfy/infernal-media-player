@@ -12,6 +12,13 @@ namespace Base.ListLogic
 {
     public class PlaylistThreadedUpdater
     {
+        #region Static Fields and Constants
+
+        private const int updateBatchCount = 100;
+        private const int updateBatchLast = updateBatchCount - 1;
+
+        #endregion
+
         #region Fields
 
         public ConcurrentQueue<PlaylistItem> FinishedAdding = new ConcurrentQueue<PlaylistItem>();
@@ -48,12 +55,11 @@ namespace Base.ListLogic
         {
             lock (addLock)
             {
-                if ((!itemsToAdd.IsEmpty || !pathsToRemove.IsEmpty) && !adding)
-                {
-                    adding = true;
-                    updaterThread = new Thread(ThreadedUpdate);
-                    updaterThread.Start();
-                }
+                if ((itemsToAdd.IsEmpty && pathsToRemove.IsEmpty) || adding) return;
+
+                adding = true;
+                updaterThread = new Thread(ThreadedUpdate);
+                updaterThread.Start();
             }
         }
 
@@ -66,8 +72,7 @@ namespace Base.ListLogic
                 {
                     string path;
                     var success = pathsToRemove.TryDequeue(out path);
-                    if (success)
-                        ExistingPaths.Remove(path);
+                    if (success) { ExistingPaths.Remove(path); }
                 }
 
                 if (!itemsToAdd.IsEmpty)
@@ -75,36 +80,34 @@ namespace Base.ListLogic
                     var success = itemsToAdd.TryDequeue(out item);
                     if (success)
                     {
-                        //if (!ExistingPaths.Contains(item.FullPath))
-                        //{
-
                         item.ReadFileData();
                         FinishedAdding.Enqueue(item);
-                        //}
                     }
                 }
 
-                if (FinishedAdding.Count % 100 == 99)
+
+                if (FinishedAdding.Count % updateBatchCount == updateBatchLast)
                     dispatcher.Invoke(CallForFinalAddAction, DispatcherPriority.Background);
             }
 
             lock (addLock)
             {
-                if (clear == true)
+                if (clear)
                 {
                     while (FinishedAdding.TryDequeue(out item)) { }
                     clear = false;
                     adding = false;
                     return;
                 }
-                else
-                {
-                    adding = false;
-                }
+
+                adding = false;
             }
             dispatcher.Invoke(CallForFinalAddAction, DispatcherPriority.Background);
         }
 
+        /// <summary>
+        /// Clear updater queues.
+        /// </summary>
         public void Clear()
         {
             PlaylistItem item;
@@ -113,8 +116,7 @@ namespace Base.ListLogic
 
             lock (addLock)
             {
-                if (adding)
-                    clear = true;
+                if (adding) { clear = true; }
             }
         }
     }

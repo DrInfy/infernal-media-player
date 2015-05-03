@@ -13,7 +13,7 @@ namespace Base.ListLogic
     {
         public int Compare(Selectable<FileImpInfo> x, Selectable<FileImpInfo> y)
         {
-            return String.Compare(x.Content.SmartName, y.Content.SmartName, StringComparison.Ordinal);
+            return string.Compare(x.Content.SmartName, y.Content.SmartName, StringComparison.Ordinal);
         }
     }
 
@@ -29,7 +29,7 @@ namespace Base.ListLogic
     {
         public int Compare(FileImpInfo x, FileImpInfo y)
         {
-            return String.Compare(x.SmartName, y.SmartName, StringComparison.Ordinal);
+            return string.Compare(x.SmartName, y.SmartName, StringComparison.Ordinal);
         }
     }
 
@@ -45,7 +45,7 @@ namespace Base.ListLogic
     {
         public int Compare(ImpFolder x, ImpFolder y)
         {
-            return String.Compare(x.SmartPath, y.SmartPath, StringComparison.Ordinal);
+            return string.Compare(x.SmartPath, y.SmartPath, StringComparison.Ordinal);
         }
     }
 
@@ -53,16 +53,23 @@ namespace Base.ListLogic
     {
         public int Compare(Selectable<PlaylistItem> x, Selectable<PlaylistItem> y)
         {
-            return String.Compare(x.Content.FullPath, y.Content.FullPath, StringComparison.Ordinal);
+            return string.Compare(x.Content.FullPath, y.Content.FullPath, StringComparison.Ordinal);
         }
     }
 
+    public class ComparerPlayListItemDate : IComparer<Selectable<PlaylistItem>>
+    {
+        public int Compare(Selectable<PlaylistItem> x, Selectable<PlaylistItem> y)
+        {
+            return y.Content.DateModified.CompareTo(x.Content.DateModified);
+        }
+    }
 
     public class ComparerPlayListItemRandom : IComparer<Selectable<PlaylistItem>>
     {
         public int Compare(Selectable<PlaylistItem> x, Selectable<PlaylistItem> y)
         {
-            return LibImp.Rnd.Next(-10000, 10000);
+            return LibImp.Rnd.Next(int.MinValue, int.MaxValue);
         }
     }
 
@@ -70,7 +77,7 @@ namespace Base.ListLogic
     {
         public int Compare(Selectable<PlaylistItem> x, Selectable<PlaylistItem> y)
         {
-            return String.Compare(x.Content.SmartName, y.Content.SmartName, StringComparison.Ordinal);
+            return string.Compare(x.Content.SmartName, y.Content.SmartName, StringComparison.Ordinal);
         }
     }
 }

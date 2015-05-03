@@ -1,5 +1,8 @@
 ﻿namespace ImpControls
 {
+    /// <summary>
+    /// Button class that allows button to be pushed down
+    /// </summary>
     public class PushDownButton : ImpButton
     {
         #region Properties
@@ -28,44 +31,41 @@
 
         protected override double SetupTranslation(double x, ref double y)
         {
-            if (CurrentState == 1)
-            {
-                x = sStyle.PressedTranslation.X;
-                y = sStyle.PressedTranslation.Y;
+            if (CurrentState != 1) return base.SetupTranslation(x, ref y);
 
-                return x;
-            }
+            x = sStyle.PressedTranslation.X;
+            y = sStyle.PressedTranslation.Y;
 
-            return base.SetupTranslation(x, ref y);
+            return x;
         }
 
         protected override void AdjustRenderColors()
         {
             base.AdjustRenderColors();
-            if (CurrentState == 1)
+
+            if (CurrentState != 1) return;
+            if (!IsEnabled) { return; }
+
+            if (Pressed & MouseOver)
             {
-                if (!IsEnabled) {}
-                else if (Pressed & MouseOver)
-                {
-                    renderData.BackBrush = sStyle.BackPressedBrush;
-                    renderData.BorderBrush = sStyle.BorderPressedBrush;
-                    renderData.FrontBrush = sStyle.PressedBrush;
-                    renderData.SetTranslate(sStyle.PressedTranslation);
-                }
-                else if (MouseOver | Pressed)
-                {
-                    renderData.BackBrush = sStyle.BackPressedBrush;
-                    renderData.BorderBrush = sStyle.BorderPressedBrush;
-                    renderData.FrontBrush = sStyle.PressedBrush;
-                    renderData.SetTranslate(sStyle.PressedTranslation);
-                }
-                else
-                {
-                    renderData.BackBrush = sStyle.BackPressedBrush;
-                    renderData.BorderBrush = sStyle.BorderPressedBrush;
-                    renderData.FrontBrush = sStyle.PressedBrush;
-                    renderData.SetTranslate(sStyle.PressedTranslation);
-                }
+                renderData.BackBrush = sStyle.BackPressedBrush;
+                renderData.BorderBrush = sStyle.BorderPressedBrush;
+                renderData.FrontBrush = sStyle.PressedBrush;
+                renderData.SetTranslate(sStyle.PressedTranslation);
+            }
+            else if (MouseOver | Pressed)
+            {
+                renderData.BackBrush = sStyle.BackPressedBrush;
+                renderData.BorderBrush = sStyle.BorderPressedBrush;
+                renderData.FrontBrush = sStyle.PressedBrush;
+                renderData.SetTranslate(sStyle.PressedTranslation);
+            }
+            else
+            {
+                renderData.BackBrush = sStyle.BackPressedBrush;
+                renderData.BorderBrush = sStyle.BorderPressedBrush;
+                renderData.FrontBrush = sStyle.PressedBrush;
+                renderData.SetTranslate(sStyle.PressedTranslation);
             }
         }
     }

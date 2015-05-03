@@ -13,7 +13,7 @@ namespace ImpControls.Lists
 
         public new Size DesiredSize()
         {
-            return new Size(165, controller.VisibleCount * ISize + 3);
+            return new Size(165, controller.VisibleCount * RowHeight + 3);
         }
     }
 }

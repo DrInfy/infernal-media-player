@@ -75,17 +75,17 @@ namespace Imp
                     if (value == ExtWindowState.Fullscreen)
                     {
                         //Me.Topmost = True
-                        backupRect = LibImp.GetWindowRect(this);
+                        backupRect = ImpNativeMethods.GetWindowRect(this);
                         ResizeMode = ResizeMode.CanMinimize;
                         WindowState = WindowState.Maximized;
                     }
                     else
                     {
                         //Me.Topmost = False
-                        backupRect = LibImp.GetWindowRect(this);
+                        backupRect = ImpNativeMethods.GetWindowRect(this);
                         ResizeMode = ResizeMode.CanMinimize;
                         WindowState = WindowState.Normal;
-                        var area = LibImp.GetWorkArea(this);
+                        var area = ImpNativeMethods.GetWorkArea(this);
 
                         setRect(this, area);
                         //Me.SizeToContent = Windows.SizeToContent.WidthAndHeight ' =SystemParameters.WorkArea 
@@ -160,7 +160,7 @@ namespace Imp
 
             Styling.SetStyle(ButtonMin, BtnNumber.Minimize);
             Styling.SetStyle(ButtonMax, BtnNumber.Maximize);
-            Styling.SetStyle(ButtonExit, BtnNumber.Exit_);
+            Styling.SetStyle(ButtonExit, BtnNumber.Close);
 
             Styling.SetStyle(MenuList);
             LabelTopic.Foreground = Styling.GetForeground();
@@ -219,7 +219,7 @@ namespace Imp
                 var dpiX = source.CompositionTarget.TransformToDevice.M11;
                 var dpiY = source.CompositionTarget.TransformToDevice.M22;
 
-                var rect = LibImp.GetWorkArea(this);
+                var rect = ImpNativeMethods.GetWorkArea(this);
                 Width = Math.Min(1200 * dpiX, rect.Width * dpiX);
                 Height = Math.Min(800 * dpiY, rect.Height * dpiY);
             }

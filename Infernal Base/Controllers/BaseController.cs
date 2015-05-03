@@ -78,8 +78,9 @@ namespace Base.Controllers
                     cmdList.Add(new ImpTextAndCommand("Play this", ImpCommand.OpenPl));
                     cmdList.Add(new ImpTextAndCommand("Remove selected", ImpCommand.RemoveSelected));
                     cmdList.Add(new ImpTextAndCommand("Sort files", ImpCommand.Sort));
-                    cmdList.Add(new ImpTextAndCommand("Sort files by their paths", ImpCommand.SortBypath));
-                    cmdList.Add(new ImpTextAndCommand("Randomize file order", ImpCommand.SortByrandom));
+                    cmdList.Add(new ImpTextAndCommand("Sort files by dates", ImpCommand.Sort, FileSortMode.Date));
+                    cmdList.Add(new ImpTextAndCommand("Sort files by paths", ImpCommand.Sort, FileSortMode.Path));
+                    cmdList.Add(new ImpTextAndCommand("Randomize file order", ImpCommand.Sort, FileSortMode.Random));
                     cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
                     cmdList.Add(new ImpTextAndCommand("Open path in file browser", ImpCommand.ShowInExplorer));
                     cmdList.Add(new ImpTextAndCommand("Delete Selected Files", ImpCommand.DeletePlFiles));
@@ -270,13 +271,7 @@ namespace Base.Controllers
                     RemoveSelectedFromPlaylist();
                     break;
                 case ImpCommand.Sort:
-                    PlaylistSort(FileSortMode.Name);
-                    break;
-                case ImpCommand.SortBypath:
-                    PlaylistSort(FileSortMode.Path);
-                    break;
-                case ImpCommand.SortByrandom:
-                    PlaylistSort(FileSortMode.Random);
+                    PlaylistSort(argument as FileSortMode? ?? FileSortMode.Name);
                     break;
                 case ImpCommand.DeletePlFiles:
                     RequestPlaylistFileDeletion();

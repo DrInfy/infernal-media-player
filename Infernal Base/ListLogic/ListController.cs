@@ -43,29 +43,16 @@ namespace Base.ListLogic
             set
             {
                 value = value.Trim();
-                if (string.Compare(findText, value, StringComparison.OrdinalIgnoreCase) != 0)
-                {
-                    findText = value;
-                    findWords = StringHandler.GetFindWords(findText);
-                    UpdateItems();
-                }
+                if (string.Compare(findText, value, StringComparison.OrdinalIgnoreCase) == 0) return;
+                findText = value;
+                findWords = StringHandler.GetFindWords(findText);
+                UpdateItems();
             }
         }
 
-        protected bool SearchActive
-        {
-            get { return searchable && !string.IsNullOrEmpty(findText); }
-        }
+        protected bool SearchActive => searchable && !string.IsNullOrEmpty(findText);
 
-        public int VisibleCount
-        {
-            get
-            {
-                if (SearchActive)
-                    return findlist.Length;
-                return items.Count;
-            }
-        }
+        public int VisibleCount => SearchActive ? findlist.Length : items.Count;
 
         #endregion
 
@@ -82,11 +69,7 @@ namespace Base.ListLogic
         /// <returns></returns>
         public T GetContent(int visibleIndex)
         {
-            if (SearchActive)
-            {
-                return items[findlist[visibleIndex]].Content;
-            }
-            return items[visibleIndex].Content;
+            return SearchActive ? items[findlist[visibleIndex]].Content : items[visibleIndex].Content;
         }
 
         /// <summary>
@@ -96,11 +79,7 @@ namespace Base.ListLogic
         /// <returns></returns>
         public string GetText(int visibleIndex)
         {
-            if (SearchActive)
-            {
-                return items[findlist[visibleIndex]].PresentText;
-            }
-            return items[visibleIndex].PresentText;
+            return SearchActive ? items[findlist[visibleIndex]].PresentText : items[visibleIndex].PresentText;
         }
 
         /// <summary>
@@ -237,28 +216,25 @@ namespace Base.ListLogic
                 var removed = false;
                 for (var i = items.Count - 1; i >= 0; i--)
                 {
-                    if (items[i].Selected)
-                    {
-                        items.RemoveAt(i);
+                    if (!items[i].Selected) continue;
 
-                        if (selectedIndex == i)
-                            selectedIndex = -1;
-                        else if (selectedIndex > i)
-                            selectedIndex--;
+                    items.RemoveAt(i);
 
-                        removed = true;
-                    }
+                    if (selectedIndex == i)
+                        selectedIndex = -1;
+                    else if (selectedIndex > i)
+                        selectedIndex--;
+
+                    removed = true;
                 }
                 if (removed) OnListSizeChanged(false);
             }
             else
             {
-                if (selectedIndex >= 0)
-                {
-                    items.RemoveAt(selectedIndex);
-                    selectedIndex = -1;
-                    OnListSizeChanged(false);
-                }
+                if (selectedIndex < 0) return;
+                items.RemoveAt(selectedIndex);
+                selectedIndex = -1;
+                OnListSizeChanged(false);
             }
         }
 
@@ -274,14 +250,10 @@ namespace Base.ListLogic
 
             if (SearchActive)
             {
-                if (!multiSelectable)
-                    return items[findlist[visibleIndex]].SelectedIndex;
-                return items[findlist[visibleIndex]].Selected;
+                return !multiSelectable ? items[findlist[visibleIndex]].SelectedIndex : items[findlist[visibleIndex]].Selected;
             }
 
-            if (!multiSelectable)
-                return items[visibleIndex].SelectedIndex;
-            return items[visibleIndex].Selected;
+            return !multiSelectable ? items[visibleIndex].SelectedIndex : items[visibleIndex].Selected;
         }
 
         /// <summary>
@@ -296,6 +268,7 @@ namespace Base.ListLogic
                     return false;
                 return items[findlist[visibleIndex]].SelectedIndex;
             }
+
             if (visibleIndex >= items.Count || visibleIndex < 0)
                 return false;
             return items[visibleIndex].SelectedIndex;
@@ -322,6 +295,7 @@ namespace Base.ListLogic
             }
 
             var selectionChanged = false;
+
             switch (selection)
             {
                 case SelectionMode.None:
@@ -355,19 +329,19 @@ namespace Base.ListLogic
                 default:
                     throw new ArgumentOutOfRangeException("selection");
             }
-            if (selectionChanged)
-            {
-                if (visibleIndex > -1 && IsSelectedIndex(visibleIndex))
-                {
-                    selectedIndex = visibleIndex;
-                }
-                else
-                {
-                    SeekSelectedIndex();
-                }
 
-                OnListSelectionChanged();
+            if (!selectionChanged) return;
+
+            if (visibleIndex > -1 && IsSelectedIndex(visibleIndex))
+            {
+                selectedIndex = visibleIndex;
             }
+            else
+            {
+                SeekSelectedIndex();
+            }
+
+            OnListSelectionChanged();
         }
 
         private void SeekSelectedIndex()
@@ -377,22 +351,18 @@ namespace Base.ListLogic
             {
                 for (var i = 0; i < findlist.Length; i++)
                 {
-                    if (items[findlist[i]].SelectedIndex)
-                    {
-                        selectedIndex = i;
-                        break;
-                    }
+                    if (!items[findlist[i]].SelectedIndex) continue;
+                    selectedIndex = i;
+                    break;
                 }
             }
             else
             {
                 for (var i = 0; i < items.Count; i++)
                 {
-                    if (items[i].SelectedIndex)
-                    {
-                        selectedIndex = i;
-                        break;
-                    }
+                    if (!items[i].SelectedIndex) continue;
+                    selectedIndex = i;
+                    break;
                 }
             }
         }

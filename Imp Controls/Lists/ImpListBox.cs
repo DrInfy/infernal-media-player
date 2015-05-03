@@ -37,17 +37,16 @@ namespace ImpControls
         /// <remarks>
         ///     DragTo equals -1 when the drag is inactive. 0 places selection to the first index in playlist.
         /// </remarks>
-        protected int DragTo = -1;
+        protected int dragTo = -1;
 
         protected MouseStates mouseoverState = MouseStates.None;
         protected MouseStates pressedState = MouseStates.None;
         protected ToolTip toolTip = new ToolTip();
-        internal int ISize = 15;
-        private bool dragActive;
-        private int HIndex;
-        private int LIndex;
+        internal int RowHeight = 15;
+        private int highIndex;
+        private int lowIndex;
         //Mouse over index, the list box item that the mouse currently is over.
-        private int MOIndex = -1;
+        private int mouseOverIndex = -1;
 
         #endregion
 
@@ -59,10 +58,8 @@ namespace ImpControls
             set { controller.FindText = value; }
         }
 
-        // height of one single row
-
-
-        public virtual bool ItemsDragable { get; set; }
+        
+        public bool ItemsDragable { get; set; }
         public bool AcceptsNullSelection { get; set; }
 
         /// <summary>
@@ -70,32 +67,32 @@ namespace ImpControls
         /// </summary>
         public virtual int LowIndex
         {
-            get { return LIndex; }
+            get { return lowIndex; }
             set
             {
-                var TIndex = LIndex;
-                if (LIndex == value)
+                var TIndex = lowIndex;
+                if (lowIndex == value)
                     return;
                 if (controller.VisibleCount <= 0)
                 {
                     if (value == 0 & TIndex == -1)
                         InvalidateVisual();
-                    LIndex = 0;
-                    HIndex = 0;
+                    lowIndex = 0;
+                    highIndex = 0;
                     return;
                 }
-                LIndex = value;
-                if (LIndex < 0)
-                    LIndex = 0;
-                HIndex = LIndex + (int) Math.Floor(ActualHeight / ISize) - 1;
-                if (HIndex > controller.VisibleCount - 1)
+                lowIndex = value;
+                if (lowIndex < 0)
+                    lowIndex = 0;
+                highIndex = lowIndex + (int) Math.Floor(ActualHeight / RowHeight) - 1;
+                if (highIndex > controller.VisibleCount - 1)
                 {
-                    HIndex = controller.VisibleCount - 1;
-                    LIndex = HIndex - (int) Math.Floor(ActualHeight / ISize) + 1;
+                    highIndex = controller.VisibleCount - 1;
+                    lowIndex = highIndex - (int) Math.Floor(ActualHeight / RowHeight) + 1;
                 }
-                if (LIndex < 0)
-                    LIndex = 0;
-                if (TIndex != LIndex)
+                if (lowIndex < 0)
+                    lowIndex = 0;
+                if (TIndex != lowIndex)
                     InvalidateVisual();
             }
         }
@@ -105,27 +102,27 @@ namespace ImpControls
         /// </summary>
         public virtual int HighIndex
         {
-            get { return HIndex; }
+            get { return highIndex; }
             set
             {
-                var TIndex = HIndex;
-                if (HIndex == value)
+                var TIndex = highIndex;
+                if (highIndex == value)
                     return;
                 if (controller.VisibleCount <= 0)
                 {
-                    LIndex = 0;
-                    HIndex = 0;
+                    lowIndex = 0;
+                    highIndex = 0;
                     return;
                 }
-                HIndex = value;
-                if (HIndex > controller.VisibleCount - 1)
+                highIndex = value;
+                if (highIndex > controller.VisibleCount - 1)
                 {
-                    HIndex = controller.VisibleCount - 1;
+                    highIndex = controller.VisibleCount - 1;
                 }
-                LIndex = HIndex - (int) Math.Floor(ActualHeight / ISize);
-                if (LIndex < 0)
-                    LIndex = 0;
-                if (TIndex != HIndex)
+                lowIndex = highIndex - (int) Math.Floor(ActualHeight / RowHeight);
+                if (lowIndex < 0)
+                    lowIndex = 0;
+                if (TIndex != highIndex)
                     InvalidateVisual();
             }
         }
@@ -135,17 +132,17 @@ namespace ImpControls
         /// </summary>
         public virtual int MouseoverIndex
         {
-            get { return MOIndex; }
+            get { return mouseOverIndex; }
             set
             {
-                if (MOIndex == value)
+                if (mouseOverIndex == value)
                     return;
 
-                MOIndex = value;
-                if (MOIndex < LIndex)
-                    MOIndex = -1;
-                if (MOIndex > HIndex)
-                    MOIndex = -1;
+                mouseOverIndex = value;
+                if (mouseOverIndex < lowIndex)
+                    mouseOverIndex = -1;
+                if (mouseOverIndex > highIndex)
+                    mouseOverIndex = -1;
 
                 InvalidateVisual();
             }
@@ -189,12 +186,6 @@ namespace ImpControls
         public event ListSelectionChangedEventHandler SelectionChanged;
 
         #endregion
-
-        ~ImpListBox()
-        {
-            //if (toolTip != null)
-            //    toolTip.StaysOpen = false;
-        }
 
         protected virtual void CreateController(bool searchable, bool multiSelectable)
         {
@@ -272,7 +263,6 @@ namespace ImpControls
             base.OnMouseLeave(e);
             //toolTip.StaysOpen = false;
             toolTip.IsOpen = false;
-            dragActive = false;
         }
 
         protected override void DrawContent(DrawingContext drawingContext)
@@ -330,16 +320,16 @@ namespace ImpControls
             }
 
             //' Draws to line where DragTo points
-            if (DragTo >= LIndex && DragTo <= HIndex)
+            if (dragTo >= lowIndex && dragTo <= highIndex)
             {
-                if (DragTo < controller.GetSelectedIndex())
+                if (dragTo < controller.GetSelectedIndex())
                     drawingContext.DrawLine(new Pen(sStyle.PressedBrush, 1),
-                        new Point(0, (DragTo - LowIndex) * ISize + 3),
-                        new Point(GetSW(), (DragTo - LowIndex) * ISize + 3));
+                        new Point(0, (dragTo - LowIndex) * RowHeight + 3),
+                        new Point(GetSW(), (dragTo - LowIndex) * RowHeight + 3));
                 else
                     drawingContext.DrawLine(new Pen(sStyle.PressedBrush, 1),
-                        new Point(0, (DragTo - LowIndex + 1) * ISize + 3),
-                        new Point(GetSW(), (DragTo - LowIndex + 1) * ISize + 3));
+                        new Point(0, (dragTo - LowIndex + 1) * RowHeight + 3),
+                        new Point(GetSW(), (dragTo - LowIndex + 1) * RowHeight + 3));
             }
         }
 
@@ -459,13 +449,13 @@ namespace ImpControls
                 {
                     if (ActualWidth > SCROLLBARWIDTH)
                         drawingContext.DrawRectangle(sStyle.BackPressedBrush, null,
-                            new Rect(0, (i - LowIndex) * ISize + 3,
-                                ActualWidth - SCROLLBARWIDTH, ISize));
+                            new Rect(0, (i - LowIndex) * RowHeight + 3,
+                                ActualWidth - SCROLLBARWIDTH, RowHeight));
                 }
                 else
                 {
                     drawingContext.DrawRectangle(sStyle.BackPressedBrush, null,
-                        new Rect(0, (i - LowIndex) * ISize + 3, ActualWidth, ISize));
+                        new Rect(0, (i - LowIndex) * RowHeight + 3, ActualWidth, RowHeight));
                 }
             }
 
@@ -481,18 +471,18 @@ namespace ImpControls
                 //' Draws lines for selectedindex
                 if (HighIndex - LowIndex < controller.VisibleCount - 1)
                 {
-                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * ISize + 3),
-                        new Point(ActualWidth - SCROLLBARWIDTH, (i - LowIndex) * ISize + 3));
-                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * ISize + 3 - 1f),
+                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * RowHeight + 3),
+                        new Point(ActualWidth - SCROLLBARWIDTH, (i - LowIndex) * RowHeight + 3));
+                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * RowHeight + 3 - 1f),
                         new Point(ActualWidth - SCROLLBARWIDTH,
-                            (i - LowIndex + 1) * ISize + 3 - 1f));
+                            (i - LowIndex + 1) * RowHeight + 3 - 1f));
                 }
                 else
                 {
-                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * ISize + 3),
-                        new Point(ActualWidth, (i - LowIndex) * ISize + 3));
-                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * ISize + 3 - 1f),
-                        new Point(ActualWidth, (i - LowIndex + 1) * ISize + 3 - 1f));
+                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * RowHeight + 3),
+                        new Point(ActualWidth, (i - LowIndex) * RowHeight + 3));
+                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * RowHeight + 3 - 1f),
+                        new Point(ActualWidth, (i - LowIndex + 1) * RowHeight + 3 - 1f));
                 }
 
                 brush = sStyle.PressedBrush;
@@ -515,7 +505,7 @@ namespace ImpControls
 
             var text = FormatText(controller.GetText(index), ref brush);
             if (text.MaxTextWidth > 0)
-                drawingContext.DrawText(text, new Point(3, (index - LowIndex) * ISize + 3));
+                drawingContext.DrawText(text, new Point(3, (index - LowIndex) * RowHeight + 3));
         }
 
         protected virtual FormattedText FormatText(string text, ref Brush brush)
@@ -530,7 +520,7 @@ namespace ImpControls
                 width -= SCROLLBARWIDTH;
             }
             fText.MaxTextWidth = Math.Max(width, 0);
-            fText.MaxTextHeight = ISize;
+            fText.MaxTextHeight = RowHeight;
             fText.Trimming = TextTrimming.CharacterEllipsis;
             return fText;
         }
@@ -645,7 +635,7 @@ namespace ImpControls
 
             if (HitTest(e.GetPosition(this)))
             {
-                var tempIndex = LIndex + (int) Math.Floor(e.GetPosition(this).Y / ISize);
+                var tempIndex = lowIndex + (int) Math.Floor(e.GetPosition(this).Y / RowHeight);
                 if (tempIndex == MouseoverIndex)
                     return; // nothing to do here
 
@@ -687,12 +677,11 @@ namespace ImpControls
         {
             if (controller.IsSelectedIndex(index))
             {
-                DragTo = -1;
+                dragTo = -1;
             }
             else
             {
-                dragActive = true;
-                DragTo = Math.Min(Math.Max(index, 0), controller.VisibleCount - 1);
+                dragTo = Math.Min(Math.Max(index, 0), controller.VisibleCount - 1);
             }
         }
 
@@ -717,8 +706,8 @@ namespace ImpControls
         /// </summary>
         protected virtual void UpdateItems()
         {
-            var t = LIndex;
-            LIndex = -2;
+            var t = lowIndex;
+            lowIndex = -2;
             LowIndex = t;
             //SelectedIndex = SelectedIndex
             InvalidateVisual();
@@ -728,8 +717,8 @@ namespace ImpControls
         {
             if (GlobalKeyboard.ModKeys == ModifierKeys.None && ItemsDragable && pressedState == MouseStates.WindowPressed)
             {
-                if (DragTo > -1)
-                    controller.DoDrag(DragTo);
+                if (dragTo > -1)
+                    controller.DoDrag(dragTo);
                 else if (controller.IsSelectedIndex(MouseoverIndex))
                     controller.Select(SelectionMode.One, MouseoverIndex);
             }
@@ -742,8 +731,7 @@ namespace ImpControls
             }
             pressedState = MouseStates.None;
             base.OnMouseUp(e);
-            dragActive = false;
-            DragTo = -1;
+            dragTo = -1;
         }
 
         private void ImpListBoxBase_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -768,11 +756,10 @@ namespace ImpControls
             mouseoverState = MouseStates.None;
         }
 
-        private void ScrollBarMove(double p1)
+        private void ScrollBarMove(double cursorY)
         {
-            double ScrollSize = (HighIndex - LowIndex);
-            // / item.Count
-            LowIndex = (int) Math.Round(p1 / ActualHeight * (controller.VisibleCount) - ScrollSize / 2);
+            double scrollSize = (HighIndex - LowIndex);
+            LowIndex = (int) Math.Round(cursorY / ActualHeight * (controller.VisibleCount) - scrollSize / 2);
         }
     }
 }

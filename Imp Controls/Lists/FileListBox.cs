@@ -27,10 +27,6 @@ namespace ImpControls
         private FileSortMode sortMode;
         private string currentPath;
         private List<string> currentExtensions;
-        private IEnumerable<string> filtersVideo;
-        private IEnumerable<string> filtersMusic;
-        private IEnumerable<string> filtersPictures;
-        private IEnumerable<string> filtersPlaylist;
 
         #endregion
 
@@ -121,7 +117,7 @@ namespace ImpControls
                     fileInfos[i] = new FileInfo(pathList[i]);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // doesn't matter why path choosing failed, no files available in this folder
                 controller.Clear();
@@ -175,7 +171,7 @@ namespace ImpControls
             var text = FormatText(controller.GetText(index), ref brush);
 
             if (text.MaxTextWidth > 0)
-                drawingContext.DrawText(text, new Point(3, (index - LowIndex) * ISize + 3));
+                drawingContext.DrawText(text, new Point(3, (index - LowIndex) * RowHeight + 3));
         }
 
         public override FileImpInfo GetSelected()

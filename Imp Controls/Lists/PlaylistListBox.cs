@@ -13,12 +13,25 @@ namespace ImpControls.Lists
 {
     public class PlaylistListBox : ImpListBox<PlaylistItem>
     {
+        #region Helpers
+
+        public delegate void LoadPlaylistItemEvent(PlaylistItem item);
+
+        #endregion
+
         #region Fields
 
         private readonly ComparerPlayListItemName nameComparer = new ComparerPlayListItemName();
+        private readonly ComparerPlayListItemDate dateComparer = new ComparerPlayListItemDate();
         private readonly ComparerPlayListItemPath pathComparer = new ComparerPlayListItemPath();
         private readonly ComparerPlayListItemRandom randomComparer = new ComparerPlayListItemRandom();
         private PlayListController playListController;
+
+        #endregion
+
+        #region  Events
+
+        public event LoadPlaylistItemEvent LoadPlaylistItem;
 
         #endregion
 
@@ -82,7 +95,7 @@ namespace ImpControls.Lists
                 formatText = FormatText((index + 1) + ". " + controller.GetText(index), ref brush);
             }
 
-            drawingContext.DrawText(formatText, new Point(3, (index - LowIndex) * ISize + 3));
+            drawingContext.DrawText(formatText, new Point(3, (index - LowIndex) * RowHeight + 3));
         }
 
         public void OpenNext(LoopMode loopMode)
@@ -102,10 +115,7 @@ namespace ImpControls.Lists
 
         public void OpenItem(PlaylistItem playlistItem)
         {
-            if (LoadPlaylistItem != null)
-            {
-                LoadPlaylistItem.Invoke(playlistItem);
-            }
+            LoadPlaylistItem?.Invoke(playlistItem);
         }
 
         public void Sort(FileSortMode fileSortMode)
@@ -116,7 +126,7 @@ namespace ImpControls.Lists
                     controller.Sort(nameComparer);
                     break;
                 case FileSortMode.Date:
-                    throw new NotImplementedException();
+                    controller.Sort(dateComparer);
                     break;
                 case FileSortMode.Random:
                     controller.Sort(randomComparer);
@@ -128,13 +138,5 @@ namespace ImpControls.Lists
                     throw new ArgumentOutOfRangeException("fileSortMode");
             }
         }
-
-        #region Delegates and Events
-
-        public delegate void LoadPlaylistItemEvent(PlaylistItem item);
-
-        public event LoadPlaylistItemEvent LoadPlaylistItem;
-
-        #endregion
     }
 }
