@@ -21,19 +21,6 @@
         Paused
     }
 
-    public enum MediaFadeType
-    {
-        None,
-        Pausing,
-        Startup,
-        Playing,
-        MoveFalling,
-        MovePaused,
-        MoveRising,
-        VolumeChange
-    }
-
-
     public enum MediaPositionFormat
     {
         MediaTime,

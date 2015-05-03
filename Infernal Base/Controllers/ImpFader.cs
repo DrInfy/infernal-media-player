@@ -19,17 +19,21 @@ namespace Base.Controllers
         VolumeChange,
     }
 
+    /// <summary>
+    /// Implementation independent volume fader that handles volumes as percentages
+    /// and media position as ticks
+    /// </summary>
     public class ImpFader
     {
         #region Static Fields and Constants
 
-        private const long FADEDOWNTIME = 30 * LibImp.NanoToMilli;
-        private const long FADEUPTIME = 50 * LibImp.NanoToMilli;
-        private const long MOVEINTERVALTIME = 200 * LibImp.NanoToMilli;
-        private const double UPMINIMUMFADE = 0.005;
-        private const double DOWNMINIMUMFADE = 0.005;
-        private const double UPMAXFADE = 0.15;
-        private const double DOWNMAXFADE = 0.15;
+        private const long fadeDownTime = 30 * LibImp.NanoToMilli;
+        private const long fadeUpTime = 50 * LibImp.NanoToMilli;
+        private const long moveIntervalTime = 200 * LibImp.NanoToMilli;
+        private const double upMinimumFade = 0.005;
+        private const double downMinimumFade = 0.005;
+        private const double upMaxFade = 0.15;
+        private const double downMaxFade = 0.15;
 
         #endregion
 
@@ -38,8 +42,8 @@ namespace Base.Controllers
         private FadeType fade = FadeType.None;
         private long posTarget = 0;
         private double volumeTarget = 0;
-        private long LastSetTime = 0;
-        private long LastPositionSetTime = 0;
+        private long lastSetTime = 0;
+        private long lastPositionSetTime = 0;
         private long startuptotalwait;
 
         #endregion
@@ -52,7 +56,7 @@ namespace Base.Controllers
 
         public void Play()
         {
-            if ((fade == FadeType.None | fade == FadeType.Pausing | fade == FadeType.VolumeChange))
+            if (fade == FadeType.None | fade == FadeType.Pausing | fade == FadeType.VolumeChange)
                 fade = FadeType.Playing;
             StartFade();
         }
@@ -60,15 +64,14 @@ namespace Base.Controllers
         public void Startup()
         {
             startuptotalwait = 0;
-            if ((fade == FadeType.None | fade == FadeType.Pausing | fade == FadeType.VolumeChange))
+            if (fade == FadeType.None | fade == FadeType.Pausing | fade == FadeType.VolumeChange)
                 fade = FadeType.Startup;
             StartFade();
         }
 
         public void Pause()
         {
-            if ((fade != FadeType.MoveFalling))
-                posTarget = -1;
+            if (fade != FadeType.MoveFalling) { posTarget = -1;}
             fade = FadeType.Pausing;
             StartFade();
         }
@@ -76,7 +79,7 @@ namespace Base.Controllers
         public void SetVolume(double value)
         {
             volumeTarget = value;
-            if ((fade == FadeType.None))
+            if (fade == FadeType.None)
                 fade = FadeType.VolumeChange;
             StartFade();
         }
@@ -96,10 +99,10 @@ namespace Base.Controllers
         /// <param name="value">Pass the desired position</param>
         public void SetPosition(long value)
         {
-            if (value < 0)
-                posTarget = 0;
+            if (value < 0) { posTarget = 0; }
             posTarget = value;
-            if ((fade != FadeType.Pausing))
+
+            if (fade != FadeType.Pausing)
             {
                 fade = FadeType.MoveFalling;
                 StartFade();
@@ -110,17 +113,10 @@ namespace Base.Controllers
         /// Returns the desired or current position based on fade type
         /// </summary>
         /// <param name="value">Pass the current player position here</param>
-        /// <returns></returns>
+        /// <returns> The desired position or current position if no move is active.</returns>
         public long GetPosition(long value)
         {
-            if ((posTarget == -1))
-            {
-                return value;
-            }
-            else
-            {
-                return posTarget;
-            }
+            return (posTarget == -1) ? value : posTarget;
         }
 
         /// <summary>
@@ -128,10 +124,9 @@ namespace Base.Controllers
         /// </summary>
         private void StartFade()
         {
-            if (Active)
-                return;
+            if (Active) { return; }
 
-            LastSetTime = DateTime.Now.Ticks;
+            lastSetTime = DateTime.Now.Ticks;
             Active = true;
         }
 
@@ -154,9 +149,9 @@ namespace Base.Controllers
         /// <returns>True if requesting pause.</returns>
         public bool Update(ref long position, ref double volume, bool paused)
         {
-            dynamic pause_ = false;
+            var pause = false;
 
-            if ((double.IsNaN(volume) | volume <= 0))
+            if (double.IsNaN(volume) | volume <= 0)
             {
                 volume = 0;
             }
@@ -168,19 +163,18 @@ namespace Base.Controllers
             switch (fade)
             {
                 case FadeType.VolumeChange:
-                    fadevolume(ref volume, volumeTarget, paused);
-                    if ((volume == volumeTarget))
-                        EndFade();
+                    FadeVolume(ref volume, volumeTarget, paused);
+                    if (volume == volumeTarget) { EndFade(); }
 
                     break;
                 case FadeType.MoveFalling:
-                    fadevolume(ref volume, 0, paused);
+                    FadeVolume(ref volume, 0, paused);
 
-                    if ((volume == 0))
+                    if (volume == 0)
                     {
-                        if ((LastPositionSetTime + MOVEINTERVALTIME < DateTime.Now.Ticks))
+                        if (lastPositionSetTime + moveIntervalTime < DateTime.Now.Ticks)
                         {
-                            LastPositionSetTime = DateTime.Now.Ticks;
+                            lastPositionSetTime = DateTime.Now.Ticks;
                             position = posTarget;
 
                             fade = (paused) ? FadeType.MoveRising : FadeType.MovePaused;
@@ -189,73 +183,73 @@ namespace Base.Controllers
 
                     break;
                 case FadeType.MovePaused:
-                    if ((paused | (position > posTarget + LibImp.SecondToTicks / 3)))
+                    if (paused | (position > posTarget + LibImp.SecondToTicks / 3))
                     {
                         fade = FadeType.MoveRising;
                     }
 
                     break;
+
                 case FadeType.MoveRising:
-                    fadevolume(ref volume, volumeTarget, paused);
+                    FadeVolume(ref volume, volumeTarget, paused);
                     posTarget = -1;
-                    if ((volume == volumeTarget))
-                        EndFade();
-
+                    if (volume == volumeTarget) { EndFade(); }
                     break;
-                case FadeType.Pausing:
-                    fadevolume(ref volume, 0, paused);
 
-                    if ((volume == 0))
+                case FadeType.Pausing:
+                    FadeVolume(ref volume, 0, paused);
+
+                    if (volume == 0)
                     {
-                        if ((posTarget != -1))
+                        if (posTarget != -1)
                             position = posTarget;
 
                         EndFade();
-                        pause_ = true;
+                        pause = true;
                     }
                     break;
+
                 case FadeType.Startup:
-                    startuptotalwait += DateTime.Now.Ticks - LastSetTime;
+                    startuptotalwait += DateTime.Now.Ticks - lastSetTime;
                     if (startuptotalwait > 0.2 * LibImp.SecondToTicks)
                     {
                         fade = FadeType.Playing;
                     }
                     break;
-                case FadeType.Playing:
-                    fadevolume(ref volume, volumeTarget, paused);
-                    if ((volume == volumeTarget))
-                        EndFade();
 
+                case FadeType.Playing:
+                    FadeVolume(ref volume, volumeTarget, paused);
+                    if (volume == volumeTarget) { EndFade(); }
                     break;
             }
-            LastSetTime = DateTime.Now.Ticks;
+            lastSetTime = DateTime.Now.Ticks;
 
             volume = Math.Log10(volume * 99 + 1) / 2;
-            return pause_;
+            return pause;
         }
 
         /// <summary>
         /// Smoothly fades volume towards the desired value
         /// </summary>
-        private void fadevolume(ref double volume, double value, bool paused)
+        private void FadeVolume(ref double volume, double value, bool paused)
         {
             // No need for audiofading when the system is on pause
             if (((paused & fade != FadeType.Pausing) | (volume == 0 & value == 0)))
             {
-                put_volume(ref volume, 0);
+                volume = PutVolume(0);
                 return;
             }
 
             // set temp as valuechange based on time passed
-            double temp = DateTime.Now.Ticks - LastSetTime;
+            double temp = DateTime.Now.Ticks - lastSetTime;
 
             if ((volume < value))
             {
-                temp /= FADEUPTIME;
+                temp /= fadeUpTime;
             }
             else
             {
-                temp /= FADEDOWNTIME;
+                temp /= fadeDownTime;
             }
 
             if ((temp > 1))
@@ -267,31 +261,31 @@ namespace Base.Controllers
             // check that the fade isn't too big or too small
             if ((volume < value))
             {
-                if ((temp - volume > UPMAXFADE))
-                    temp = volume + UPMAXFADE;
-                if ((temp - volume < UPMINIMUMFADE))
-                    temp = volume + UPMINIMUMFADE;
+                if ((temp - volume > upMaxFade))
+                    temp = volume + upMaxFade;
+                if ((temp - volume < upMinimumFade))
+                    temp = volume + upMinimumFade;
                 if ((temp > value))
                     temp = value;
             }
             else
             {
-                if ((volume - temp > DOWNMAXFADE))
-                    temp = volume - DOWNMAXFADE;
-                if ((volume - temp < DOWNMINIMUMFADE))
-                    temp = volume - DOWNMINIMUMFADE;
+                if ((volume - temp > downMaxFade))
+                    temp = volume - downMaxFade;
+                if ((volume - temp < downMinimumFade))
+                    temp = volume - downMinimumFade;
                 if ((temp < value))
                     temp = value;
             }
 
 
-            put_volume(ref volume, temp);
+            volume = PutVolume(temp);
         }
 
         /// <summary>
         /// Ensures no out of bounds volumevalues, takes 0-1
         /// </summary>
-        private void put_volume(ref double volume, double value)
+        private static double PutVolume(double value)
         {
             if ((value < 0))
             {
@@ -301,7 +295,8 @@ namespace Base.Controllers
             {
                 value = 1;
             }
-            volume = value;
+
+            return value;
         }
     }
 }

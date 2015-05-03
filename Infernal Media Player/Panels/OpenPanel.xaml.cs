@@ -242,6 +242,7 @@ namespace Imp.Panels
             {
                 path = ListFiles.CurrentPath;
             }
+
             PrepareFolderLoader(new DirectoryLoadOptions(path,
                 SearchOption.TopDirectoryOnly,
                 GetFileTypes()));
@@ -254,9 +255,10 @@ namespace Imp.Panels
                 mainC.EventC.SetEvent(new EventText("Folder load already active", 1, EventType.Delayed));
                 return;
             }
+            
             options.FindText = TextBoxFind.Text;
-            //options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
-            options.FilterOptions = FilterOptions.Files;
+            options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
+            //options.FilterOptions = FilterOptions.Files;
 
             ButtonAddSubFolder.IsEnabled = false;
             ButtonAddFolder.IsEnabled = false;

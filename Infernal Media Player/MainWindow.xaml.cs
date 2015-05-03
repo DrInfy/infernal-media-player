@@ -60,7 +60,7 @@ namespace Imp
                     WindowState = (WindowState) value;
                     if (ExtWindowState > ExtWindowState.Minimized)
                     {
-                        setRect(this, backupRect);
+                        SetRect(this, backupRect);
                     }
 
                     Topmost = false;
@@ -87,7 +87,7 @@ namespace Imp
                         WindowState = WindowState.Normal;
                         var area = ImpNativeMethods.GetWorkArea(this);
 
-                        setRect(this, area);
+                        SetRect(this, area);
                         //Me.SizeToContent = Windows.SizeToContent.WidthAndHeight ' =SystemParameters.WorkArea 
                     }
                     ButtonMax.CurrentState = 1;
@@ -231,20 +231,11 @@ namespace Imp
             {
                 Thread.Sleep(15);
 
-                if ((!Updating))
-                {
-                    Updating = true;
-                    Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Update(mainC.Update));
+                if (Updating) continue;
+                Updating = true;
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Update(mainC.Update));
 
-                    //if (mainC.skipFrame)
-                    //{
-                    //    //If videoPlayer.HasInitialized And videoPlayer.HasVideo Then
-                    //    videoPlayer.FrameStep(1);
-                    //    //End If
-                    //    mainC.skipFrame = false;
-                    //}
-                }
-            } while ((!WindowClosed));
+            } while (!WindowClosed);
         }
 
         private void grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -256,6 +247,7 @@ namespace Imp
                 grid.CaptureMouse();
                 return;
             }
+
             if (SplitterRight.IsMouseOver && e.LeftButton == MouseButtonState.Pressed)
             {
                 mouseState = MouseStates.PanRightPressed;
@@ -348,7 +340,7 @@ namespace Imp
                 ExtWindowState = (ExtWindowState) WindowState;
         }
 
-        private void setRect(Window o, Rect r)
+        private static void SetRect(Window o, Rect r)
         {
             o.Left = r.Left;
             o.Top = r.Top;
@@ -363,11 +355,9 @@ namespace Imp
 
         private void Window_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (!mainC.ContentMenu.IsMouseOver)
-            {
-                mouseState = MouseStates.None;
-                mainC.PanelC.CheckPanelHide(new Point(double.MaxValue, double.MaxValue));
-            }
+            if (mainC.ContentMenu.IsMouseOver) return;
+            mouseState = MouseStates.None;
+            mainC.PanelC.CheckPanelHide(new Point(double.MaxValue, double.MaxValue));
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
@@ -395,20 +385,16 @@ namespace Imp
 
         private bool IsMouseOverList()
         {
-            if (PanelOpen.ListPlaces.IsMouseOver ||
-                PanelOpen.ListDirectories.IsMouseOver ||
-                PanelOpen.ListFiles.IsMouseOver ||
-                PanelPlaylist.ListPlaylist.IsMouseOver)
-                return true;
-            return false;
+            return PanelOpen.ListPlaces.IsMouseOver ||
+                   PanelOpen.ListDirectories.IsMouseOver ||
+                   PanelOpen.ListFiles.IsMouseOver ||
+                   PanelPlaylist.ListPlaylist.IsMouseOver;
         }
 
         private bool IsMouseOverTextbox()
         {
-            if (PanelOpen.TextBoxFind.IsMouseOver ||
-                PanelPlaylist.TextBoxFind.IsMouseOver)
-                return true;
-            return false;
+            return PanelOpen.TextBoxFind.IsMouseOver ||
+                   PanelPlaylist.TextBoxFind.IsMouseOver;
         }
 
         private void UriPlayer_MediaPlayerEnded()
