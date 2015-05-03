@@ -1,13 +1,20 @@
-﻿using Base.Commands;
+﻿#region Usings
+
+using Base.Commands;
+
+#endregion
 
 namespace Base.ListLogic
 {
     public class TextAndCommand<T>
     {
+        #region Fields
+
         public readonly string Text;
         public readonly T Command;
         public readonly object Argument;
 
+        #endregion
 
         public TextAndCommand(string text, T command, object argument = null)
         {
@@ -15,7 +22,6 @@ namespace Base.ListLogic
             Command = command;
             Argument = argument;
         }
-
 
         public override string ToString()
         {
@@ -25,8 +31,6 @@ namespace Base.ListLogic
 
     public class ImpTextAndCommand : TextAndCommand<ImpCommand>
     {
-        public ImpTextAndCommand(string text, ImpCommand command, object argument = null) : base(text, command, argument)
-        {
-        }
+        public ImpTextAndCommand(string text, ImpCommand command, object argument = null) : base(text, command, argument) {}
     }
 }

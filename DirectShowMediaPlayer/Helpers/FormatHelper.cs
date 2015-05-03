@@ -1,5 +1,9 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using DirectShowLib;
+
+#endregion
 
 namespace MediaPlayer.Helpers
 {
@@ -36,7 +40,6 @@ namespace MediaPlayer.Helpers
 
             return timeFormat;
         }
-
 
         /// <summary>
         /// Converts a DirectShow TimeFormat GUID to a MediaPositionFormat enum

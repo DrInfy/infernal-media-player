@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region Usings
+
+using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Base;
 using Base.ListLogic;
 
+#endregion
+
 namespace ImpControls.Lists
 {
     public class PlaylistListBox : ImpListBox<PlaylistItem>
     {
-        #region Delegates and Events
-        public delegate void LoadPlaylistItemEvent(PlaylistItem item);
-
-        public event LoadPlaylistItemEvent LoadPlaylistItem;
-        #endregion
-
-        private PlayListController playListController;
+        #region Fields
 
         private readonly ComparerPlayListItemName nameComparer = new ComparerPlayListItemName();
         private readonly ComparerPlayListItemPath pathComparer = new ComparerPlayListItemPath();
         private readonly ComparerPlayListItemRandom randomComparer = new ComparerPlayListItemRandom();
+        private PlayListController playListController;
+
+        #endregion
 
         public PlaylistListBox() : base(true, true)
         {
@@ -45,7 +42,6 @@ namespace ImpControls.Lists
             var index = playListController.PlayingThis(item);
             SeekTo(index);
         }
-
 
         /// <summary>
         /// Attempts to put the index specified to view. Values smaller than 0 are ignored.
@@ -70,7 +66,6 @@ namespace ImpControls.Lists
             controller = playListController;
         }
 
-
         protected override void DrawText(int index, DrawingContext drawingContext, Brush brush)
         {
             if (ActualWidth - SCROLLBARWIDTH < 0)
@@ -86,16 +81,14 @@ namespace ImpControls.Lists
             {
                 formatText = FormatText((index + 1) + ". " + controller.GetText(index), ref brush);
             }
-                
+
             drawingContext.DrawText(formatText, new Point(3, (index - LowIndex) * ISize + 3));
         }
-
 
         public void OpenNext(LoopMode loopMode)
         {
             playListController.OpenNext(loopMode);
         }
-
 
         public void OpenPrev(LoopMode loopMode)
         {
@@ -115,26 +108,33 @@ namespace ImpControls.Lists
             }
         }
 
-
         public void Sort(FileSortMode fileSortMode)
         {
             switch (fileSortMode)
             {
                 case FileSortMode.Name:
-                    controller.Sort(nameComparer); 
+                    controller.Sort(nameComparer);
                     break;
                 case FileSortMode.Date:
                     throw new NotImplementedException();
                     break;
                 case FileSortMode.Random:
-                    controller.Sort(randomComparer); 
+                    controller.Sort(randomComparer);
                     break;
                 case FileSortMode.Path:
-                    controller.Sort(pathComparer); 
+                    controller.Sort(pathComparer);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("fileSortMode");
             }
         }
+
+        #region Delegates and Events
+
+        public delegate void LoadPlaylistItemEvent(PlaylistItem item);
+
+        public event LoadPlaylistItemEvent LoadPlaylistItem;
+
+        #endregion
     }
 }

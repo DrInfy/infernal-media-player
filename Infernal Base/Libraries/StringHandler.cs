@@ -1,20 +1,28 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Base.ListLogic;
 
+#endregion
+
 namespace Base.Libraries
 {
     public static class StringHandler
     {
+        #region Static Fields and Constants
+
+        private const int fillNumbersToLength = 3;
         //private static StringBuilder gBuilder = new StringBuilder(50);
 
-        private static readonly char[] startBrackets = new char[] { '(', '[', '{'};
-        private static readonly char[] endBrackets = new char[] { ')', ']', '}' };
-        private static readonly char[] numeral = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-        private const int fillNumbersToLength = 3;
-        
+        private static readonly char[] startBrackets = new char[] {'(', '[', '{'};
+        private static readonly char[] endBrackets = new char[] {')', ']', '}'};
+        private static readonly char[] numeral = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+        #endregion
+
         /// <summary>
         /// returns time text based on seconds
         /// </summary>
@@ -23,38 +31,35 @@ namespace Base.Libraries
         /// <remarks></remarks>
         public static string SecondsToTimeText(int value)
         {
-            int hours = 0;
-            int minutes = 0;
-            int seconds = 0;
+            var hours = 0;
+            var minutes = 0;
+            var seconds = 0;
             Math.DivRem(value, 60, out seconds);
-            Math.DivRem(Convert.ToInt32(Math.Floor((float)value / 60)), 60, out minutes);
-            hours = (int)Math.Floor((float)value / 3600);
+            Math.DivRem(Convert.ToInt32(Math.Floor((float) value / 60)), 60, out minutes);
+            hours = (int) Math.Floor((float) value / 3600);
 
-            
+
             return hours.ToString() + ":" + FullFillText(minutes.ToString(), 2, "0") + ":" + FullFillText(seconds.ToString(), 2, "0");
-            
         }
-
-
 
         public static bool IsSpecialFolder(string pathData)
         {
             return (String.Compare(pathData.Substring(0, 1), "$", StringComparison.Ordinal) == 0);
         }
+
         public static string FullFillText(string text, int length, string fillChar)
         {
-            for (int i = text.Length; i <= length - 1; i++)
+            for (var i = text.Length; i <= length - 1; i++)
             {
                 text = fillChar + text;
             }
             return text;
         }
 
-
         public static string GetFilename(string path)
         {
             string name = null;
-            int index = path.LastIndexOf("\\", StringComparison.Ordinal);
+            var index = path.LastIndexOf("\\", StringComparison.Ordinal);
             name = path.Substring(index + 1);
             return name;
         }
@@ -69,8 +74,7 @@ namespace Base.Libraries
 
         public static string RemoveExtension(string path)
         {
-            
-            int index = path.LastIndexOf(".", StringComparison.Ordinal);
+            var index = path.LastIndexOf(".", StringComparison.Ordinal);
             if (index > 1)
                 return path.Substring(0, index);
             return path;
@@ -79,7 +83,7 @@ namespace Base.Libraries
         public static string Get_Streamname(string path)
         {
             string name = null;
-            int index = path.LastIndexOf("/");
+            var index = path.LastIndexOf("/");
             name = path.Substring(index + 1);
             return name;
         }
@@ -89,14 +93,14 @@ namespace Base.Libraries
             var gBuilder = new StringBuilder();
 
             gBuilder.Append(RemoveExtension(fileName.ToLowerInvariant()));
-            
+
             gBuilder.Replace(" - ", " ");
             gBuilder.Replace("-", " ");
             gBuilder.Replace(".", " ");
             gBuilder.Replace("'", " ");
             gBuilder.Replace("~", " ");
             gBuilder.Replace("_", " ");
-            
+
 
             Removebrackets(gBuilder);
             RemoveWords(gBuilder);
@@ -108,11 +112,10 @@ namespace Base.Libraries
             return gBuilder.ToString();
         }
 
-
         private static void FillNumerals(StringBuilder builder)
-         {
-            int numberCount = 0;
-            for (int i = 0; i < builder.Length; i++)
+        {
+            var numberCount = 0;
+            for (var i = 0; i < builder.Length; i++)
             {
                 if (IsNumeral(builder[i]))
                     numberCount++;
@@ -131,16 +134,13 @@ namespace Base.Libraries
         private static void FillNumeral(StringBuilder builder, int endIndex, int length)
         {
             if (length < fillNumbersToLength)
-                builder.Insert(Math.Max(endIndex - length,0), "0", fillNumbersToLength - length);
-            
+                builder.Insert(Math.Max(endIndex - length, 0), "0", fillNumbersToLength - length);
         }
-
 
         private static bool IsNumeral(char number)
         {
             return numeral.Any(t => number == t);
         }
-
 
         private static void RemoveWords(StringBuilder builder)
         {
@@ -149,17 +149,16 @@ namespace Base.Libraries
             builder.Replace(" ep ", " ");
         }
 
-
         private static void Removebrackets(StringBuilder builder)
         {
-            for (int i = 0; i < builder.Length; i++)
+            for (var i = 0; i < builder.Length; i++)
             {
-                for (int j = 0; j < startBrackets.Length; j++)
+                for (var j = 0; j < startBrackets.Length; j++)
                 {
                     if (builder.Length > i && builder[i] == startBrackets[j])
                     {
                         // start of bracket found
-                        for (int k = i; k < builder.Length; k++)
+                        for (var k = i; k < builder.Length; k++)
                         {
                             if (builder[k] == endBrackets[j])
                             {
@@ -175,13 +174,11 @@ namespace Base.Libraries
             }
         }
 
-
         private static void RemoveSingleBracket(StringBuilder builder, int startIndex, int endIndex)
         {
-            
             // check for meaningful episode number, i.e. "song (14).mp3"
             bool isNumber;
-            int result = 0;
+            var result = 0;
             if (endIndex - startIndex <= 1)
             {
                 isNumber = false;
@@ -205,16 +202,15 @@ namespace Base.Libraries
             }
         }
 
-
         public static bool FindFound(string text, FindString[] findWords)
         {
             if (findWords == null) return true;
 
             // if even a single word not found, item is no longer identified as found
-            bool found = true;
+            var found = true;
 
             // Filter each find word separately
-            foreach (FindString findString in findWords)
+            foreach (var findString in findWords)
             {
                 if (findString.Count == 1)
                 {
@@ -226,9 +222,9 @@ namespace Base.Libraries
                 }
                 else
                 {
-                    int lastIndex = text.IndexOf(findString.Text,
+                    var lastIndex = text.IndexOf(findString.Text,
                         StringComparison.OrdinalIgnoreCase);
-                    for (int j = 0; j < findString.Count; j++)
+                    for (var j = 0; j < findString.Count; j++)
                     {
                         if (lastIndex < 0)
                         {
@@ -246,7 +242,6 @@ namespace Base.Libraries
             return found;
         }
 
-
         /// <summary>
         /// Breaks down a find string to find word pieces, with appearance counts
         /// </summary>
@@ -261,12 +256,12 @@ namespace Base.Libraries
                 return null;
             }
 
-            int index = 0;
+            var index = 0;
 
             do
             {
                 index = text.LastIndexOf(" ", StringComparison.Ordinal);
-                string textPiece = text.Substring(index + 1);
+                var textPiece = text.Substring(index + 1);
 
 
                 findTexts.Add(new FindString(textPiece, 1));
@@ -279,12 +274,12 @@ namespace Base.Libraries
             } while (index > 0);
 
             // this filters duplicates
-            for (int i = 0; i < findTexts.Count; i++)
+            for (var i = 0; i < findTexts.Count; i++)
             {
                 // findtext == 0, means that it is identical to something else and has been disabled.
                 if (findTexts[i].Count == 0)
                     continue;
-                for (int j = 0; j < findTexts.Count; j++)
+                for (var j = 0; j < findTexts.Count; j++)
                 {
                     if (i == j)
                         continue;
@@ -303,7 +298,7 @@ namespace Base.Libraries
             }
 
             // remove extra find strings
-            for (int i = findTexts.Count - 1; i >= 0; i--)
+            for (var i = findTexts.Count - 1; i >= 0; i--)
             {
                 if (findTexts[i].Count == 0)
                     findTexts.RemoveAt(i);

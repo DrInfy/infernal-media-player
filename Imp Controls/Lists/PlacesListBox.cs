@@ -1,7 +1,11 @@
+#region Usings
+
 using System.Collections.Generic;
 using System.IO;
 using Base.ListLogic;
 using ImpControls.SpecialFolder;
+
+#endregion
 
 namespace ImpControls
 {
@@ -15,16 +19,12 @@ namespace ImpControls
         /// Initializes a new instance of the <see cref="PlacesListBox"/> class.
         /// </summary>
         public PlacesListBox()
-            : base(false, false)
-        {
-        }
-
+            : base(false, false) {}
 
         protected override void GetTooltip()
         {
-            toolTip.Content = controller.GetContent(MouseoverIndex).Value.Replace("$" , "");
+            toolTip.Content = controller.GetContent(MouseoverIndex).Value.Replace("$", "");
         }
-
 
         /// <summary>
         /// Loads the places.
@@ -46,7 +46,7 @@ namespace ImpControls
                     else
                     {
                         paths.Add(new DoubleString(driveInfo.RootDirectory.Name,
-                                                   driveInfo.RootDirectory.Name + " (" + driveInfo.VolumeLabel + ")"));
+                            driveInfo.RootDirectory.Name + " (" + driveInfo.VolumeLabel + ")"));
                     }
                 }
             }
@@ -59,7 +59,6 @@ namespace ImpControls
             controller.AddItem(new DoubleString("$" + SpecialFolderLoader.MusicFolderName, SpecialFolderLoader.MusicFolderName));
             controller.AddItem(new DoubleString("$" + SpecialFolderLoader.DownloadFolderName, SpecialFolderLoader.DownloadFolderName));
 
-            
 
             if (last != null)
             {

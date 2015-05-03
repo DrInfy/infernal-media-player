@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
@@ -11,15 +13,23 @@ using Base.Commands;
 using Base.ListLogic;
 using SelectionMode = Base.ListLogic.SelectionMode;
 
+#endregion
+
 namespace ImpControls
 {
     public delegate void ListSelectionChangedEventHandler();
 
     public class ImpListBox<T> : ImpBaseControl
     {
+        #region Static Fields and Constants
+
         protected const int SCROLLBARWIDTH = 10;
+
+        #endregion
+
+        #region Fields
+
         protected ListController<T> controller;
-        private bool dragActive;
 
         /// <summary>
         ///     Indicates where to drag current selection
@@ -29,37 +39,19 @@ namespace ImpControls
         /// </remarks>
         protected int DragTo = -1;
 
-        private int HIndex;
-        internal int ISize = 15;
-        private int LIndex;
-        //Mouse over index, the list box item that the mouse currently is over.
-        private int MOIndex = -1;
         protected MouseStates mouseoverState = MouseStates.None;
         protected MouseStates pressedState = MouseStates.None;
         protected ToolTip toolTip = new ToolTip();
+        internal int ISize = 15;
+        private bool dragActive;
+        private int HIndex;
+        private int LIndex;
+        //Mouse over index, the list box item that the mouse currently is over.
+        private int MOIndex = -1;
 
-        public ImpListBox(bool searchable, bool multiSelectable)
-        {
-            CreateController(searchable, multiSelectable);
+        #endregion
 
-            SizeChanged += ImpListBoxBase_SizeChanged;
-            MouseWheel += ImpListBoxBase_MouseWheel;
-            MouseMove += ImpListBoxBase_MouseMove;
-            MouseLeave += ImpListBoxBase_MouseLeave;
-            MouseEnter += ImpListBoxBase_MouseEnter;
-            MouseDown += ImpListBoxBase_MouseDown;
-            MouseDoubleClick += ImpListBoxBase_MouseDoubleClick;
-
-            controller.ListSizeChanged += ListSizeChanged;
-            controller.ListSelectionChanged += OnSelectionChanged; // need redrawing when list changes
-            //selected = New List(Of Boolean)
-            //For i As Integer = 1 To 20
-            //    selected.Add(False)
-            //Next
-
-            ToolTip = toolTip;
-            //toolTip.StaysOpen = true;
-        }
+        #region Properties
 
         public string FindText
         {
@@ -162,6 +154,31 @@ namespace ImpControls
         private bool ScrollBarVisible
         {
             get { return HighIndex - LowIndex < controller.VisibleCount - 1; }
+        }
+
+        #endregion
+
+        public ImpListBox(bool searchable, bool multiSelectable)
+        {
+            CreateController(searchable, multiSelectable);
+
+            SizeChanged += ImpListBoxBase_SizeChanged;
+            MouseWheel += ImpListBoxBase_MouseWheel;
+            MouseMove += ImpListBoxBase_MouseMove;
+            MouseLeave += ImpListBoxBase_MouseLeave;
+            MouseEnter += ImpListBoxBase_MouseEnter;
+            MouseDown += ImpListBoxBase_MouseDown;
+            MouseDoubleClick += ImpListBoxBase_MouseDoubleClick;
+
+            controller.ListSizeChanged += ListSizeChanged;
+            controller.ListSelectionChanged += OnSelectionChanged; // need redrawing when list changes
+            //selected = New List(Of Boolean)
+            //For i As Integer = 1 To 20
+            //    selected.Add(False)
+            //Next
+
+            ToolTip = toolTip;
+            //toolTip.StaysOpen = true;
         }
 
         #region Delegates & Events

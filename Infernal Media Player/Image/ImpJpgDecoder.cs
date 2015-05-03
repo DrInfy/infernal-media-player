@@ -1,18 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Usings
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Base;
+
+#endregion
 
 namespace Imp.Image
 {
     public class ImpJpgDecoder
     {
+        #region Fields
+
         public BitmapSource Source;
+
+        #endregion
 
         public ImpJpgDecoder(Uri uri)
         {

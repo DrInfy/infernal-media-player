@@ -1,41 +1,47 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using Base.Interfaces;
 using Base.Libraries;
 using Imp.Controllers;
+
+#endregion
 
 namespace Base.Controllers
 {
     public class MediaController
     {
+        #region Static Fields and Constants
+
         private const double startingMoveValue = 20.00;
         private const int MoveValueMax = 1000;
         private const int MoveValueIncrease = 100;
-        private IMediaUriPlayer player;
-        private IStateButton playButton;
-        private IStateButton muteButton;
-        private IStateButton loopButton;
-        private readonly IEventController eventC;
-        private double volume = 1;
-        
-        private double moveValue;
-        private long lastMovedtime;
-        private LoopMode loopMode = LoopMode.NoLoop;
+
+        #endregion
+
+        #region Fields
 
         // variables for handling keyboard based movement
         public bool LastMoved = false;
         public bool MoveTemp = false;
+        private readonly IMediaUriPlayer player;
+        private readonly IStateButton playButton;
+        private readonly IStateButton muteButton;
+        private readonly IStateButton loopButton;
+        private readonly IEventController eventC;
+        private double volume = 1;
+        private double moveValue;
+        private long lastMovedtime;
+        private LoopMode loopMode = LoopMode.NoLoop;
 
-        public MediaController(IMediaUriPlayer player, IStateButton playButton, IStateButton muteButton, IStateButton loopButton, IEventController eventC)
+        #endregion
+
+        #region Properties
+
+        public bool Paused
         {
-            this.muteButton = muteButton;
-            this.eventC = eventC;
-            this.loopButton = loopButton;
-            this.playButton = playButton;
-            this.player = player;
+            get { return playButton.CurrentState == 0; }
         }
-
-
-        public bool Paused { get { return playButton.CurrentState == 0; } }
 
         public double Volume
         {
@@ -48,6 +54,16 @@ namespace Base.Controllers
             set { loopMode = value; }
         }
 
+        #endregion
+
+        public MediaController(IMediaUriPlayer player, IStateButton playButton, IStateButton muteButton, IStateButton loopButton, IEventController eventC)
+        {
+            this.muteButton = muteButton;
+            this.eventC = eventC;
+            this.loopButton = loopButton;
+            this.playButton = playButton;
+            this.player = player;
+        }
 
         public void Play()
         {
@@ -66,7 +82,6 @@ namespace Base.Controllers
             eventC.SetEvent(new EventText("Paused", 1, EventType.Delayed));
         }
 
-
         public void PlayPause()
         {
             if (playButton.CurrentState == 0)
@@ -75,19 +90,17 @@ namespace Base.Controllers
                 Pause();
         }
 
-
         public void MediaClosed()
         {
             playButton.CurrentState = 0;
             playButton.IsEnabled = false;
         }
 
-
         public void MediaOpened()
         {
             playButton.IsEnabled = true;
             if (playButton.CurrentState != 0)
-                player.Volume = Volume; 
+                player.Volume = Volume;
 
             Play();
         }
@@ -98,18 +111,15 @@ namespace Base.Controllers
             playButton.CurrentState = 0;
         }
 
-
         public void Rewind()
         {
             FastMove(-1);
         }
 
-
         public void Fastforward()
         {
             FastMove(1);
         }
-
 
         private void FastMove(int sign)
         {
@@ -118,7 +128,7 @@ namespace Base.Controllers
             else
             {
                 moveValue = startingMoveValue;
-                lastMovedtime = DateTime.Now.Ticks - (long)(0.015  * LibImp.TicksToSecond);
+                lastMovedtime = DateTime.Now.Ticks - (long) (0.015 * LibImp.TicksToSecond);
             }
 
             moveValue = Math.Min(MoveValueMax, moveValue) * sign;
@@ -129,7 +139,6 @@ namespace Base.Controllers
             MoveTemp = true;
         }
 
-
         public void Mute()
         {
             player.Volume = 0;
@@ -137,14 +146,12 @@ namespace Base.Controllers
             eventC.SetEvent(new EventText("Muted"));
         }
 
-
         public void Unmute()
         {
             player.Volume = Volume;
             muteButton.CurrentState = 1;
             eventC.SetEvent(new EventText(String.Format("Volume: {0}%", ((int) (Volume * 100)))));
         }
-
 
         public void ToggleMute()
         {
@@ -154,12 +161,10 @@ namespace Base.Controllers
                 Mute();
         }
 
-
         public void FreePlayer()
         {
             player.Clear();
         }
-
 
         public void ToggleLoop()
         {
@@ -187,25 +192,24 @@ namespace Base.Controllers
             var rewind = (player.Position > positionInSeconds);
             positionInSeconds = Math.Max(Math.Min(positionInSeconds, player.Duration), 0);
 
-            
+
             eventC.SetEvent(
-                new EventText(String.Format("{0} {1}", rewind ? "<< ": ">> ",
+                new EventText(String.Format("{0} {1}", rewind ? "<< " : ">> ",
                     StringHandler.SecondsToTimeText((int) Math.Round(positionInSeconds)))));
             player.Position = positionInSeconds;
         }
 
-
         public void SetVolume(double volumePercentage)
         {
-            double volumeBy100 = Math.Max(Math.Min(Math.Round(volumePercentage * 100), 100), 0);
-            
+            var volumeBy100 = Math.Max(Math.Min(Math.Round(volumePercentage * 100), 100), 0);
+
             eventC.SetEvent(new EventText(String.Format("Volume: {0}%", ((int) volumeBy100))));
 
             volume = volumeBy100 / 100;
 
             // apply volume only when not muted
             if (muteButton.CurrentState != 0)
-                player.Volume = Volume;   
+                player.Volume = Volume;
         }
     }
 }

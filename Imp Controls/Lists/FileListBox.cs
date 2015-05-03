@@ -1,9 +1,8 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Base;
@@ -12,6 +11,8 @@ using Base.Libraries;
 using Base.ListLogic;
 using ImpControls.SpecialFolder;
 
+#endregion
+
 namespace ImpControls
 {
     /// <summary>
@@ -19,15 +20,21 @@ namespace ImpControls
     /// </summary>
     public sealed class FileListBox : ImpListBox<FileImpInfo>
     {
+        #region Fields
+
         private readonly ComparerSelectableFileName nameComparer;
         private readonly ComparerSelectableFileDate dateComparer;
         private FileSortMode sortMode;
-        private string currentPath; 
+        private string currentPath;
         private List<string> currentExtensions;
         private IEnumerable<string> filtersVideo;
         private IEnumerable<string> filtersMusic;
         private IEnumerable<string> filtersPictures;
         private IEnumerable<string> filtersPlaylist;
+
+        #endregion
+
+        #region Properties
 
         public FileSortMode SortMode
         {
@@ -43,11 +50,9 @@ namespace ImpControls
         }
 
         public string CurrentPath => currentPath;
+        public bool ColorCoding { get; set; }
 
-        protected override void GetTooltip()
-        {
-            toolTip.Content = controller.GetContent(MouseoverIndex).Name;
-        }
+        #endregion
 
         public FileListBox() : base(true, true)
         {
@@ -55,6 +60,11 @@ namespace ImpControls
             SortMode = FileSortMode.Name;
             nameComparer = new ComparerSelectableFileName();
             dateComparer = new ComparerSelectableFileDate();
+        }
+
+        protected override void GetTooltip()
+        {
+            toolTip.Content = controller.GetContent(MouseoverIndex).Name;
         }
 
         public void SetPath(string path, List<string> extensions)
@@ -65,7 +75,6 @@ namespace ImpControls
             SetPath();
         }
 
-
         private void SetPath()
         {
             FileInfo[] fileInfos;
@@ -75,12 +84,12 @@ namespace ImpControls
                 if (specialFolder != null)
                 {
                     fileInfos = new FileInfo[specialFolder.FilePaths.Count];
-                    for (int i = 0; i < specialFolder.FilePaths.Count; i++)
+                    for (var i = 0; i < specialFolder.FilePaths.Count; i++)
                         fileInfos[i] = new FileInfo(specialFolder.FilePaths[i]);
                 }
                 else
                 {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(currentPath);
+                    var directoryInfo = new DirectoryInfo(currentPath);
                     fileInfos = directoryInfo.GetFiles();
                 }
             }
@@ -101,19 +110,18 @@ namespace ImpControls
             Sort();
         }
 
-
         public void SetFiles(string path, List<string> pathList, List<string> extensions)
         {
             currentPath = path;
             var fileInfos = new FileInfo[pathList.Count];
             try
             {
-                for (int i = 0; i < pathList.Count; i++)
+                for (var i = 0; i < pathList.Count; i++)
                 {
                     fileInfos[i] = new FileInfo(pathList[i]);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // doesn't matter why path choosing failed, no files available in this folder
                 controller.Clear();
@@ -129,7 +137,6 @@ namespace ImpControls
             SetList(list);
             Sort();
         }
-
 
         protected override Brush getBrush(int i, DrawingContext drawingContext, Brush brush)
         {
@@ -159,23 +166,17 @@ namespace ImpControls
             return brush;
         }
 
-
-        public bool ColorCoding { get; set; }
-
-
         protected override void DrawText(int index, DrawingContext drawingContext, Brush brush)
         {
             if (ActualWidth - SCROLLBARWIDTH < 0)
                 return;
 
-            
 
-            FormattedText text = FormatText(controller.GetText(index), ref brush);
-            
+            var text = FormatText(controller.GetText(index), ref brush);
+
             if (text.MaxTextWidth > 0)
                 drawingContext.DrawText(text, new Point(3, (index - LowIndex) * ISize + 3));
         }
-
 
         public override FileImpInfo GetSelected()
         {
@@ -196,7 +197,6 @@ namespace ImpControls
                 controller.Sort(dateComparer);
             }
         }
-
 
         public void Refresh()
         {

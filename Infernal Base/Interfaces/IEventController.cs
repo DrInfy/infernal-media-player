@@ -1,4 +1,8 @@
-﻿using Imp.Controllers;
+﻿#region Usings
+
+using Imp.Controllers;
+
+#endregion
 
 namespace Base.Interfaces
 {

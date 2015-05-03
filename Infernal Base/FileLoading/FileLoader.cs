@@ -1,28 +1,46 @@
-﻿using System.Threading;
+﻿#region Usings
+
+using System.Threading;
 using System.Windows.Threading;
+
+#endregion
 
 namespace Base.FileLoading
 {
     public abstract class FileLoader<T>
     {
+        #region Helpers
+
+        public delegate void LoadedBitmapEventHandler(T loadedFile);
+
+        public delegate void LoadedEventHandler(T loadedFile);
+
+        public delegate void LoadFailedEventHandler(ImpError errorMessage);
+
+        public delegate void LoadFailedMainEventHandler(ImpError errorMessage);
+
+        #endregion
+
+        #region Fields
+
         protected readonly Dispatcher dispatcher;
+        protected LoadedBitmapEventHandler LoadedMainEvent;
+        protected LoadFailedMainEventHandler loadFailedMainEvent;
+        private readonly object loadLock = new object();
         private volatile bool currentlyLoading;
         private string fileInQueue;
         private string fileInLoading;
 
-        public event LoadedEventHandler Loaded;
-        public delegate void LoadedEventHandler(T loadedFile);
-        public delegate void LoadedBitmapEventHandler(T loadedFile);
-        protected LoadedBitmapEventHandler LoadedMainEvent;
+        #endregion
 
-        public event LoadFailedEventHandler LoadFailed;
-        public delegate void LoadFailedEventHandler(ImpError errorMessage);
-        public delegate void LoadFailedMainEventHandler(ImpError errorMessage);
-        protected LoadFailedMainEventHandler loadFailedMainEvent;
+        #region Properties
 
-        private object loadLock = new object();
+        public bool IsLoading
+        {
+            get { return currentlyLoading; }
+        }
 
-        public bool IsLoading { get { return currentlyLoading; } }
+        #endregion
 
         public FileLoader(Dispatcher dispatcher)
         {
@@ -30,6 +48,9 @@ namespace Base.FileLoading
             LoadedMainEvent = RaiseLoadedMainThread;
             loadFailedMainEvent = RaiseLoadFailedMainThread;
         }
+
+        public event LoadedEventHandler Loaded;
+        public event LoadFailedEventHandler LoadFailed;
 
         /// <summary>
         /// Call dispatcher to switch to main thread so we can call load success event
@@ -43,7 +64,6 @@ namespace Base.FileLoading
             }
         }
 
-
         /// <summary>
         /// Using Main thread, raise the load success event
         /// </summary>
@@ -52,7 +72,6 @@ namespace Base.FileLoading
         {
             Loaded(loadedFile);
         }
-
 
         /// <summary>
         /// Call dispatcher to switch to main thread so we can call load failed event
@@ -73,7 +92,6 @@ namespace Base.FileLoading
             LoadFailed(errorMessage);
         }
 
-
         public void OpenFile(string path)
         {
             lock (loadLock)
@@ -91,7 +109,6 @@ namespace Base.FileLoading
         {
             lock (loadLock)
             {
-
                 if (!currentlyLoading && !string.IsNullOrEmpty(fileInQueue))
                 {
                     fileInLoading = fileInQueue;

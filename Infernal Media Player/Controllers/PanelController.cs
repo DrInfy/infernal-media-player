@@ -1,27 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region Usings
+
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Base;
-using Base.Libraries;
-using Ipv;
+
+#endregion
 
 namespace Imp.Controllers
 {
     public class PanelController : IPanelController
     {
+        #region Helpers
+
         private struct PanelPositions
         {
+            #region Fields
+
             public double LeftPercentage;
             public double MidPercentage;
             public double RightPercentage;
             public Point OriginalCursorPosition;
             public Point OriginalCursorPositionOnControl;
+
+            #endregion
         }
+
+        #endregion
+
+        #region Static Fields and Constants
 
         private const int resizerWidth = 5;
         private const int PanelHeight = 40;
@@ -29,28 +37,35 @@ namespace Imp.Controllers
         private const int desiredRightWidth = 350;
         private const int MaxDesiredLeftWidth = 600;
         private const int MaxDesiredRightWidth = 600;
-        private int minLeftPanelWidth = 200;
-        private int minRightPanelWidth = 200;
-        
-        private readonly MainWindow window;
 
+        #endregion
+
+        #region Fields
+
+        private readonly int minLeftPanelWidth = 200;
+        private readonly int minRightPanelWidth = 200;
+        private readonly MainWindow window;
         private PanelPositions oldPositions = new PanelPositions();
+
+        #endregion
+
+        #region Properties
+
+        private bool IsLeftOpen
+        {
+            get { return window.grid.ColumnDefinitions[0].ActualWidth > 1; }
+        }
+
+        private bool IsRightOpen
+        {
+            get { return window.grid.ColumnDefinitions[4].ActualWidth > 1; }
+        }
+
+        #endregion
 
         public PanelController(MainWindow window)
         {
             this.window = window;
-        }
-
-        private bool IsLeftOpen { get { return window.grid.ColumnDefinitions[0].ActualWidth > 1; } }
-
-        private bool IsRightOpen { get { return window.grid.ColumnDefinitions[4].ActualWidth > 1; } }
-
-        /// <summary>
-        /// hides other left panels and makes panel open visible
-        /// </summary>
-        private void MakeVisiblePanelOpen()
-        {
-            window.PanelOpen.Visibility = Visibility.Visible;
         }
 
         public void CommandPanelOpen(PanelCommand? panelCommand)
@@ -70,7 +85,7 @@ namespace Imp.Controllers
 
 
             if (command == PanelCommand.MaxToggle &&
-                (window.grid.ColumnDefinitions[2].ActualWidth > 1 || window.grid.ColumnDefinitions[3].ActualWidth > 1 ))
+                (window.grid.ColumnDefinitions[2].ActualWidth > 1 || window.grid.ColumnDefinitions[3].ActualWidth > 1))
                 command = PanelCommand.Maximize;
             else if (command == PanelCommand.MaxToggle)
                 command = PanelCommand.Normalize;
@@ -102,14 +117,13 @@ namespace Imp.Controllers
             CheckMainGrid();
         }
 
-
         public void CommandPanelPlaylist(PanelCommand? panelCommand)
         {
             PanelCommand command;
             if (panelCommand == null)
                 command = PanelCommand.Toggle;
             else
-                command = (PanelCommand)panelCommand;
+                command = (PanelCommand) panelCommand;
 
 
             if (command == PanelCommand.Toggle &&
@@ -152,7 +166,6 @@ namespace Imp.Controllers
             CheckMainGrid();
         }
 
-
         public void RememberThisPanelPosition(Point cursorPosition, Point cursorOnControl)
         {
             oldPositions.OriginalCursorPosition = cursorPosition;
@@ -161,7 +174,6 @@ namespace Imp.Controllers
             oldPositions.MidPercentage = GetMiddlePercentage();
             oldPositions.RightPercentage = GetRightPercentage();
         }
-
 
         public void PanelPanLeft(Point cursorPosition)
         {
@@ -180,7 +192,6 @@ namespace Imp.Controllers
                         window.grid.ColumnDefinitions[2].Width = new GridLength(window.ActualWidth - oldPositions.RightPercentage * window.ActualWidth, GridUnitType.Star);
                         NormalizePanelButtons();
                     }
-                        
                 }
                 else if (window.ActualWidth - leftWidth < minRightPanelWidth)
                 {
@@ -222,7 +233,6 @@ namespace Imp.Controllers
                         window.grid.ColumnDefinitions[4].Width = new GridLength(window.ActualWidth - leftWidth - resizerWidth, GridUnitType.Star);
                     }
                 }
-                
             }
             else
             {
@@ -247,7 +257,6 @@ namespace Imp.Controllers
             }
         }
 
-
         public void PanelPanRight(Point cursorPosition)
         {
             var rightWidth = window.ActualWidth - (cursorPosition.X + resizerWidth - oldPositions.OriginalCursorPositionOnControl.X);
@@ -265,7 +274,6 @@ namespace Imp.Controllers
                         window.grid.ColumnDefinitions[2].Width = new GridLength(window.ActualWidth - oldPositions.RightPercentage * window.ActualWidth, GridUnitType.Star);
                         NormalizePanelButtons();
                     }
-
                 }
                 else if (window.ActualWidth - rightWidth < minLeftPanelWidth)
                 {
@@ -307,7 +315,6 @@ namespace Imp.Controllers
                         window.grid.ColumnDefinitions[0].Width = new GridLength(window.ActualWidth - rightWidth - resizerWidth, GridUnitType.Star);
                     }
                 }
-
             }
             else
             {
@@ -332,13 +339,6 @@ namespace Imp.Controllers
             }
         }
 
-
-        private void MakeVisiblePanelPlaylist()
-        {
-            window.PanelPlaylist.Visibility = Visibility.Visible;
-        }
-
-
         public void HideRightPanel()
         {
             if (GetMiddlePercentage() <= 0)
@@ -353,7 +353,7 @@ namespace Imp.Controllers
                         window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth, GridUnitType.Pixel);
                         window.grid.ColumnDefinitions[2].Width = new GridLength(window.ActualWidth - resizerWidth - leftWidth, GridUnitType.Star);
                         window.grid.ColumnDefinitions[3].Width = new GridLength(0, GridUnitType.Pixel);
-                        window.grid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);    
+                        window.grid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);
                         NormalizePanelButtons();
                     }
                     else
@@ -364,7 +364,7 @@ namespace Imp.Controllers
                 else
                 {
                     window.grid.ColumnDefinitions[3].Width = new GridLength(0, GridUnitType.Pixel);
-                    window.grid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);  
+                    window.grid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);
                 }
             }
             else
@@ -373,16 +373,128 @@ namespace Imp.Controllers
                 if (left > 0)
                 {
                     window.grid.ColumnDefinitions[0].Width = new GridLength(left * window.ActualWidth, GridUnitType.Star);
-                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth, GridUnitType.Pixel); 
+                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth, GridUnitType.Pixel);
                 }
 
                 window.grid.ColumnDefinitions[2].Width = new GridLength((1 - left) * window.ActualWidth - resizerWidth, GridUnitType.Star);
                 window.grid.ColumnDefinitions[3].Width = new GridLength(0, GridUnitType.Pixel);
-                window.grid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);    
+                window.grid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);
             }
             window.PanelPlaylist.Visibility = Visibility.Hidden;
         }
 
+        public void HideLeftPanel()
+        {
+            if (GetMiddlePercentage() <= 0)
+            {
+                var right = GetRightPercentage();
+                if (right > 0)
+                {
+                    if (window.ActualWidth > MaxDesiredLeftWidth)
+                    {
+                        var rightWidth = Math.Min(MaxDesiredRightWidth, window.ActualWidth * 0.5);
+                        window.grid.ColumnDefinitions[4].Width = new GridLength(rightWidth, GridUnitType.Star);
+                        window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth, GridUnitType.Pixel);
+                        window.grid.ColumnDefinitions[2].Width = new GridLength(window.ActualWidth - resizerWidth - rightWidth, GridUnitType.Star);
+                        window.grid.ColumnDefinitions[1].Width = new GridLength(0);
+                        window.grid.ColumnDefinitions[0].Width = new GridLength(0);
+                        NormalizePanelButtons();
+                    }
+                    else
+                    {
+                        ShowOnlyRight();
+                    }
+                }
+                else
+                {
+                    window.grid.ColumnDefinitions[0].Width = new GridLength(0);
+                    window.grid.ColumnDefinitions[1].Width = new GridLength(0);
+                }
+            }
+            else
+            {
+                var right = GetRightPercentage();
+                if (right > 0)
+                {
+                    window.grid.ColumnDefinitions[4].Width = new GridLength(right * window.ActualWidth, GridUnitType.Star);
+                    window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth, GridUnitType.Pixel);
+                }
+
+                window.grid.ColumnDefinitions[2].Width = new GridLength((1 - right) * window.ActualWidth - resizerWidth, GridUnitType.Star);
+                window.grid.ColumnDefinitions[1].Width = new GridLength(0, GridUnitType.Pixel);
+                window.grid.ColumnDefinitions[0].Width = new GridLength(0, GridUnitType.Star);
+            }
+            window.PanelOpen.Visibility = Visibility.Hidden;
+        }
+
+        /// <summary>
+        /// Ensures that grid doesn't break down with all columns being 0
+        /// </summary>
+        public void CheckMainGrid()
+        {
+            if (window.grid.ColumnDefinitions[0].Width.Value <= 0 && window.grid.ColumnDefinitions[4].Width.Value <= 0)
+            {
+                window.grid.ColumnDefinitions[2].Width = new GridLength(3, GridUnitType.Star);
+            }
+
+            if (!IsLeftOpen && !IsRightOpen)
+                NormalizePanelButtons();
+        }
+
+        public void Update() {}
+
+        public void CheckPanelHide(Point cursorPosition)
+        {
+            if (window.panelLeft.Width.Value <= 0 && window.panelRight.Width.Value <= 0 &&
+                (window.ExtWindowState == ExtWindowState.Maximized || window.ExtWindowState == ExtWindowState.Fullscreen) &&
+                ((cursorPosition.Y > window.PanelHigh.Height.Value &&
+                  cursorPosition.Y < window.ActualHeight - window.PanelHigh.Height.Value - 1 &&
+                  (cursorPosition.X < 2 || cursorPosition.X > window.ActualWidth - 2)) ||
+                 (cursorPosition.Y < 0 ||
+                  cursorPosition.Y > window.ActualHeight)))
+            {
+                HideBottomAndTop();
+            }
+            else
+            {
+                ShowBottomAndTop();
+            }
+        }
+
+        public void HideBottomAndTop()
+        {
+            window.PanelHigh.Height = new GridLength(0, GridUnitType.Pixel);
+            window.PanelLow.Height = new GridLength(0, GridUnitType.Pixel);
+            Mouse.OverrideCursor = Cursors.None;
+            window.LabelEvent.Visibility = Visibility.Visible;
+        }
+
+        public void ShowBottomAndTop()
+        {
+            window.PanelHigh.Height = new GridLength(PanelHeight, GridUnitType.Pixel);
+            window.PanelLow.Height = new GridLength(PanelHeight, GridUnitType.Pixel);
+            Mouse.OverrideCursor = null;
+            window.LabelEvent.Visibility = Visibility.Hidden;
+        }
+
+        public void CheckResize()
+        {
+            ResizeTitleBar();
+            CheckPanelsOnResize();
+        }
+
+        /// <summary>
+        /// hides other left panels and makes panel open visible
+        /// </summary>
+        private void MakeVisiblePanelOpen()
+        {
+            window.PanelOpen.Visibility = Visibility.Visible;
+        }
+
+        private void MakeVisiblePanelPlaylist()
+        {
+            window.PanelPlaylist.Visibility = Visibility.Visible;
+        }
 
         private bool NormalizeRight()
         {
@@ -440,7 +552,6 @@ namespace Imp.Controllers
             }
             return true;
         }
-
 
         private void MaximizeRight()
         {
@@ -510,8 +621,6 @@ namespace Imp.Controllers
                             window.grid.ColumnDefinitions[0].Width = new GridLength(desiredLeftWidth, GridUnitType.Star);
                         }
                     }
-
-                    
                 }
             }
             else
@@ -604,7 +713,6 @@ namespace Imp.Controllers
             }
         }
 
-
         private void ShowLeftAndMiddleEven()
         {
             window.grid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
@@ -625,7 +733,6 @@ namespace Imp.Controllers
             window.grid.ColumnDefinitions[4].Width = new GridLength(1, GridUnitType.Star);
         }
 
-
         private void ShowOnlyBothPanelsMaxed()
         {
             window.grid.ColumnDefinitions[2].Width = new GridLength(0);
@@ -636,7 +743,6 @@ namespace Imp.Controllers
             window.grid.ColumnDefinitions[4].Width = new GridLength(1, GridUnitType.Star);
             MaximizePanelButtons();
         }
-
 
         private void ShowOnlyRight()
         {
@@ -674,7 +780,6 @@ namespace Imp.Controllers
             window.PanelPlaylist.ButtonMaximizePanel.CurrentState = 0;
         }
 
-
         private void MaximizePanelButtons()
         {
             window.PanelOpen.ButtonMaximizePanel.CurrentState = 1;
@@ -703,9 +808,6 @@ namespace Imp.Controllers
                 {
                     SetNormalLayoutPanelsVisible();
                 }
-                
-
-                
             }
             else
             {
@@ -741,7 +843,6 @@ namespace Imp.Controllers
             return true;
         }
 
-
         private void SetNormalLayoutPanelsVisible()
         {
             window.grid.ColumnDefinitions[0].Width = new GridLength(2, GridUnitType.Star);
@@ -750,7 +851,6 @@ namespace Imp.Controllers
             window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth);
             window.grid.ColumnDefinitions[4].Width = new GridLength(2, GridUnitType.Star);
         }
-
 
         private void MaximizeLeft()
         {
@@ -763,15 +863,13 @@ namespace Imp.Controllers
                 window.grid.ColumnDefinitions[0].Width = new GridLength((1 - rightPercentage) * window.ActualWidth - resizerWidth, GridUnitType.Star);
                 window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
                 window.grid.ColumnDefinitions[2].Width = new GridLength(0);
-                window.grid.ColumnDefinitions[3].Width = new GridLength(0);    
+                window.grid.ColumnDefinitions[3].Width = new GridLength(0);
                 window.grid.ColumnDefinitions[4].Width = new GridLength(rightPercentage * window.ActualWidth, GridUnitType.Star);
             }
             else
             {
                 ShowOnlyLeft();
             }
-
-            
         }
 
         private double GetPercentage(ColumnDefinition current, double actualWidth, ColumnDefinitionCollection columnDefinitions)
@@ -782,7 +880,7 @@ namespace Imp.Controllers
             else
             {
                 double percentageWidthPixels;
-                double totalPercentage = current.Width.Value;
+                var totalPercentage = current.Width.Value;
                 percentageWidthPixels = actualWidth;
 
                 foreach (var column in columnDefinitions)
@@ -796,7 +894,7 @@ namespace Imp.Controllers
                 }
 
                 percentage = percentageWidthPixels / actualWidth *
-                                  current.Width.Value / totalPercentage;
+                             current.Width.Value / totalPercentage;
             }
             return percentage;
         }
@@ -806,132 +904,15 @@ namespace Imp.Controllers
             return GetPercentage(window.grid.ColumnDefinitions[4], window.ActualWidth, window.grid.ColumnDefinitions);
         }
 
-        
-
         private double GetLeftPercentage()
         {
             return GetPercentage(window.grid.ColumnDefinitions[0], window.ActualWidth, window.grid.ColumnDefinitions);
         }
 
-
         private double GetMiddlePercentage()
         {
             return GetPercentage(window.grid.ColumnDefinitions[2], window.ActualWidth, window.grid.ColumnDefinitions);
         }
-
-
-        public void HideLeftPanel()
-        {
-            if (GetMiddlePercentage() <= 0)
-            {
-                var right = GetRightPercentage();
-                if (right > 0)
-                {
-                    if (window.ActualWidth > MaxDesiredLeftWidth)
-                    {
-                        var rightWidth = Math.Min(MaxDesiredRightWidth, window.ActualWidth * 0.5);
-                        window.grid.ColumnDefinitions[4].Width = new GridLength(rightWidth, GridUnitType.Star);
-                        window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth, GridUnitType.Pixel);
-                        window.grid.ColumnDefinitions[2].Width = new GridLength(window.ActualWidth - resizerWidth - rightWidth, GridUnitType.Star);
-                        window.grid.ColumnDefinitions[1].Width = new GridLength(0);
-                        window.grid.ColumnDefinitions[0].Width = new GridLength(0);
-                        NormalizePanelButtons();
-                    }
-                    else
-                    {
-                        ShowOnlyRight();
-                    }
-                }
-                else
-                {
-                    window.grid.ColumnDefinitions[0].Width = new GridLength(0);
-                    window.grid.ColumnDefinitions[1].Width = new GridLength(0);
-                }
-            }
-            else
-            {
-                var right = GetRightPercentage();
-                if (right > 0)
-                {
-                    window.grid.ColumnDefinitions[4].Width = new GridLength(right * window.ActualWidth, GridUnitType.Star);
-                    window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth, GridUnitType.Pixel);
-                }
-
-                window.grid.ColumnDefinitions[2].Width = new GridLength((1 - right) * window.ActualWidth - resizerWidth, GridUnitType.Star);
-                window.grid.ColumnDefinitions[1].Width = new GridLength(0, GridUnitType.Pixel);
-                window.grid.ColumnDefinitions[0].Width = new GridLength(0, GridUnitType.Star);
-            }
-            window.PanelOpen.Visibility = Visibility.Hidden;
-        }
-
-
-        
-
-
-        /// <summary>
-        /// Ensures that grid doesn't break down with all columns being 0
-        /// </summary>
-        public void CheckMainGrid()
-        {
-            if (window.grid.ColumnDefinitions[0].Width.Value <= 0 && window.grid.ColumnDefinitions[4].Width.Value <= 0)
-            {
-                window.grid.ColumnDefinitions[2].Width = new GridLength(3, GridUnitType.Star);
-            }
-
-            if (!IsLeftOpen && !IsRightOpen)
-                NormalizePanelButtons();
-        }
-
-
-        public void Update()
-        {
-            
-        }
-
-
-        public void CheckPanelHide(Point cursorPosition)
-        {
-            if (window.panelLeft.Width.Value <= 0 && window.panelRight.Width.Value <= 0 &&
-                (window.ExtWindowState == ExtWindowState.Maximized || window.ExtWindowState == ExtWindowState.Fullscreen) &&
-                 ((cursorPosition.Y > window.PanelHigh.Height.Value &&
-                  cursorPosition.Y < window.ActualHeight - window.PanelHigh.Height.Value - 1 &&
-                  (cursorPosition.X < 2 || cursorPosition.X > window.ActualWidth - 2)) ||
-                  (cursorPosition.Y < 0 ||
-                  cursorPosition.Y > window.ActualHeight)))
-            {
-                HideBottomAndTop();
-            }
-            else
-            {
-                ShowBottomAndTop();
-            }
-        }
-
-
-        public void HideBottomAndTop()
-        {
-            window.PanelHigh.Height = new GridLength(0, GridUnitType.Pixel);
-            window.PanelLow.Height = new GridLength(0, GridUnitType.Pixel);
-            Mouse.OverrideCursor = Cursors.None;
-            window.LabelEvent.Visibility = Visibility.Visible;
-        }
-
-
-        public void ShowBottomAndTop()
-        {
-            window.PanelHigh.Height = new GridLength(PanelHeight, GridUnitType.Pixel);
-            window.PanelLow.Height = new GridLength(PanelHeight, GridUnitType.Pixel);
-            Mouse.OverrideCursor = null;
-            window.LabelEvent.Visibility = Visibility.Hidden;
-        }
-
-
-        public void CheckResize()
-        {
-            ResizeTitleBar();
-            CheckPanelsOnResize();
-        }
-
 
         private void CheckPanelsOnResize()
         {
@@ -959,9 +940,7 @@ namespace Imp.Controllers
             {
                 NormalizeRight();
             }
-            
         }
-
 
         private void ResizeTitleBar()
         {

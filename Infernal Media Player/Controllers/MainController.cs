@@ -1,15 +1,5 @@
-﻿using Base;
-using Base.Commands;
-using Base.Controllers;
-using Base.FileData;
-using Base.Libraries;
-using Base.ListLogic;
-using Imp.Image;
-using Imp.Libraries;
-using ImpControls.Controllers;
-using MediaPlayer;
-using MediaPlayer.Player;
-using Microsoft.WindowsAPICodePack.Taskbar;
+﻿#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,24 +10,65 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Base;
+using Base.Commands;
+using Base.Controllers;
+using Base.FileData;
 using Base.FileLoading;
+using Base.Libraries;
+using Base.ListLogic;
+using Imp.Image;
+using Imp.Libraries;
+using ImpControls.Controllers;
+using MediaPlayer;
+using MediaPlayer.Player;
+using Microsoft.WindowsAPICodePack.Taskbar;
+
+#endregion
 
 namespace Imp.Controllers
 {
     public partial class MainController : BaseController
     {
-        private static readonly OperatingSystem osInfo = Environment.OSVersion;
-        public readonly Popup ContentMenu;
+        #region Static Fields and Constants
 
+        private static readonly OperatingSystem osInfo = Environment.OSVersion;
+
+        #endregion
+
+        #region Fields
+
+        public readonly Popup ContentMenu;
         private readonly ImageLoader imageLoader;
         private readonly MediaLoader mediaLoader;
         private readonly MainWindow window;
         private BitmapSource currentImage;
 
+        #endregion
+
+        #region Properties
+
+        public override bool Focused
+        {
+            get { return !window.PanelOpen.TextBoxFind.IsFocused && !window.PanelPlaylist.TextBoxFind.IsFocused; }
+        }
+
+        public override bool Selected
+        {
+            get { return window.IsActive && window.ExtWindowState != ExtWindowState.Minimized; }
+        }
+
+        public override bool IsMostRecentInstance
+        {
+            get { return ImpMessaging.LastActive; }
+        }
+
+        #endregion
+
         public MainController(MainWindow window)
         {
             AllowedStyles = PlayerStyle.MediaPlayer;
-            
+
             ToolTipService.ShowDurationProperty.OverrideMetadata(
                 typeof (DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
@@ -65,21 +96,6 @@ namespace Imp.Controllers
             ContentMenu = window.ContentMenu;
 
             ApplySettings();
-        }
-
-        public override bool Focused
-        {
-            get { return !window.PanelOpen.TextBoxFind.IsFocused && !window.PanelPlaylist.TextBoxFind.IsFocused; }
-        }
-
-        public override bool Selected
-        {
-            get { return window.IsActive && window.ExtWindowState != ExtWindowState.Minimized; }
-        }
-
-        public override bool IsMostRecentInstance
-        {
-            get { return ImpMessaging.LastActive; }
         }
 
         protected void ApplySettings()
@@ -259,7 +275,7 @@ namespace Imp.Controllers
 
             window.MenuList.SetList(cmdList);
 
-            Size size = window.MenuList.DesiredSize();
+            var size = window.MenuList.DesiredSize();
             ContentMenu.Height = size.Height;
             ContentMenu.Width = size.Width;
 
@@ -290,7 +306,7 @@ namespace Imp.Controllers
 
         protected override void RemoveSelectedPath()
         {
-            string path = window.PanelOpen.ListPlaces.GetSelected().Value;
+            var path = window.PanelOpen.ListPlaces.GetSelected().Value;
             if (!Settings.CustomPaths.Contains(path))
             {
                 EventC.SetEvent(new EventText("Path cannot be removed", 1, EventType.Delayed));
@@ -307,7 +323,7 @@ namespace Imp.Controllers
 
         protected override void AddSelectedFolderToPaths()
         {
-            string path = window.PanelOpen.ListDirectories.GetSelected().Value;
+            var path = window.PanelOpen.ListDirectories.GetSelected().Value;
             if (StringHandler.IsSpecialFolder(path)) return;
             if (Settings.CustomPaths.Contains(path)) return;
             Settings.CustomPaths.Add(path);
@@ -341,11 +357,11 @@ namespace Imp.Controllers
 
         protected override void RequestDeleteOpenFiles()
         {
-            List<FileImpInfo> items = window.PanelOpen.ListFiles.GetSelectedList();
+            var items = window.PanelOpen.ListFiles.GetSelectedList();
             var playlistItems = new List<PlaylistItem>(items.Count);
             var paths = new List<string>(items.Count);
 
-            foreach (FileImpInfo fileImpInfo in items)
+            foreach (var fileImpInfo in items)
             {
                 paths.Add(fileImpInfo.Path);
                 playlistItems.Add(new PlaylistItem(fileImpInfo));
@@ -362,8 +378,8 @@ namespace Imp.Controllers
 
         protected override void PlaySelectedOpenFiles()
         {
-            List<FileImpInfo> list = window.PanelOpen.ListFiles.GetSelectedList();
-            for (int i = 0; i < list.Count; i++)
+            var list = window.PanelOpen.ListFiles.GetSelectedList();
+            for (var i = 0; i < list.Count; i++)
             {
                 if (i == 0)
                     Exec(ImpCommand.OpenFile, list[i]);
@@ -374,11 +390,11 @@ namespace Imp.Controllers
 
         protected override void RequestPlaylistFileDeletion()
         {
-            List<PlaylistItem> items = window.PanelPlaylist.ListPlaylist.GetSelectedList();
+            var items = window.PanelPlaylist.ListPlaylist.GetSelectedList();
 
             var paths = new List<string>(items.Count);
 
-            foreach (PlaylistItem playlistItem in items)
+            foreach (var playlistItem in items)
                 paths.Add(playlistItem.FullPath);
 
             PopupDeleteWindow(paths, items);
@@ -400,7 +416,7 @@ namespace Imp.Controllers
 
         protected override void OpenSelectedInExplorer()
         {
-            PlaylistItem item = window.PanelPlaylist.ListPlaylist.GetSelected();
+            var item = window.PanelPlaylist.ListPlaylist.GetSelected();
             if (item != null)
             {
                 Process.Start("explorer.exe", string.Format("/select,\"{0}\"", item.FullPath));
@@ -514,8 +530,8 @@ namespace Imp.Controllers
             // TODO: update position only when it has changed
             if (window.UriPlayer.IsPlaying)
             {
-                double duration = window.UriPlayer.Duration;
-                double position = window.UriPlayer.Position;
+                var duration = window.UriPlayer.Duration;
+                var position = window.UriPlayer.Position;
                 window.PlayerBottom.SliderTime.Maximum = duration;
                 window.PlayerBottom.SliderTime.Value = position;
 
@@ -556,8 +572,8 @@ namespace Imp.Controllers
 
         public void PermanentlyDeleteFiles(List<PlaylistItem> playlistItemsToDelete)
         {
-            int fileDeleteCount = 0;
-            foreach (PlaylistItem playlistItem in playlistItemsToDelete)
+            var fileDeleteCount = 0;
+            foreach (var playlistItem in playlistItemsToDelete)
             {
                 if (playingItem != null && playingItem.FullPath.Equals(playlistItem.FullPath))
                 {

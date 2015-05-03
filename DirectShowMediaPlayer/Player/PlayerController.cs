@@ -1,30 +1,28 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
+﻿#region Usings
+
+using System;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Timers;
 using System.Windows.Threading;
 using Base;
 using Base.Controllers;
-
 using DirectShowLib;
 using MediaPlayer.Helpers;
-using Size = System.Windows.Size;
-using Timer = System.Timers.Timer;
 
+#endregion
 
 namespace MediaPlayer.Player
 {
     public class PlayerController
     {
-        private bool reallyPlaying = false;
-        private ImpFader fader;
+        #region Fields
 
         internal readonly string FilePath;
+        private readonly ImpFader fader;
         private readonly Dispatcher dispatcher;
+        private readonly FilterGraphs graphs;
+        private bool reallyPlaying = false;
         private volatile bool timerUpdating = false;
-        private FilterGraphs graphs;
-
         private double fadingVolume;
         //private Dispatcher dispatcher;
 
@@ -42,6 +40,10 @@ namespace MediaPlayer.Player
         private Timer graphPollTimer;
 
         private double volume;
+
+        #endregion
+
+        #region Properties
 
         public bool Released { get; private set; }
 
@@ -73,23 +75,23 @@ namespace MediaPlayer.Player
             get { return graphs.HasVideo; }
         }
 
+        #endregion
 
         public PlayerController(string filePath, Dispatcher dispatcher)
         {
             graphs = new FilterGraphs(this);
-            this.FilePath = filePath;
+            FilePath = filePath;
             this.dispatcher = dispatcher;
             //this.dispatcher = dispatcher;
             fader = new ImpFader();
         }
-
 
         public void HandleCommand()
         {
             if (currentCommand != queuedCommand)
             {
                 currentCommand = queuedCommand;
-                
+
                 switch (currentCommand)
                 {
                     case MediaCommand.Play:
@@ -127,23 +129,21 @@ namespace MediaPlayer.Player
                 queuedCommand = command;
         }
 
-
         private void UpdateFade()
         {
-         
-            long position = graphs.Position;
-            long oldPosition = position;
+            var position = graphs.Position;
+            var oldPosition = position;
             //int volumeInt;
             //graphs.Audio.get_Volume(out volumeInt);
             //fadingVolume = DShowHelper.DirectShowVolumeToVolumePercentage(volumeInt);
-            double oldVolume = fadingVolume;// DShowHelper.DirectShowVolumeToVolumePercentage(volumeInt);
+            var oldVolume = fadingVolume; // DShowHelper.DirectShowVolumeToVolumePercentage(volumeInt);
 
             if (fader.Update(ref position, ref oldVolume, currentCommand == MediaCommand.Stop))
             {
                 if (reallyPlaying)
                 {
                     graphs.MediaControl.Pause();
-                    reallyPlaying = false;   
+                    reallyPlaying = false;
                 }
             }
             else
@@ -154,8 +154,8 @@ namespace MediaPlayer.Player
                     reallyPlaying = true;
                 }
             }
-                
-            
+
+
             //DShowHelper.VolumePercentageToDirectShowVolume(volume);
             if (oldPosition != position)
                 graphs.Seeking.SetPositions(position, AMSeekingSeekingFlags.AbsolutePositioning, 0,
@@ -168,15 +168,12 @@ namespace MediaPlayer.Player
                     fadingVolume = oldVolume;
                 graphs.Audio.put_Volume(DShowHelper.VolumePercentageToDirectShowVolume(fadingVolume));
             }
-                
         }
-        
 
         /// <summary>
         /// Notifies when the media has completed
         /// </summary>
         public event Action MediaEnded;
-
 
         /// <summary>
         ///     Event notifies when there is a new video frame
@@ -189,7 +186,6 @@ namespace MediaPlayer.Player
         /// </summary>
         public event NewAllocatorSurfaceDelegate NewAllocatorSurface;
 
-
         public virtual void OpenSource(out ImpError result)
         {
             result = null;
@@ -201,7 +197,6 @@ namespace MediaPlayer.Player
             graphs.SetMediaSeekingInterface(graphs.GraphBuilder as IMediaSeeking);
         }
 
-
         public ImpError Activate()
         {
             ImpError result = null;
@@ -209,7 +204,7 @@ namespace MediaPlayer.Player
             if (graphs.HasVideo)
             {
                 RegisterCustomAllocator(graphs.Allocator);
-                graphs.Allocator.InvokeSurfaceCreation();    
+                graphs.Allocator.InvokeSurfaceCreation();
             }
             else
             {
@@ -226,9 +221,6 @@ namespace MediaPlayer.Player
             return result;
         }
 
-        
-
-
         /// <summary>
         /// Starts the graph polling timer to update possibly needed
         /// things like the media position
@@ -244,7 +236,6 @@ namespace MediaPlayer.Player
             graphPollTimer.Enabled = true;
         }
 
-
         private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (timerUpdating)
@@ -255,19 +246,17 @@ namespace MediaPlayer.Player
             if (currentCommand == MediaCommand.Close)
                 return;
 
-            UpdateFade();                
+            UpdateFade();
 
             //Dispatcher.BeginInvoke((Action)delegate
             //{
-                
+
             ProcessGraphEvents();
-                //OnGraphTimerTick();
+            //OnGraphTimerTick();
             //});
             graphs.Seeking.GetCurrentPosition(out graphs.Position);
             timerUpdating = false;
         }
-
-
 
         private void ProcessGraphEvents()
         {
@@ -321,7 +310,6 @@ namespace MediaPlayer.Player
                 mediaEndedHandler();
         }
 
-
         private void FreeResources()
         {
             reallyPlaying = false;
@@ -331,7 +319,6 @@ namespace MediaPlayer.Player
             graphs.FreeResources();
             Released = true;
         }
-
 
         /// <summary>
         ///     Stops the graph polling timer
@@ -345,7 +332,6 @@ namespace MediaPlayer.Player
                 graphPollTimer = null;
             }
         }
-
 
         /// <summary>
         ///     Disposes of the current allocator
@@ -366,9 +352,6 @@ namespace MediaPlayer.Player
             customAllocator = null;
         }
 
-
-        
-
         /// <summary>
         ///     Registers the custom allocator and hooks into it's supplied events
         /// </summary>
@@ -385,8 +368,6 @@ namespace MediaPlayer.Player
             customAllocator.NewAllocatorSurface += CustomAllocatorNewAllocatorSurface;
         }
 
-
-
         /// <summary>
         ///     Local event handler for the custom allocator's new surface event
         /// </summary>
@@ -394,7 +375,6 @@ namespace MediaPlayer.Player
         {
             InvokeNewAllocatorSurface(pSurface);
         }
-
 
         /// <summary>
         ///     Local event handler for the custom allocator's new frame event
@@ -404,18 +384,16 @@ namespace MediaPlayer.Player
             InvokeNewAllocatorFrame();
         }
 
-
         /// <summary>
         ///     Invokes the NewAllocatorFrame event, notifying any subscriber that new frame
         ///     is ready to be presented.
         /// </summary>
         protected void InvokeNewAllocatorFrame()
         {
-            Action newAllocatorFrameHandler = NewAllocatorFrame;
+            var newAllocatorFrameHandler = NewAllocatorFrame;
             if (newAllocatorFrameHandler != null)
                 newAllocatorFrameHandler();
         }
-
 
         /// <summary>
         ///     Invokes the NewAllocatorSurface event, notifying any subscriber of a new surface
@@ -423,11 +401,10 @@ namespace MediaPlayer.Player
         /// <param name="pSurface">The COM pointer to the D3D surface</param>
         protected void InvokeNewAllocatorSurface(IntPtr pSurface)
         {
-            NewAllocatorSurfaceDelegate del = NewAllocatorSurface;
+            var del = NewAllocatorSurface;
             if (del != null)
                 del(this, pSurface);
         }
-
 
         public void MoveTo(long value)
         {

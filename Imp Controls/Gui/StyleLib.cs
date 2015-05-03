@@ -1,24 +1,35 @@
-﻿using System.Windows.Controls;
+﻿#region Usings
+
+using System.Windows.Controls;
 using System.Windows.Media;
+
+#endregion
 
 namespace ImpControls.Gui
 {
     public class StyleLib : IStyleLib
     {
-        private StyleClass BaseStyle;
-        private StyleClass ButtonStyle;
+        #region Static Fields and Constants
 
-        //private StyleClass BarStyle;
-
-        private StyleClass ListStyle;
         public const int WINDOWED_MARGIN = 6;
         public const int PANWIDTH = 5;
         public const int SNAPTOWIDTH = 15;
         public const int MINPANWIDTH = 60;
         public const int MINFONTSIZE = 9;
         public const int WIDTH_TO_RESIZE = 800;
-
         public const int WIDTH_CRITICAL = 400;
+
+        #endregion
+
+        #region Fields
+
+        private StyleClass BaseStyle;
+        private StyleClass ButtonStyle;
+        //private StyleClass BarStyle;
+
+        private StyleClass ListStyle;
+
+        #endregion
 
         public void LoadStyles()
         {
@@ -45,18 +56,46 @@ namespace ImpControls.Gui
             return BaseStyle.NormalBrush;
         }
 
+        public void SetStyle(ImpBaseControl nonButton)
+        {
+            nonButton.SetStyle(BaseStyle);
+        }
+
+        public void SetStyle(ImpButton button, string content)
+        {
+            button.SetContent(content);
+            button.SetStyle(ButtonStyle);
+        }
+
+        public void SetStyle(ImpButton button, BtnNumber btnNumber)
+        {
+            for (var i = 0; i < button.CheckStates; i++)
+            {
+                button.SetContent(GeometryCreator.GetGeometry(btnNumber, i), i);
+            }
+
+            button.SetStyle(ButtonStyle);
+        }
+
+        public void SetStyle(TextBox textBox)
+        {
+            textBox.Background = BaseStyle.PanelUpperBrush;
+            textBox.BorderBrush = BaseStyle.BorderBrush;
+            textBox.Foreground = BaseStyle.NormalBrush;
+        }
+
         private void SetDefaultButtonStyle()
         {
-            LinearGradientBrush brushT = new LinearGradientBrush();
+            var brushT = new LinearGradientBrush();
             ButtonStyle = new StyleClass();
             ButtonStyle.BackNormalBrush = BaseStyle.PanelUpperBrush;
 
             brushT = new LinearGradientBrush();
             brushT.StartPoint = new System.Windows.Point(0, 0);
             brushT.EndPoint = new System.Windows.Point(0, 1);
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 0));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(200, 0, 0, 0), 0.75));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 1));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 0));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(200, 0, 0, 0), 0.75));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 1));
 
 
             ButtonStyle.BorderBrush = brushT;
@@ -64,26 +103,26 @@ namespace ImpControls.Gui
             brushT = new LinearGradientBrush();
             brushT.StartPoint = new System.Windows.Point(0, 0);
             brushT.EndPoint = new System.Windows.Point(0, 1);
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 0));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(200, 0, 0, 0), 0.75));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 1));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 0));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(200, 0, 0, 0), 0.75));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 1));
 
             ButtonStyle.BorderMouseoverBrush = brushT;
             brushT = new LinearGradientBrush();
             brushT.StartPoint = new System.Windows.Point(0, 0);
             brushT.EndPoint = new System.Windows.Point(0, 1);
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 0));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(100, 0, 0, 0), 0.85));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 1));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 0));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(100, 0, 0, 0), 0.85));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 1));
 
             ButtonStyle.BorderPressedBrush = brushT;
 
             brushT = new LinearGradientBrush();
             brushT.StartPoint = new System.Windows.Point(0, 0);
             brushT.EndPoint = new System.Windows.Point(0, 1);
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 0));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(200, 0, 0, 0), 0.85));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 1));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 0));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(200, 0, 0, 0), 0.85));
+            brushT.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 1));
 
             ButtonStyle.BorderDisabledBrush = brushT;
 
@@ -91,18 +130,18 @@ namespace ImpControls.Gui
             brushT = new LinearGradientBrush();
             brushT.StartPoint = new System.Windows.Point(0, 0);
             brushT.EndPoint = new System.Windows.Point(0, 1);
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(65, 65, 65), 0));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(150, 150, 150), 0.75));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(65, 65, 65), 1));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(65, 65, 65), 0));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(150, 150, 150), 0.75));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(65, 65, 65), 1));
 
             ButtonStyle.BackMouseoverBrush = brushT;
 
             brushT = new LinearGradientBrush();
             brushT.StartPoint = new System.Windows.Point(0, 0);
             brushT.EndPoint = new System.Windows.Point(0, 1);
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(33, 33, 33), 0));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(75, 75, 75), 0.85));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(33, 33, 33), 1));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(33, 33, 33), 0));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(75, 75, 75), 0.85));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(33, 33, 33), 1));
 
             ButtonStyle.BackPressedBrush = brushT;
 
@@ -115,52 +154,21 @@ namespace ImpControls.Gui
             brushT = new LinearGradientBrush();
             brushT.StartPoint = new System.Windows.Point(0, 0);
             brushT.EndPoint = new System.Windows.Point(0, 1);
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(30, 30, 30), 0));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(70, 70, 70), 0.85));
-            brushT.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(30, 30, 30), 1));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(30, 30, 30), 0));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(70, 70, 70), 0.85));
+            brushT.GradientStops.Add(new GradientStop(Color.FromRgb(30, 30, 30), 1));
 
             ButtonStyle.BackDisabledBrush = brushT;
-        }
-
-
-        public void SetStyle(ImpBaseControl nonButton)
-        {
-            nonButton.SetStyle(BaseStyle);
-        }
-
-
-        public void SetStyle(ImpButton button, string content)
-        {
-            button.SetContent(content);
-            button.SetStyle(ButtonStyle);
         }
 
         public void SetStyle(ImpButton button, params string[] content)
         {
             button.CheckStates = content.Length;
-            for (int i = 0; i < content.Length; i++)
+            for (var i = 0; i < content.Length; i++)
             {
                 button.SetContent(content[i], i);
             }
             button.SetStyle(ButtonStyle);
-        }
-
-        public void SetStyle(ImpButton button, BtnNumber btnNumber)
-        {
-            for (int i = 0; i < button.CheckStates; i++)
-            {
-                button.SetContent(GeometryCreator.GetGeometry(btnNumber, i), i);
-            }
-
-            button.SetStyle(ButtonStyle);
-        }
-
-
-        public void SetStyle(TextBox textBox)
-        {
-            textBox.Background = BaseStyle.PanelUpperBrush;
-            textBox.BorderBrush = BaseStyle.BorderBrush;
-            textBox.Foreground = BaseStyle.NormalBrush;
         }
 
         public void SetStyle(Label label)

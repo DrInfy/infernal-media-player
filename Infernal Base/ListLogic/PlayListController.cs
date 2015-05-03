@@ -1,38 +1,36 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using Base.Libraries;
+
+#endregion
 
 namespace Base.ListLogic
 {
     public class PlayListController : ListController<PlaylistItem>
     {
-        public string PlayingFullPath { get; set; }
+        #region Fields
 
         private PlaylistThreadedUpdater updater;
 
-        #region Delegates and Events
+        #endregion
 
-        public delegate void LoadPlaylistItemEvent(PlaylistItem item);
+        #region Properties
 
-        public event LoadPlaylistItemEvent LoadPlaylistItem;
+        public string PlayingFullPath { get; set; }
 
         #endregion
 
-
         public PlayListController(bool searchable, bool multiSelectable)
-            : base(searchable, multiSelectable)
-        {
-
-        }
-
+            : base(searchable, multiSelectable) {}
 
         public void SetDispatcher(Dispatcher dispatcher)
         {
             updater = new PlaylistThreadedUpdater(dispatcher);
             updater.CallForFinalAddAction += FinalAdd;
         }
-
 
         private void FinalAdd()
         {
@@ -51,10 +49,7 @@ namespace Base.ListLogic
             }
             //UpdateItems();
             OnListSizeChanged(true);
-
         }
-
-
 
         /// <summary>
         /// Adds the item.
@@ -71,17 +66,15 @@ namespace Base.ListLogic
             }
         }
 
-
         /// <summary>
         /// Adds the items.
         /// </summary>
         /// <param name="list">The list.</param>
         public override void AddItems(ICollection<PlaylistItem> list)
         {
-            foreach (PlaylistItem item in list)
+            foreach (var item in list)
                 AddItem(item);
         }
-
 
         /// <summary>
         /// Adds the items.
@@ -89,10 +82,9 @@ namespace Base.ListLogic
         /// <param name="array">The array.</param>
         public override void AddItems(PlaylistItem[] array)
         {
-            foreach (PlaylistItem item in array)
+            foreach (var item in array)
                 AddItem(item);
         }
-
 
         public override void Clear()
         {
@@ -104,13 +96,12 @@ namespace Base.ListLogic
             base.Clear();
         }
 
-
         public override void RemoveSelected()
         {
             if (multiSelectable)
             {
-                bool removed = false;
-                for (int i = items.Count - 1; i >= 0; i--)
+                var removed = false;
+                for (var i = items.Count - 1; i >= 0; i--)
                 {
                     if (items[i].Selected)
                     {
@@ -140,13 +131,12 @@ namespace Base.ListLogic
             }
         }
 
-
         public int PlayingThis(PlaylistItem item)
         {
             if (item == null)
             {
                 PlayingFullPath = null;
-                for (int i = 0; i < items.Count; i++)
+                for (var i = 0; i < items.Count; i++)
                 {
                     items[i].Content.Playing = false;
                 }
@@ -154,8 +144,8 @@ namespace Base.ListLogic
             }
             PlayingFullPath = item.FullPath;
 
-            int index = -1;
-            for (int i = 0; i < items.Count; i++)
+            var index = -1;
+            for (var i = 0; i < items.Count; i++)
             {
                 if (!items[i].Content.FullPath.Equals(item.FullPath))
                     items[i].Content.Playing = false;
@@ -164,8 +154,7 @@ namespace Base.ListLogic
                     items[i].Content.Playing = true;
                     if (SearchActive)
                     {
-
-                        for (int j = 0; j < findlist.Length; j++)
+                        for (var j = 0; j < findlist.Length; j++)
                         {
                             if (findlist[j] == i)
                             {
@@ -189,14 +178,11 @@ namespace Base.ListLogic
             {
                 OnListSelectionChanged();
                 item.Playing = true;
-                
             }
 
             OnListSelectionChanged();
             return index;
         }
-
-
 
         public bool IsPlaying(int visibleIndex)
         {
@@ -207,21 +193,19 @@ namespace Base.ListLogic
             return items[visibleIndex].Content.Playing;
         }
 
-
         /// <summary>
         /// Open next item in the list, using visible items first if using search
         /// </summary>
         /// <param name="loopMode"></param>
         public void OpenNext(LoopMode loopMode)
         {
-
-            for (int i = 0; i < items.Count; i++)
+            for (var i = 0; i < items.Count; i++)
             {
                 if (items[i].Content.Playing)
                 {
                     if (SearchActive)
                     {
-                        for (int j = 0; j < findlist.Length; j++)
+                        for (var j = 0; j < findlist.Length; j++)
                         {
                             if (i == findlist[j])
                             {
@@ -241,7 +225,6 @@ namespace Base.ListLogic
                                 }
                                 return; // item was found, no need to search further
                             }
-
                         }
 
                         // item was not in the visible list, play next item from overall then instead
@@ -262,7 +245,6 @@ namespace Base.ListLogic
             else
                 RaiseLoadEvent(items[0].Content);
         }
-
 
         /// <summary>
         /// Plays the next item from the overall list, ignoring any and all searches
@@ -285,20 +267,19 @@ namespace Base.ListLogic
             }
         }
 
-
         /// <summary>
         /// Open previous item in the list, using visible items first if using search
         /// </summary>
         /// <param name="loopMode"></param>
         public void OpenPrev(LoopMode loopMode)
         {
-            for (int i = 0; i < items.Count; i++)
+            for (var i = 0; i < items.Count; i++)
             {
                 if (items[i].Content.Playing)
                 {
                     if (SearchActive)
                     {
-                        for (int j = 0; j < findlist.Length; j++)
+                        for (var j = 0; j < findlist.Length; j++)
                         {
                             if (i == findlist[j])
                             {
@@ -332,7 +313,6 @@ namespace Base.ListLogic
             }
         }
 
-
         /// <summary>
         /// Plays the next item from the overall list, ignoring any and all searches
         /// </summary>
@@ -362,23 +342,30 @@ namespace Base.ListLogic
             }
         }
 
-
         public void OpenRandom()
         {
             if (SearchActive && findlist.Length > 0)
             {
-                int playIndex = (int)Math.Round(LibImp.Rnd.NextDouble() * findlist.Length - 0.49999999);
+                var playIndex = (int) Math.Round(LibImp.Rnd.NextDouble() * findlist.Length - 0.49999999);
                 if (playIndex >= findlist.Length)
                     playIndex = findlist.Length - 1;
                 RaiseLoadEvent(items[findlist[playIndex]].Content);
             }
             else if (items.Count > 0)
             {
-                int playIndex = (int)Math.Round(LibImp.Rnd.NextDouble() * items.Count - 0.49999999);
+                var playIndex = (int) Math.Round(LibImp.Rnd.NextDouble() * items.Count - 0.49999999);
                 if (playIndex >= items.Count)
                     playIndex = items.Count - 1;
                 RaiseLoadEvent(items[playIndex].Content);
             }
         }
+
+        #region Delegates and Events
+
+        public delegate void LoadPlaylistItemEvent(PlaylistItem item);
+
+        public event LoadPlaylistItemEvent LoadPlaylistItem;
+
+        #endregion
     }
 }

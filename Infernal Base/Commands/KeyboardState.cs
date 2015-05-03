@@ -1,12 +1,20 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Windows.Input;
+
+#endregion
 
 namespace Base.Commands
 {
     public class KeyboardState
     {
-        private bool[] keyStates;
-        private Key[] keys;
+        #region Fields
+
+        private readonly bool[] keyStates;
+        private readonly Key[] keys;
+
+        #endregion
 
         public KeyboardState()
         {
@@ -15,18 +23,17 @@ namespace Base.Commands
             keyStates = new bool[l.Length];
             keys = new Key[l.Length];
 
-            int realCount = 0;
+            var realCount = 0;
             bool duplicateFound;
-            for (int i = 0; i< l.Length; i++)
+            for (var i = 0; i < l.Length; i++)
             {
                 duplicateFound = false;
                 keyStates[i] = false;
-                for (int j = i + 1; j < l.Length; j++)
+                for (var j = i + 1; j < l.Length; j++)
                 {
                     if (l[i] == l[j])
                     {
                         duplicateFound = true;
-                        
                     }
                 }
                 if (!duplicateFound)
@@ -52,7 +59,7 @@ namespace Base.Commands
         internal bool Get(Key key)
         {
             #region jumptable
-            
+
             switch (key)
             {
                 case Key.None:
@@ -404,13 +411,14 @@ namespace Base.Commands
                 default:
                     throw new ArgumentOutOfRangeException("key");
             }
+
             #endregion
         }
 
         public void Update()
         {
-            int i = 0;
-            foreach (Key key in keys)
+            var i = 0;
+            foreach (var key in keys)
             {
                 if (key != Key.None && Keyboard.IsKeyDown(key))
                 {
@@ -421,7 +429,7 @@ namespace Base.Commands
                     keyStates[i] = false;
                 }
                 i++;
-            }            
+            }
         }
 
         /// <summary>
@@ -430,7 +438,7 @@ namespace Base.Commands
         /// <param name="state">The state.</param>
         public void CopyTo(KeyboardState state)
         {
-            for (int i = 0; i < keys.Length; i++)
+            for (var i = 0; i < keys.Length; i++)
             {
                 state.Set(i, keyStates[i]);
             }

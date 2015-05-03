@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region Usings
+
+using System;
+
+#endregion
 
 namespace MediaPlayer.Helpers
 {
     public static class DShowHelper
     {
+        #region Static Fields and Constants
+
         /// <summary>
         /// The name of the default audio render.  This is the
         /// same on all versions of windows
@@ -44,24 +46,23 @@ namespace MediaPlayer.Helpers
         /// </summary>
         internal const int DSHOW_TIMER_POLL_MS = 33;
 
-
         /// <summary>
         /// UserId value for the VMR9 Allocator - Not entirely useful
         /// for this application of the VMR
         /// </summary>
-        private static readonly IntPtr m_userId = new IntPtr(unchecked((int)0xDEADBEEF));
+        private static readonly IntPtr m_userId = new IntPtr(unchecked((int) 0xDEADBEEF));
 
+        #endregion
 
         public static int VolumePercentageToDirectShowVolume(double volumePercentage)
         {
             return (int) (volumePercentage * (DSHOW_VOLUME_MAX - DSHOW_VOLUME_SILENCE) + DSHOW_VOLUME_SILENCE);
         }
 
-
         public static double DirectShowVolumeToVolumePercentage(int directShowVolume)
         {
-            return ((double)(directShowVolume - DSHOW_VOLUME_SILENCE))
-                / (DSHOW_VOLUME_MAX - DSHOW_VOLUME_SILENCE);
+            return ((double) (directShowVolume - DSHOW_VOLUME_SILENCE))
+                   / (DSHOW_VOLUME_MAX - DSHOW_VOLUME_SILENCE);
         }
     }
 }

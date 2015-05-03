@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,26 +10,87 @@ using System.Windows.Interop;
 using System.Windows.Threading;
 using Base.FileData;
 
+#endregion
+
 namespace Base.Libraries
 {
     public static class LibImp
     {
-        public const double MilliToSecond = 1d / 1000d;
+        #region Static Fields and Constants
 
+        public const double MilliToSecond = 1d / 1000d;
         public const long NANOTOMILLI = 10000;
         public const long SecondToTicks = 10000000;
         public const double TicksToSecond = 1d / SecondToTicks;
         public const int PANELHIGHHEIGHT = 25;
-
         public const int PANELLOWHEIGHT = 25;
-
-
         public static OperatingSystem OsInfo = Environment.OSVersion;
-
         public static Random Rnd = new Random();
 
+        #endregion
 
-#region Complicated Monitor screen size stuff
+        public static double TicksToSeconds(long ticks)
+        {
+            return ticks * TicksToSecond;
+        }
+
+        public static long SecondsToTicks(double seconds)
+        {
+            return (long) (seconds * SecondToTicks);
+        }
+
+        public static FileImpInfo[] FilterFiles(FileInfo[] infos, List<string> extensions)
+        {
+            FileImpInfo[] files;
+            if (extensions == null || extensions.Count < 1 || String.IsNullOrEmpty(extensions[0]))
+            {
+                files = new FileImpInfo[infos.Length];
+                for (var j = 0; j < infos.Length; j++)
+                {
+                    files[j] = new FileImpInfo(infos[j]);
+                }
+                return files;
+            }
+
+            var foundItems = 0;
+            foreach (var p in infos)
+            {
+                var e = Path.GetExtension(p.Name);
+                if (!string.IsNullOrWhiteSpace(e))
+                    if (extensions.Any(f => String.Compare(e, f, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        infos[foundItems] = p;
+                        foundItems += 1;
+                    }
+            }
+            // Array.Resize(ref paths, i + 1);
+
+            files = new FileImpInfo[foundItems];
+            for (var j = 0; j < files.Length; j++)
+            {
+                files[j] = new FileImpInfo(infos[j]);
+            }
+
+            return files;
+        }
+
+        /// <summary>
+        /// Does events, and allows updating of the form.
+        /// Use Dispatcher.CurrentDispatcher for the current thread.
+        /// </summary>
+        public static void DoEvents(Dispatcher dispatch)
+        {
+            dispatch.Invoke(new Action(DoEventsHandler), DispatcherPriority.Background);
+        }
+
+        private static void DoEventsHandler() {}
+
+        public static double KeepInsideBounds(double value, double min, double max)
+        {
+            return Math.Max(Math.Min(value, max), min);
+        }
+
+        #region Complicated Monitor screen size stuff
 
         [DllImport("user32")]
         private static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
@@ -49,17 +112,19 @@ namespace Base.Libraries
         }
 
 
-
         /// <summary> Win32 </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 0)]
         public struct RECT
         {
             /// <summary> Win32 </summary>
             public int left;
+
             /// <summary> Win32 </summary>
             public int top;
+
             /// <summary> Win32 </summary>
             public int right;
+
             /// <summary> Win32 </summary>
             public int bottom;
 
@@ -69,8 +134,9 @@ namespace Base.Libraries
             /// <summary> Win32 </summary>
             public int Width
             {
-                get { return Math.Abs(right - left); }  // Abs needed for BIDI OS
+                get { return Math.Abs(right - left); } // Abs needed for BIDI OS
             }
+
             /// <summary> Win32 </summary>
             public int Height
             {
@@ -90,10 +156,10 @@ namespace Base.Libraries
             /// <summary> Win32 </summary>
             public RECT(RECT rcSrc)
             {
-                this.left = rcSrc.left;
-                this.top = rcSrc.top;
-                this.right = rcSrc.right;
-                this.bottom = rcSrc.bottom;
+                left = rcSrc.left;
+                top = rcSrc.top;
+                right = rcSrc.right;
+                bottom = rcSrc.bottom;
             }
 
             /// <summary> Win32 </summary>
@@ -105,6 +171,7 @@ namespace Base.Libraries
                     return left >= right || top >= bottom;
                 }
             }
+
             /// <summary> Return a user friendly representation of this struct </summary>
             public override string ToString()
             {
@@ -116,7 +183,7 @@ namespace Base.Libraries
             public override bool Equals(object obj)
             {
                 if (!(obj is RECT)) { return false; }
-                return (this == (RECT)obj);
+                return (this == (RECT) obj);
             }
 
             /// <summary>Return the HashCode for this struct (not garanteed to be unique)</summary>
@@ -137,8 +204,6 @@ namespace Base.Libraries
             {
                 return !(rect1 == rect2);
             }
-
-
         }
 
         /// <summary>
@@ -149,7 +214,7 @@ namespace Base.Libraries
         {
             /// <summary>
             /// </summary>            
-            public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+            public int cbSize = Marshal.SizeOf(typeof (MONITORINFO));
 
             /// <summary>
             /// </summary>            
@@ -168,8 +233,8 @@ namespace Base.Libraries
 
         public static Rect GetWorkArea(Window imp)
         {
-            IntPtr handle = (new WindowInteropHelper(imp)).Handle;
-            IntPtr monitor = MonitorFromWindow(handle, MONITOR_DEFAULTTONEAREST);
+            var handle = (new WindowInteropHelper(imp)).Handle;
+            var monitor = MonitorFromWindow(handle, MONITOR_DEFAULTTONEAREST);
             if ((monitor != IntPtr.Zero))
             {
                 var monitorData = new MONITORINFO();
@@ -179,8 +244,8 @@ namespace Base.Libraries
                     handle = IntPtr.Zero;
                 }
                 var area = new Rect(monitorData.rcWork.left, monitorData.rcWork.top,
-                                     monitorData.rcWork.right - monitorData.rcWork.left,
-                                     monitorData.rcWork.bottom - monitorData.rcWork.top);
+                    monitorData.rcWork.right - monitorData.rcWork.left,
+                    monitorData.rcWork.bottom - monitorData.rcWork.top);
 
                 return area;
             }
@@ -192,8 +257,8 @@ namespace Base.Libraries
 
         public static Rect GetMonitorArea(Window imp)
         {
-            IntPtr handle = (new WindowInteropHelper(imp)).Handle;
-            IntPtr monitor = MonitorFromWindow(handle, MONITOR_DEFAULTTONEAREST);
+            var handle = (new WindowInteropHelper(imp)).Handle;
+            var monitor = MonitorFromWindow(handle, MONITOR_DEFAULTTONEAREST);
             if ((monitor != IntPtr.Zero))
             {
                 var monitorData = new MONITORINFO();
@@ -204,8 +269,8 @@ namespace Base.Libraries
                 }
 
                 var area = new Rect(monitorData.rcMonitor.left, monitorData.rcMonitor.top,
-                                     monitorData.rcMonitor.right - monitorData.rcMonitor.left,
-                                     monitorData.rcMonitor.bottom - monitorData.rcMonitor.top);
+                    monitorData.rcMonitor.right - monitorData.rcMonitor.left,
+                    monitorData.rcMonitor.bottom - monitorData.rcMonitor.top);
 
                 return area;
             }
@@ -218,7 +283,7 @@ namespace Base.Libraries
 
         public static Rect GetWindowRect(Window o)
         {
-            Rect r = new Rect();
+            var r = new Rect();
             r.X = o.Left;
             r.Y = o.Top;
             r.Height = o.Height;
@@ -233,73 +298,7 @@ namespace Base.Libraries
             o.Height = r.Height;
             o.Width = r.Width;
         }
-#endregion
 
-
-        public static double TicksToSeconds(long ticks)
-        {
-            return ticks * TicksToSecond;
-        }
-
-        public static long SecondsToTicks(double seconds)
-        {
-            return (long) (seconds * SecondToTicks);
-        }
-
-        public static FileImpInfo[] FilterFiles(FileInfo[] infos, List<string> extensions)
-        {
-            FileImpInfo[] files;
-            if (extensions == null || extensions.Count < 1 || String.IsNullOrEmpty(extensions[0]))
-            {
-                files = new FileImpInfo[infos.Length];
-                for (int j = 0; j < infos.Length; j++)
-                {
-                    files[j] = new FileImpInfo(infos[j]);
-
-                }
-                return files;
-            }
-
-            int foundItems = 0;
-            foreach (FileInfo p in infos)
-            {
-                var e = Path.GetExtension(p.Name);
-                if (!string.IsNullOrWhiteSpace(e))
-                    if (extensions.Any(f => String.Compare(e, f, StringComparison.OrdinalIgnoreCase) == 0))
-                    {
-                        infos[foundItems] = p;
-                        foundItems += 1;
-                    }
-            }
-            // Array.Resize(ref paths, i + 1);
-
-            files = new FileImpInfo[foundItems];
-            for (int j = 0; j < files.Length; j++)
-            {
-                files[j] = new FileImpInfo(infos[j]);
-            }
-
-            return files;
-        }
-
-
-        /// <summary>
-        /// Does events, and allows updating of the form.
-        /// Use Dispatcher.CurrentDispatcher for the current thread.
-        /// </summary>
-        public static void DoEvents(Dispatcher dispatch)
-        {
-            dispatch.Invoke(new Action(DoEventsHandler), DispatcherPriority.Background);
-        }
-
-        private static void DoEventsHandler()
-        {
-        }
-
-
-        public static double KeepInsideBounds(double value, double min, double max)
-        {
-            return Math.Max(Math.Min(value, max), min);
-        }
+        #endregion
     }
 }

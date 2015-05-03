@@ -5,12 +5,17 @@
     /// </summary>
     internal abstract class AudioFile
     {
+        #region Fields
+
         protected int sFrequency = 0;
         protected int sChannels = 0;
-
         protected long sSamples = 0;
-
         protected int sTrack = -1;
+
+        #endregion
+
+        #region Properties
+
         /// <summary>
         /// Gets the bitrate.
         /// </summary>
@@ -40,5 +45,7 @@
         /// Gets the album name
         /// </summary>
         public string Album { get; protected set; } = "";
+
+        #endregion
     }
 }

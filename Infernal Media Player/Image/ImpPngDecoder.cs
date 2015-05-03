@@ -1,26 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿#region Usings
+
+using System;
 using System.IO;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Hjg.Pngcs;
+
+#endregion
 
 namespace Imp.Image
 {
     public class ImpPngDecoder
     {
+        #region Fields
+
         public BitmapSource Source;
+
+        #endregion
+
         [SecurityCritical]
         public ImpPngDecoder(Stream bitmapStream, BitmapCreateOptions createOptions, BitmapCacheOption cacheOption)
         {
             ReadPng(bitmapStream, createOptions, cacheOption);
         }
-
 
         [SecurityCritical]
         public ImpPngDecoder(Uri bitmapUri, BitmapCreateOptions createOptions, BitmapCacheOption cacheOption)
@@ -49,12 +52,12 @@ namespace Imp.Image
             {
                 fixed (byte* dataStart = &data[0])
                 {
-                    byte* d = dataStart;
+                    var d = dataStart;
 
-                    for (int i = 0; i < pngr.ImgInfo.Rows; i++)
+                    for (var i = 0; i < pngr.ImgInfo.Rows; i++)
                     {
-                        ImageLine line = pngr.ReadRowByte(i);
-                        for (int j = 0; j < pngr.ImgInfo.Cols; j++)
+                        var line = pngr.ReadRowByte(i);
+                        for (var j = 0; j < pngr.ImgInfo.Cols; j++)
                         {
                             var j2 = j * channels;
                             *d++ = line.ScanlineB[j2 + 2];
@@ -64,7 +67,8 @@ namespace Imp.Image
                         }
                     }
 
-                    Source = BitmapSource.Create(pngr.ImgInfo.Cols, pngr.ImgInfo.Rows, 100, 100, PixelFormats.Bgra32, null, (IntPtr)dataStart, pngr.ImgInfo.Cols * pngr.ImgInfo.Rows * channels, pngr.ImgInfo.Cols * channels);
+                    Source = BitmapSource.Create(pngr.ImgInfo.Cols, pngr.ImgInfo.Rows, 100, 100, PixelFormats.Bgra32, null, (IntPtr) dataStart, pngr.ImgInfo.Cols * pngr.ImgInfo.Rows * channels,
+                        pngr.ImgInfo.Cols * channels);
                 }
                 //for (int i = 0; i < pngr.ImgInfo.Rows; i++)
                 //{
@@ -87,16 +91,16 @@ namespace Imp.Image
             {
                 fixed (byte* dataStart = &data[0])
                 {
-                    byte* d = dataStart;
-                    for (int i = 0; i < pngr.ImgInfo.Rows; i++)
+                    var d = dataStart;
+                    for (var i = 0; i < pngr.ImgInfo.Rows; i++)
                     {
-                        ImageLine line = pngr.ReadRowInt(i);
-                        for (int j = 0; j < pngr.ImgInfo.Cols; j++)
+                        var line = pngr.ReadRowInt(i);
+                        for (var j = 0; j < pngr.ImgInfo.Cols; j++)
                         {
                             var j2 = j * channels;
-                            *d++ = (byte)line.Scanline[j2 + 2];
-                            *d++ = (byte)line.Scanline[j2 + 1];
-                            *d++ = (byte)line.Scanline[j2];
+                            *d++ = (byte) line.Scanline[j2 + 2];
+                            *d++ = (byte) line.Scanline[j2 + 1];
+                            *d++ = (byte) line.Scanline[j2];
                         }
                     }
                     Source = BitmapSource.Create(pngr.ImgInfo.Cols, pngr.ImgInfo.Rows, 100, 100, PixelFormats.Bgr24, null, data, pngr.ImgInfo.Cols * channels);

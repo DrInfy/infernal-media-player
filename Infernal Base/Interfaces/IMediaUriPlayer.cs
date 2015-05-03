@@ -2,23 +2,7 @@
 {
     public interface IMediaUriPlayer
     {
-        /// <summary>
-        /// Plays video or sound file
-        /// </summary>
-        void Play();
-        /// <summary>
-        /// Pauses playback, holding the stream in place
-        /// </summary>
-        void Pause();
-        /// <summary>
-        /// Stops playback and returns to position 0
-        /// </summary>
-        void Stop();
-
-        /// <summary>
-        /// Close down this instance of the media player controller
-        /// </summary>
-        void Clear();
+        #region Properties
 
         /// <summary>
         /// Gets whether the player has an active media controller
@@ -44,5 +28,27 @@
         /// Gets whether this player controller holds video data
         /// </summary>
         bool HasVideo { get; }
+
+        #endregion
+
+        /// <summary>
+        /// Plays video or sound file
+        /// </summary>
+        void Play();
+
+        /// <summary>
+        /// Pauses playback, holding the stream in place
+        /// </summary>
+        void Pause();
+
+        /// <summary>
+        /// Stops playback and returns to position 0
+        /// </summary>
+        void Stop();
+
+        /// <summary>
+        /// Close down this instance of the media player controller
+        /// </summary>
+        void Clear();
     }
 }

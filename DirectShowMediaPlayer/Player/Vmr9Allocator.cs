@@ -1,9 +1,13 @@
+#region Usings
+
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using WPFMediaKit.DirectX;
+
+#endregion
 
 namespace MediaPlayer.Player
 {
@@ -39,16 +43,12 @@ namespace MediaPlayer.Player
     [ComVisible(true)]
     public class Vmr9Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9, ICustomAllocator
     {
-        /// <summary>
-        /// UserId value for the VMR9 Allocator - Not entirely useful
-        /// for this application of the VMR
-        /// </summary>
-        public static readonly IntPtr UserId = new IntPtr(unchecked((int)0xDEADBEEF));
+        #region Static Fields and Constants
 
         /// <summary>
         /// Base constant for FAIL error codes
         /// </summary>
-        private const int E_FAIL = unchecked((int)0x80004005);
+        private const int E_FAIL = unchecked((int) 0x80004005);
 
         /// <summary>
         /// The SDK version of D3D we are using
@@ -56,34 +56,44 @@ namespace MediaPlayer.Player
         private const ushort D3D_SDK_VERSION = 32;
 
         /// <summary>
+        /// UserId value for the VMR9 Allocator - Not entirely useful
+        /// for this application of the VMR
+        /// </summary>
+        public static readonly IntPtr UserId = new IntPtr(unchecked((int) 0xDEADBEEF));
+
+        /// <summary>
         /// Lock for shared resources
         /// </summary>
-        private static object m_staticLock = new object();
-        
+        private static readonly object m_staticLock = new object();
+
         /// <summary>
         /// Direct3D functions
         /// </summary>
-        private static IDirect3D9 m_d3d;
+        private static readonly IDirect3D9 m_d3d;
 
         /// <summary>
         /// Direct3D functions of Vista
         /// </summary>
-        private static IDirect3D9Ex m_d3dEx;
+        private static readonly IDirect3D9Ex m_d3dEx;
 
         /// <summary>
         /// The window handle, needed for D3D intialization
         /// </summary>
-        private readonly static IntPtr m_hWnd;
+        private static readonly IntPtr m_hWnd;
 
         /// <summary>
         /// The Direct3D device
         /// </summary>
         private static IDirect3DDevice9 m_device;
 
+        #endregion
+
+        #region Fields
+
         /// <summary>
         /// Lock for instance's resources
         /// </summary>
-        private object m_instanceLock = new object();
+        private readonly object m_instanceLock = new object();
 
         /// <summary>
         /// Part of the "Dispose" pattern
@@ -98,16 +108,6 @@ namespace MediaPlayer.Player
         private IVMRSurfaceAllocatorNotify9 m_allocatorNotify;
 
         /// <summary>
-        /// Fires each time a frame needs to be presented
-        /// </summary>
-        public event Action NewAllocatorFrame;
-
-        /// <summary>
-        /// Fires when new D3D surfaces are allocated
-        /// </summary>
-        public event NewAllocatorSurfaceDelegate NewAllocatorSurface;
-
-        /// <summary>
         /// Private surface for YUV stuffs
         /// </summary>
         private IDirect3DSurface9 m_privateSurface;
@@ -117,8 +117,25 @@ namespace MediaPlayer.Player
         /// </summary>
         private IDirect3DTexture9 m_privateTexture;
 
-        [DllImport("user32.dll", SetLastError = false)]
-        private static extern IntPtr GetDesktopWindow();
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Current Direct3D surfaces our allocator has ready and allocated
+        /// </summary>
+        private IntPtr[] DxSurfaces { get; set; }
+
+        /// <summary>
+        /// Gets if the current operating system is
+        /// Windows Vista or higher.
+        /// </summary>
+        private static bool IsVistaOrBetter
+        {
+            get { return Environment.OSVersion.Version.Major >= 6; }
+        }
+
+        #endregion
 
         static Vmr9Allocator()
         {
@@ -136,29 +153,17 @@ namespace MediaPlayer.Player
         /// <summary>
         /// Creates a new VMR9 custom allocator to use with Direct3D
         /// </summary>
-        public Vmr9Allocator()
-        {
-        }
+        public Vmr9Allocator() {}
 
         /// <summary>
-        /// Fires the OnNewAllocatorSurface event, notifying the
-        /// subscriber that new surfaces are available
+        /// Fires each time a frame needs to be presented
         /// </summary>
-        private void InvokeNewSurfaceEvent(IntPtr pSurface)
-        {
-            if (NewAllocatorSurface != null)
-                NewAllocatorSurface(this, pSurface);
-        }
+        public event Action NewAllocatorFrame;
 
         /// <summary>
-        /// Fires the NewAllocatorFrame event notifying the
-        /// subscriber that a new frame is ready to be presented
+        /// Fires when new D3D surfaces are allocated
         /// </summary>
-        private void InvokeNewAllocatorFrame()
-        {
-            Action newAllocatorFrameHandler = NewAllocatorFrame;
-            if (newAllocatorFrameHandler != null) newAllocatorFrameHandler();
-        }
+        public event NewAllocatorSurfaceDelegate NewAllocatorSurface;
 
         /// <summary>
         /// Frees any remaining unmanaged memory
@@ -168,31 +173,6 @@ namespace MediaPlayer.Player
             Dispose(true);
             //GC.SuppressFinalize(this);
         }
-
-        /// <summary>
-        /// Part of the dispose pattern
-        /// </summary>
-        protected virtual void Dispose(bool disposing)
-        {
-            //if (m_disposed) return;
-
-            if (disposing)
-            {
-                InvokeNewSurfaceEvent(IntPtr.Zero);
-                /* Pass a dummy cookie to TerminateDevice */
-                TerminateDevice(IntPtr.Zero);
-
-                if (m_allocatorNotify != null)
-                    Marshal.FinalReleaseComObject(m_allocatorNotify);
-            }
-
-            m_disposed = true;
-        }
-
-        /// <summary>
-        /// Current Direct3D surfaces our allocator has ready and allocated
-        /// </summary>
-        private IntPtr[] DxSurfaces { get; set; }
 
         /// <summary>
         /// The StartPresenting method is called just before the video starts playing. 
@@ -235,23 +215,23 @@ namespace MediaPlayer.Player
         /// <returns>Returns an HRESULT</returns>
         public int PresentImage(IntPtr dwUserID, ref VMR9PresentationInfo lpPresInfo)
         {
-            VMR9PresentationInfo presInfo = lpPresInfo;
+            var presInfo = lpPresInfo;
 
-            int hr = 0;
+            var hr = 0;
 
             try
             {
-                lock(m_staticLock)
+                lock (m_staticLock)
                 {
                     /* Test to see if our device was lost, is so fix it */
                     TestRestoreLostDevice();
 
                     if (m_privateSurface != null)
                         hr = m_device.StretchRect(presInfo.lpSurf,
-                                                  presInfo.rcSrc,
-                                                  m_privateSurface,
-                                                  presInfo.rcDst,
-                                                  0);
+                            presInfo.rcSrc,
+                            m_privateSurface,
+                            presInfo.rcDst,
+                            0);
                     if (hr < 0)
                         return hr;
                 }
@@ -267,54 +247,6 @@ namespace MediaPlayer.Player
             }
 
             return hr;
-        }
-
-        /// <summary>
-        /// Tests if the D3D device has been lost and if it has
-        /// it is retored. This happens on XP with things like
-        /// resolution changes or pressing ctrl + alt + del.  With
-        /// Vista, this will most likely never be called unless the
-        /// video driver hangs or is changed.
-        /// </summary>
-        private void TestRestoreLostDevice()
-        {
-            // TODO: why was this required in the first place?
-            // TestCooperativeLevel throws managed error, cannot be converted to IDirect3DDevice9
-            //if (m_device == null)
-                return;
-
-            /* This will throw an exception
-             * if the device is lost */
-            int hr = m_device.TestCooperativeLevel();
-
-            /* Do nothing if S_OK */
-            if (hr == 0)
-                return;
-
-            FreeSurfaces();
-            CreateDevice();
-
-            /* TODO: This is bad. FIX IT! 
-             * Figure out how to tell when the new
-             * device is ready to use */
-            Thread.Sleep(1500);
-
-            IntPtr pDev = GetComPointer(m_device);
-
-            /* Update with our new device */
-            m_allocatorNotify.ChangeD3DDevice(pDev, GetAdapterMonitor(0));
-        }
-
-        /// <summary>
-        /// Gets the pointer to the adapter monitor
-        /// </summary>
-        /// <param name="adapterOrdinal">The ordinal of the adapter</param>
-        /// <returns>A pointer to the adaptor monitor</returns>
-        private IntPtr GetAdapterMonitor(uint adapterOrdinal)
-        {
-            IntPtr pMonitor = IsVistaOrBetter ? m_d3dEx.GetAdapterMonitor(adapterOrdinal) : m_d3d.GetAdapterMonitor(adapterOrdinal);
-
-            return pMonitor;
         }
 
         /// <summary>
@@ -372,17 +304,17 @@ namespace MediaPlayer.Player
                     {
                         FreeSurfaces();
 
-                        
+
                         if (lpAllocInfo.Format > 0)
                         {
-                            hr = m_device.CreateTexture(lpAllocInfo.dwWidth, 
-                                                        lpAllocInfo.dwHeight, 
-                                                        1, 
-                                                        1,
-                                                        D3DFORMAT.D3DFMT_X8R8G8B8, 
-                                                        0, 
-                                                        out m_privateTexture, 
-                                                        IntPtr.Zero);
+                            hr = m_device.CreateTexture(lpAllocInfo.dwWidth,
+                                lpAllocInfo.dwHeight,
+                                1,
+                                1,
+                                D3DFORMAT.D3DFMT_X8R8G8B8,
+                                0,
+                                out m_privateTexture,
+                                IntPtr.Zero);
 
                             DsError.ThrowExceptionForHR(hr);
 
@@ -395,9 +327,9 @@ namespace MediaPlayer.Player
 
                         DxSurfaces = new IntPtr[lpNumBuffers];
 
-                        hr = m_allocatorNotify.AllocateSurfaceHelper(ref lpAllocInfo, 
-                                                                     ref lpNumBuffers,
-                                                                     DxSurfaces);
+                        hr = m_allocatorNotify.AllocateSurfaceHelper(ref lpAllocInfo,
+                            ref lpNumBuffers,
+                            DxSurfaces);
                         if (hr < 0)
                         {
                             FreeSurfaces();
@@ -415,17 +347,6 @@ namespace MediaPlayer.Player
                 return E_FAIL;
             }
         }
-
-
-        public void InvokeSurfaceCreation()
-        {
-            /* Nofity to our listeners we have new surfaces */
-            if (m_privateSurface != null)
-                InvokeNewSurfaceEvent(GetComPointer(m_privateSurface));
-            else
-                InvokeNewSurfaceEvent(DxSurfaces[0]);
-        }
-
 
         /// <summary>
         /// The TerminateDevice method releases the Direct3D device.
@@ -506,6 +427,106 @@ namespace MediaPlayer.Player
             }
         }
 
+        [DllImport("user32.dll", SetLastError = false)]
+        private static extern IntPtr GetDesktopWindow();
+
+        /// <summary>
+        /// Fires the OnNewAllocatorSurface event, notifying the
+        /// subscriber that new surfaces are available
+        /// </summary>
+        private void InvokeNewSurfaceEvent(IntPtr pSurface)
+        {
+            if (NewAllocatorSurface != null)
+                NewAllocatorSurface(this, pSurface);
+        }
+
+        /// <summary>
+        /// Fires the NewAllocatorFrame event notifying the
+        /// subscriber that a new frame is ready to be presented
+        /// </summary>
+        private void InvokeNewAllocatorFrame()
+        {
+            var newAllocatorFrameHandler = NewAllocatorFrame;
+            if (newAllocatorFrameHandler != null) newAllocatorFrameHandler();
+        }
+
+        /// <summary>
+        /// Part of the dispose pattern
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            //if (m_disposed) return;
+
+            if (disposing)
+            {
+                InvokeNewSurfaceEvent(IntPtr.Zero);
+                /* Pass a dummy cookie to TerminateDevice */
+                TerminateDevice(IntPtr.Zero);
+
+                if (m_allocatorNotify != null)
+                    Marshal.FinalReleaseComObject(m_allocatorNotify);
+            }
+
+            m_disposed = true;
+        }
+
+        /// <summary>
+        /// Tests if the D3D device has been lost and if it has
+        /// it is retored. This happens on XP with things like
+        /// resolution changes or pressing ctrl + alt + del.  With
+        /// Vista, this will most likely never be called unless the
+        /// video driver hangs or is changed.
+        /// </summary>
+        private void TestRestoreLostDevice()
+        {
+            // TODO: why was this required in the first place?
+            // TestCooperativeLevel throws managed error, cannot be converted to IDirect3DDevice9
+            //if (m_device == null)
+            return;
+
+            /* This will throw an exception
+             * if the device is lost */
+            var hr = m_device.TestCooperativeLevel();
+
+            /* Do nothing if S_OK */
+            if (hr == 0)
+                return;
+
+            FreeSurfaces();
+            CreateDevice();
+
+            /* TODO: This is bad. FIX IT! 
+             * Figure out how to tell when the new
+             * device is ready to use */
+            Thread.Sleep(1500);
+
+            var pDev = GetComPointer(m_device);
+
+            /* Update with our new device */
+            m_allocatorNotify.ChangeD3DDevice(pDev, GetAdapterMonitor(0));
+        }
+
+        /// <summary>
+        /// Gets the pointer to the adapter monitor
+        /// </summary>
+        /// <param name="adapterOrdinal">The ordinal of the adapter</param>
+        /// <returns>A pointer to the adaptor monitor</returns>
+        private IntPtr GetAdapterMonitor(uint adapterOrdinal)
+        {
+            var pMonitor = IsVistaOrBetter ? m_d3dEx.GetAdapterMonitor(adapterOrdinal) : m_d3d.GetAdapterMonitor(adapterOrdinal);
+
+            return pMonitor;
+        }
+
+        public void InvokeSurfaceCreation()
+        {
+            /* Nofity to our listeners we have new surfaces */
+            if (m_privateSurface != null)
+                InvokeNewSurfaceEvent(GetComPointer(m_privateSurface));
+            else
+                InvokeNewSurfaceEvent(DxSurfaces[0]);
+        }
+
         /// <summary>
         /// Gets a native pointer to a COM object.  This method does not
         /// add a reference count.
@@ -517,7 +538,7 @@ namespace MediaPlayer.Player
             if (!Marshal.IsComObject(comObj))
                 throw new ArgumentException("The argument is not a COM object", "COMObj");
 
-            IntPtr pComObj = Marshal.GetIUnknownForObject(comObj);
+            var pComObj = Marshal.GetIUnknownForObject(comObj);
 
             /* Get IUnknownForObject adds a reference count
              * to the COM object so we remove a reference count
@@ -534,18 +555,6 @@ namespace MediaPlayer.Player
         }
 
         /// <summary>
-        /// Gets if the current operating system is
-        /// Windows Vista or higher.
-        /// </summary>
-        private static bool IsVistaOrBetter
-        {
-            get
-            {
-                return Environment.OSVersion.Version.Major >= 6;
-            }
-        }
-
-        /// <summary>
         /// Creates a Direct3D device
         /// </summary>
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -557,7 +566,7 @@ namespace MediaPlayer.Player
             var param = new D3DPRESENT_PARAMETERS
             {
                 Windowed = 1,
-                Flags = ((short)(D3DPRESENTFLAG.D3DPRESENTFLAG_VIDEO)),
+                Flags = ((short) (D3DPRESENTFLAG.D3DPRESENTFLAG_VIDEO)),
                 BackBufferFormat = D3DFORMAT.D3DFMT_X8R8G8B8,
                 SwapEffect = D3DSWAPEFFECT.D3DSWAPEFFECT_DISCARD
             };
@@ -569,17 +578,17 @@ namespace MediaPlayer.Player
             if (IsVistaOrBetter)
             {
                 m_d3dEx.CreateDeviceEx(0, D3DDEVTYPE.D3DDEVTYPE_HAL, m_hWnd,
-                  CreateFlags.D3DCREATE_SOFTWARE_VERTEXPROCESSING | CreateFlags.D3DCREATE_MULTITHREADED,
-                  ref param, IntPtr.Zero, out dev);
+                    CreateFlags.D3DCREATE_SOFTWARE_VERTEXPROCESSING | CreateFlags.D3DCREATE_MULTITHREADED,
+                    ref param, IntPtr.Zero, out dev);
             }
-            else/* Windows XP */
+            else /* Windows XP */
             {
                 m_d3d.CreateDevice(0, D3DDEVTYPE.D3DDEVTYPE_HAL, m_hWnd,
-                  CreateFlags.D3DCREATE_SOFTWARE_VERTEXPROCESSING | CreateFlags.D3DCREATE_MULTITHREADED,
-                  ref param, out dev);
+                    CreateFlags.D3DCREATE_SOFTWARE_VERTEXPROCESSING | CreateFlags.D3DCREATE_MULTITHREADED,
+                    ref param, out dev);
             }
 
-            m_device = (IDirect3DDevice9)Marshal.GetObjectForIUnknown(dev);
+            m_device = (IDirect3DDevice9) Marshal.GetObjectForIUnknown(dev);
             Marshal.Release(dev);
         }
 
@@ -590,7 +599,7 @@ namespace MediaPlayer.Player
         {
             lock (m_instanceLock)
             {
-                if(m_privateSurface != null)
+                if (m_privateSurface != null)
                 {
                     Marshal.ReleaseComObject(m_privateSurface);
                     m_privateSurface = null;

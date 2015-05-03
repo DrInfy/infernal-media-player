@@ -1,8 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿#region Usings
+
+using System;
 using System.Windows;
 using System.Windows.Media;
+
+#endregion
 
 namespace ImpControls
 {
@@ -12,34 +14,36 @@ namespace ImpControls
     [Serializable]
     public class StyleClass
     {
-        /// <summary> height of one single row in listboxes in pixels</summary>
-        public int RowHeight = 15;
+        #region Static Fields and Constants
 
         /// <summary> The scrollbar width</summary>
         public const int ScrollbarWidth = 10;
 
+        #endregion
+
+        #region Fields
+
+        /// <summary> height of one single row in listboxes in pixels</summary>
+        public int RowHeight = 15;
+
         public Brush BorderBrush;
         public Brush BorderMouseoverBrush;
         public Brush BorderPressedBrush;
-
         public Brush BorderDisabledBrush;
         public Brush BackNormalBrush;
         public Brush BackMouseoverBrush;
         public Brush BackPressedBrush;
-
         public Brush BackDisabledBrush;
         public Brush NormalBrush;
         public Brush MouseoverBrush;
         public Brush PressedBrush;
-
         public Brush DisabledBrush;
         public Brush PanelUpperBrush;
-
         public Brush PanelLowerBrush;
         public Thickness BaseBorderThickness;
-
         public Point PressedTranslation = new Point(0, 0);
-        
+
+        #endregion
 
         public StyleClass()
         {
@@ -58,7 +62,7 @@ namespace ImpControls
             PressedBrush = new SolidColorBrush(Color.FromRgb(200, 0, 0));
             DisabledBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
 
-            LinearGradientBrush brush = new LinearGradientBrush();
+            var brush = new LinearGradientBrush();
             brush.StartPoint = new Point(0, 0);
             brush.EndPoint = new Point(0, 1);
             brush.GradientStops.Add(new GradientStop(Color.FromRgb(50, 50, 50), 0));

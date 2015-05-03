@@ -1,25 +1,30 @@
-﻿using System;
-using System.Drawing;
+﻿#region Usings
+
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows;
 using Base;
 using DirectShowLib;
 using MediaPlayer.Helpers;
-using Size = System.Windows.Size;
+
+#endregion
 
 namespace MediaPlayer.Player
 {
     internal class FilterGraphs
     {
+        #region Static Fields and Constants
+
         private const MediaPositionFormat preferedPositionFormat = MediaPositionFormat.MediaTime;
-        private MediaPositionFormat currentPositionFormat;
+
+        #endregion
+
+        #region Fields
 
         internal long Position;
         internal long Duration;
         internal long FrameDuration;
-
-        private PlayerController controller;
-
 
         /// <summary>
         /// DirectShow interface for controlling audio
@@ -31,7 +36,6 @@ namespace MediaPlayer.Player
         /// The DirectShow filter graph reference
         /// </summary>
         internal IFilterGraph2 FilterGraph;
-
 
         /// <summary>
         /// The DirectShow interface for controlling the
@@ -46,15 +50,12 @@ namespace MediaPlayer.Player
         /// </summary>
         internal IMediaEventEx MediaEvent;
 
-
         /// <summary>
         /// The DirectShow media seeking interface
         /// </summary>
         internal IMediaSeeking Seeking;
 
         internal IVideoFrameStep VideoStep;
-
-        private IBaseFilter sourceFilter;
 
         /// <summary>
         /// The DirectShow graph interface.  In this example
@@ -66,23 +67,28 @@ namespace MediaPlayer.Player
         internal IGraphBuilder GraphBuilder;
 
         internal volatile bool HasVideo;
-
         internal int NaturalVideoHeight;
         internal int NaturalVideoWidth;
         internal Vmr9Allocator Allocator;
+        private readonly PlayerController controller;
+        private MediaPositionFormat currentPositionFormat;
+        private IBaseFilter sourceFilter;
 
+        #endregion
 
-        internal FilterGraphs(PlayerController controller)
-        {
-            this.controller = controller;
-        }
-
+        #region Properties
 
         internal MediaPositionFormat CurrentPositionFormat
         {
             get { return currentPositionFormat; }
         }
 
+        #endregion
+
+        internal FilterGraphs(PlayerController controller)
+        {
+            this.controller = controller;
+        }
 
         internal virtual void OpenSource(out ImpError result)
         {
@@ -102,16 +108,15 @@ namespace MediaPlayer.Player
                 if (GraphBuilder == null)
                     throw new Exception("Could not create a graph");
 
-               
+
                 FilterGraph = GraphBuilder as IFilterGraph2;
 
                 if (FilterGraph == null)
                     throw new Exception("Could not QueryInterface for the IFilterGraph2");
 
                 /* Have DirectShow find the correct source filter for the Uri */
-                int hr = FilterGraph.AddSourceFilter(controller.FilePath, controller.FilePath, out sourceFilter);
+                var hr = FilterGraph.AddSourceFilter(controller.FilePath, controller.FilePath, out sourceFilter);
                 DsError.ThrowExceptionForHR(hr);
-
 
 
                 MediaEvent = GraphBuilder as IMediaEventEx;
@@ -134,42 +139,40 @@ namespace MediaPlayer.Player
             }
         }
 
-
         private static void DisableVistaDecoders()
         {
-            OperatingSystem osInfo = System.Environment.OSVersion;
+            var osInfo = Environment.OSVersion;
             if (osInfo.Version.Major >= 6)
             {
-                DirectShowPluginControl dspc = new DirectShowPluginControl();
-                IAMPluginControl ipc = (IAMPluginControl) dspc;
-                Guid aac = MediaSubType.Mpeg2Audio; //new Guid("00000001-0000-0010-8000-00AA00389B71");
-                Guid pref = new Guid();
-                Guid h264Default = new Guid("212690fb-83e5-4526-8fd7-74478b7939cd");
-                Guid MP3Default = new Guid("e1f1a0b8-beee-490d-ba7c-066c40b5e2b9");
-                int hr2 = ipc.GetPreferredClsid(aac, out pref);
+                var dspc = new DirectShowPluginControl();
+                var ipc = (IAMPluginControl) dspc;
+                var aac = MediaSubType.Mpeg2Audio; //new Guid("00000001-0000-0010-8000-00AA00389B71");
+                var pref = new Guid();
+                var h264Default = new Guid("212690fb-83e5-4526-8fd7-74478b7939cd");
+                var MP3Default = new Guid("e1f1a0b8-beee-490d-ba7c-066c40b5e2b9");
+                var hr2 = ipc.GetPreferredClsid(aac, out pref);
                 hr2 = ipc.SetDisabled(h264Default, true);
                 hr2 = ipc.SetDisabled(MP3Default, true);
             }
         }
 
-
         internal bool RenderVideoStream(ref ImpError result, string filePath)
         {
             try
             {
-                IBaseFilter renderer = CreateVideoMixingRenderer9(GraphBuilder, 2);
+                var renderer = CreateVideoMixingRenderer9(GraphBuilder, 2);
 
                 /* We will want to enum all the pins on the source filter */
                 IEnumPins pinEnum;
 
-                int hr = sourceFilter.EnumPins(out pinEnum);
+                var hr = sourceFilter.EnumPins(out pinEnum);
                 DsError.ThrowExceptionForHR(hr);
 
-                IntPtr fetched = IntPtr.Zero;
-                IPin[] pins = { null };
+                var fetched = IntPtr.Zero;
+                IPin[] pins = {null};
 
                 /* Counter for how many pins successfully rendered */
-                int pinsRendered = 0;
+                var pinsRendered = 0;
 
 
                 var mixer = renderer as IVMRMixerControl9;
@@ -200,7 +203,7 @@ namespace MediaPlayer.Player
                 if (pinsRendered == 0)
                     throw new Exception("Could not render any streams from the source Uri");
                 /* Configure the graph in the base class */
-                
+
                 VideoStep = GraphBuilder as IVideoFrameStep;
 
                 //HasVideo = true;
@@ -222,7 +225,6 @@ namespace MediaPlayer.Player
             return false;
         }
 
-
         /// <summary>
         ///     Creates a new VMR9 renderer and configures it with an allocator
         /// </summary>
@@ -237,7 +239,7 @@ namespace MediaPlayer.Player
                 throw new Exception("Could not query filter configuration.");
 
             /* We will only have one video stream connected to the filter */
-            int hr = filterConfig.SetNumberOfStreams(streamCount);
+            var hr = filterConfig.SetNumberOfStreams(streamCount);
             DsError.ThrowExceptionForHR(hr);
 
             /* Setting the renderer to "Renderless" mode
@@ -261,7 +263,6 @@ namespace MediaPlayer.Player
             hr = Allocator.AdviseNotify(vmrSurfAllocNotify);
             DsError.ThrowExceptionForHR(hr);
 
-            
 
             hr = graph.AddFilter(vmr9, string.Format("Renderer: {0}", "0"));
 
@@ -269,7 +270,6 @@ namespace MediaPlayer.Player
 
             return vmr9;
         }
-
 
         /// <summary>
         ///     Setup the IMediaSeeking interface
@@ -286,7 +286,7 @@ namespace MediaPlayer.Player
             }
 
             /* Get our prefered DirectShow TimeFormat */
-            Guid preferedFormat = FormatHelper.ConvertPositionFormat(preferedPositionFormat);
+            var preferedFormat = FormatHelper.ConvertPositionFormat(preferedPositionFormat);
 
             /* Attempt to set the time format */
             mediaSeeking.SetTimeFormat(preferedFormat);
@@ -306,22 +306,20 @@ namespace MediaPlayer.Player
             Seeking.GetDuration(out Duration);
         }
 
-
         /// <summary>
         ///     Sets the natural pixel resolution the video in the graph
         /// </summary>
         /// <param name="renderer">The video renderer</param>
         protected void SetNativePixelSizes(IBaseFilter renderer)
         {
-            bool hv = false;
+            var hv = false;
 
-            Size size = GetVideoSize(renderer, PinDirection.Input, 0, ref hv, out FrameDuration);
+            var size = GetVideoSize(renderer, PinDirection.Input, 0, ref hv, out FrameDuration);
 
-            NaturalVideoHeight = (int)size.Height;
-            NaturalVideoWidth = (int)size.Width;
+            NaturalVideoHeight = (int) size.Height;
+            NaturalVideoWidth = (int) size.Width;
             HasVideo = hv;
         }
-
 
         /// <summary>
         ///     Gets the video resolution of a pin on a renderer.
@@ -339,12 +337,12 @@ namespace MediaPlayer.Player
             var size = new Size();
 
             var mediaType = new AMMediaType();
-            IPin pin = DsFindPin.ByDirection(renderer, direction, pinIndex);
+            var pin = DsFindPin.ByDirection(renderer, direction, pinIndex);
 
             if (pin == null)
                 goto done;
 
-            int hr = pin.ConnectionMediaType(mediaType);
+            var hr = pin.ConnectionMediaType(mediaType);
 
             if (hr != 0)
                 goto done;
@@ -361,12 +359,12 @@ namespace MediaPlayer.Player
             /* Read the video info header struct from the native pointer */
             Marshal.PtrToStructure(mediaType.formatPtr, videoInfo);
 
-            Rectangle rect = videoInfo.SrcRect.ToRectangle();
+            var rect = videoInfo.SrcRect.ToRectangle();
             size = new Size(rect.Width, rect.Height);
             hasVid = true;
             frameSpeed = videoInfo.AvgTimePerFrame;
 
-        done:
+            done:
 
             DsUtils.FreeAMMediaType(mediaType);
 
@@ -375,7 +373,6 @@ namespace MediaPlayer.Player
 
             return size;
         }
-
 
         internal void RenderAudioStream(ref ImpError result)
         {
@@ -397,7 +394,6 @@ namespace MediaPlayer.Player
             }
         }
 
-
         /// <summary>
         /// Adds a filter to a DirectShow graph based on it's name and filter category
         /// </summary>
@@ -410,8 +406,8 @@ namespace MediaPlayer.Player
             var devices = DsDevice.GetDevicesOfCat(deviceCategory);
 
             var deviceList = (from d in devices
-                              where d.Name == friendlyName
-                              select d);
+                where d.Name == friendlyName
+                select d);
             DsDevice device = null;
             if (deviceList.Count() > 0)
                 device = deviceList.Take(1).Single();
@@ -430,15 +426,14 @@ namespace MediaPlayer.Player
             var devices = DsDevice.GetDevicesOfCat(deviceCategory);
 
             var deviceList = (from d in devices
-                              where d.DevicePath == devicePath
-                              select d);
+                where d.DevicePath == devicePath
+                select d);
             DsDevice device = null;
             if (deviceList.Count() > 0)
                 device = deviceList.Take(1).Single();
 
             return AddFilterByDevice(graphBuilder, device);
         }
-
 
         private static IBaseFilter AddFilterByDevice(IGraphBuilder graphBuilder, DsDevice device)
         {
@@ -453,12 +448,11 @@ namespace MediaPlayer.Player
             IBaseFilter filter = null;
             if (device != null)
             {
-                int hr = filterGraph.AddSourceFilterForMoniker(device.Mon, null, device.Name, out filter);
+                var hr = filterGraph.AddSourceFilterForMoniker(device.Mon, null, device.Name, out filter);
                 DsError.ThrowExceptionForHR(hr);
             }
             return filter;
         }
-
 
         public void FreeResources()
         {

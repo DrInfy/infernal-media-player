@@ -1,11 +1,11 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using Imp.Libraries;
+
+#endregion
 
 namespace Infernal_Media_Player
 {
@@ -14,8 +14,12 @@ namespace Infernal_Media_Player
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            Startup += Application_Startup;
+        }
 
-        private void Application_Startup(object sender, System.Windows.StartupEventArgs e)
+        private void Application_Startup(object sender, StartupEventArgs e)
         {
             // send startup message to other instances
             ImpMessaging.InitializeMode(TheCodeKing.Net.Messaging.XDTransportMode.WindowsMessaging);
@@ -34,13 +38,13 @@ namespace Infernal_Media_Player
                     ImpMessaging.DoNotDoAnythingMsg)
                 {
                     SendPathsToActiveInstance(e);
-                    System.Environment.Exit(0); // exit silently
+                    Environment.Exit(0); // exit silently
                 }
                 else
                 {
                     // Handle the command lines in this instance and start normally
                     ImpMessaging.List = new List<string>();
-                    foreach (string commandLine in e.Args)
+                    foreach (var commandLine in e.Args)
                     {
                         var c = commandLine;
                         ImpMessaging.List.Add(c);
@@ -54,19 +58,13 @@ namespace Infernal_Media_Player
         /// </summary>
         private static void SendPathsToActiveInstance(StartupEventArgs e)
         {
-            string files = ImpMessaging.CMD_LINES;
-            foreach (string commandLine in e.Args)
+            var files = ImpMessaging.CMD_LINES;
+            foreach (var commandLine in e.Args)
             {
                 var c = commandLine;
                 files += ImpMessaging.NAME_SEPARATOR + c;
             }
             ImpMessaging.SendMessage(files);
-        }
-
-
-        public App()
-        {
-            Startup += Application_Startup;
         }
     }
 }

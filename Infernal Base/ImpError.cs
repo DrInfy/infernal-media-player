@@ -24,29 +24,37 @@
     /// </summary>
     public class ImpError
     {
+        #region Static Fields and Constants
+
         private static int count;
+
+        #endregion
+
+        #region Properties
+
+        public string Text { get; private set; }
+        public ErrorType Type { get; set; }
+
+        #endregion
 
         public ImpError(ErrorType type)
         {
-            this.Type = type;
+            Type = type;
             GetErrorText();
         }
 
         public ImpError(string path, ErrorType type)
         {
-            this.Type = type;
+            Type = type;
             GetErrorText();
             Text += ": " + path;
         }
 
         public ImpError(ErrorType type, string text)
         {
-            this.Type = type;
-            this.Text = text;
+            Type = type;
+            Text = text;
         }
-
-        public string Text { get; private set; }
-        public ErrorType Type { get; set; }
 
         private void GetErrorText()
         {

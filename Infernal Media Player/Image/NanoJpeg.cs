@@ -1,48 +1,11 @@
-﻿// NanoJPEG -- KeyJ's Tiny Baseline JPEG Decoder
-// version 1.3 (2012-03-05)
-// by Martin J. Fiedler <martin.fiedler@gmx.net>
-//
-// NanoJPEG -- KeyJ's Tiny Baseline JPEG Decoder .NET Adaptation (+ Thread Safe)
-// version 1.3 (2013-04-19)
-// By Roel van Uden <roel.van.uden@hotmail.com>
-//
-// This software is published under the terms of KeyJ's Research License,
-// version 0.2. Usage of this software is subject to the following conditions:
-// 0. There's no warranty whatsoever. The author(s) of this software can not
-// be held liable for any damages that occur when using this software.
-// 1. This software may be used freely for both non-commercial and commercial
-// purposes.
-// 2. This software may be redistributed freely as long as no fees are charged
-// for the distribution and this license information is included.
-// 3. This software may be modified freely except for this license information,
-// which must not be changed in any way.
-// 4. If anything other than configuration, indentation or comments have been
-// altered in the code, the original author(s) must receive a copy of the
-// modified code.
-//
-// INTRODUCTION
-// ============
-//
-// This is a minimal decoder for baseline JPEG images. It accepts memory dumps
-// of JPEG files as input and generates either 8-bit grayscale or packed 24-bit
-// RGB images as output. It does not parse JFIF or Exif headers; all JPEG files
-// are assumed to be either grayscale or YCbCr. CMYK or other color spaces are
-// not supported. All YCbCr subsampling schemes with power-of-two ratios are
-// supported, as are restart intervals. Progressive or lossless JPEG is not
-// supported.
-// Summed up, NanoJPEG should be able to decode all images from digital cameras
-// and most common forms of other non-progressive JPEG images.
-// The decoder is not optimized for speed, it's optimized for simplicity and
-// small code. Image quality should be at a reasonable level. A bicubic chroma
-// upsampling filter ensures that subsampled YCbCr images are rendered in
-// decent quality. The decoder is not meant to deal with broken JPEG files in
-// a graceful manner; if anything is wrong with the bitstream, decoding will
-// simply fail.
-// However, it is not thread-safe.
+﻿#region Usings
 
 using System;
 
+#endregion
+
 #pragma warning disable 1591
+
 namespace Imp.Image
 {
     // nj_result_t: Result codes for njDecode().
@@ -56,13 +19,21 @@ namespace Imp.Image
         NJ_SYNTAX_ERROR, // syntax error
         __NJ_FINISHED, // used internally, will never be reported
     };
+
     public struct nj_vlc_code_t
     {
+        #region Fields
+
         public byte bits;
         public byte code;
+
+        #endregion
     };
+
     public class nj_component_t
     {
+        #region Fields
+
         public int cid;
         public int ssx, ssy;
         public int width, height;
@@ -71,26 +42,14 @@ namespace Imp.Image
         public int actabsel, dctabsel;
         public int dcpred;
         public byte[] pixels;
+
+        #endregion
     }
+
     public class nj_context_t
     {
-        public nj_context_t()
-        {
-            this.posb = null;
-            this.comp = new nj_component_t[3];
-            this.block = new int[64];
-            this.qtab = new byte[4][];
-            this.vlctab = new nj_vlc_code_t[4][];
-            for (byte i = 0; i < 4; i++)
-            {
-                this.qtab[i] = new byte[64];
-                this.vlctab[i] = new nj_vlc_code_t[65536];
-                if (i < this.comp.Length)
-                {
-                    this.comp[i] = new nj_component_t();
-                }
-            }
-        }
+        #region Fields
+
         public byte[] posb; // C#: Because we don't have fancy pointers.
         public nj_result_t error;
         public int pos;
@@ -108,35 +67,84 @@ namespace Imp.Image
         public int[] block;
         public int rstinterval;
         public byte[] rgb;
+
+        #endregion
+
+        public nj_context_t()
+        {
+            posb = null;
+            comp = new nj_component_t[3];
+            block = new int[64];
+            qtab = new byte[4][];
+            vlctab = new nj_vlc_code_t[4][];
+            for (byte i = 0; i < 4; i++)
+            {
+                qtab[i] = new byte[64];
+                vlctab[i] = new nj_vlc_code_t[65536];
+                if (i < comp.Length)
+                {
+                    comp[i] = new nj_component_t();
+                }
+            }
+        }
     }
-    public class nj_exception : Exception { }
+
+    public class nj_exception : Exception {}
+
     public class NanoJpeg
     {
-        public nj_context_t nj = new nj_context_t();
-        public static readonly byte[] njZZ = new byte[] { 0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18,
-11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7, 14, 21, 28, 35,
-42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59, 52, 45,
-38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63 };
-        public static byte njClip(int x)
+        #region Static Fields and Constants
+
+        public static readonly byte[] njZZ = new byte[]
         {
-            return (byte)((x < 0) ? 0 : ((x > 0xFF) ? 0xFF : (byte)x));
-        }
+            0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18,
+            11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7, 14, 21, 28, 35,
+            42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59, 52, 45,
+            38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63
+        };
+
         public static readonly int W1 = 2841;
         public static readonly int W2 = 2676;
         public static readonly int W3 = 2408;
         public static readonly int W5 = 1609;
         public static readonly int W6 = 1108;
         public static readonly int W7 = 565;
+        public static readonly int CF4A = (-9);
+        public static readonly int CF4B = (111);
+        public static readonly int CF4C = (29);
+        public static readonly int CF4D = (-3);
+        public static readonly int CF3A = (28);
+        public static readonly int CF3B = (109);
+        public static readonly int CF3C = (-9);
+        public static readonly int CF3X = (104);
+        public static readonly int CF3Y = (27);
+        public static readonly int CF3Z = (-3);
+        public static readonly int CF2A = (139);
+        public static readonly int CF2B = (-11);
+
+        #endregion
+
+        #region Fields
+
+        public nj_context_t nj = new nj_context_t();
+
+        #endregion
+
+        public static byte njClip(int x)
+        {
+            return (byte) ((x < 0) ? 0 : ((x > 0xFF) ? 0xFF : (byte) x));
+        }
+
         public void njRowIDCT(int[] blk, int coef)
         {
             int x0, x1, x2, x3, x4, x5, x6, x7, x8;
             if (((x1 = blk[coef + 4] << 11)
-            | (x2 = blk[coef + 6])
-            | (x3 = blk[coef + 2])
-            | (x4 = blk[coef + 1])
-            | (x5 = blk[coef + 7])
-            | (x6 = blk[coef + 5])
-            | (x7 = blk[coef + 3])) == 0)
+                 | (x2 = blk[coef + 6])
+                 | (x3 = blk[coef + 2])
+                 | (x4 = blk[coef + 1])
+                 | (x5 = blk[coef + 7])
+                 | (x6 = blk[coef + 5])
+                 | (x7 = blk[coef + 3])) == 0)
             {
                 blk[coef] = blk[coef + 1] = blk[coef + 2] = blk[coef + 3] = blk[coef + 4] = blk[coef + 5] = blk[coef + 6] = blk[coef + 7] = blk[coef] << 3;
                 return;
@@ -172,21 +180,22 @@ namespace Imp.Image
             blk[coef + 6] = (x3 - x2) >> 8;
             blk[coef + 7] = (x7 - x1) >> 8;
         }
+
         public void njColIDCT(int[] blk, int coef, byte[] pixels, int outv, int stride)
         {
             int x0, x1, x2, x3, x4, x5, x6, x7, x8;
             if (((x1 = blk[coef + 8 * 4] << 8)
-            | (x2 = blk[coef + 8 * 6])
-            | (x3 = blk[coef + 8 * 2])
-            | (x4 = blk[coef + 8 * 1])
-            | (x5 = blk[coef + 8 * 7])
-            | (x6 = blk[coef + 8 * 5])
-            | (x7 = blk[coef + 8 * 3])) == 0)
+                 | (x2 = blk[coef + 8 * 6])
+                 | (x3 = blk[coef + 8 * 2])
+                 | (x4 = blk[coef + 8 * 1])
+                 | (x5 = blk[coef + 8 * 7])
+                 | (x6 = blk[coef + 8 * 5])
+                 | (x7 = blk[coef + 8 * 3])) == 0)
             {
                 x1 = njClip(((blk[coef] + 32) >> 6) + 128);
                 for (x0 = 8; x0 != 0; --x0)
                 {
-                    pixels[outv] = (byte)x1;
+                    pixels[outv] = (byte) x1;
                     outv += stride;
                 }
                 return;
@@ -213,20 +222,29 @@ namespace Imp.Image
             x0 -= x2;
             x2 = (181 * (x4 + x5) + 128) >> 8;
             x4 = (181 * (x4 - x5) + 128) >> 8;
-            pixels[outv] = njClip(((x7 + x1) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x3 + x2) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x0 + x4) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x8 + x6) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x8 - x6) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x0 - x4) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x3 - x2) >> 14) + 128); outv += stride;
+            pixels[outv] = njClip(((x7 + x1) >> 14) + 128);
+            outv += stride;
+            pixels[outv] = njClip(((x3 + x2) >> 14) + 128);
+            outv += stride;
+            pixels[outv] = njClip(((x0 + x4) >> 14) + 128);
+            outv += stride;
+            pixels[outv] = njClip(((x8 + x6) >> 14) + 128);
+            outv += stride;
+            pixels[outv] = njClip(((x8 - x6) >> 14) + 128);
+            outv += stride;
+            pixels[outv] = njClip(((x0 - x4) >> 14) + 128);
+            outv += stride;
+            pixels[outv] = njClip(((x3 - x2) >> 14) + 128);
+            outv += stride;
             pixels[outv] = njClip(((x7 - x1) >> 14) + 128);
         }
+
         public void njThrow(nj_result_t e)
         {
             nj.error = e;
             throw new nj_exception();
         }
+
         public int njShowBits(int bits)
         {
             byte newbyte;
@@ -247,14 +265,16 @@ namespace Imp.Image
                 {
                     if (nj.size != 0)
                     {
-                        byte marker = nj.posb[nj.pos++];
+                        var marker = nj.posb[nj.pos++];
                         nj.size--;
                         switch (marker)
                         {
                             case 0x00:
                             case 0xFF:
                                 break;
-                            case 0xD9: nj.size = 0; break;
+                            case 0xD9:
+                                nj.size = 0;
+                                break;
                             default:
                                 if ((marker & 0xF8) != 0xD0)
                                     nj.error = nj_result_t.NJ_SYNTAX_ERROR;
@@ -272,22 +292,26 @@ namespace Imp.Image
             }
             return (nj.buf >> (nj.bufbits - bits)) & ((1 << bits) - 1);
         }
+
         public void njSkipBits(int bits)
         {
             if (nj.bufbits < bits)
                 njShowBits(bits);
             nj.bufbits -= bits;
         }
+
         public int njGetBits(int bits)
         {
-            int res = njShowBits(bits);
+            var res = njShowBits(bits);
             njSkipBits(bits);
             return res;
         }
+
         public void njByteAlign()
         {
             nj.bufbits &= 0xF8;
         }
+
         public void njSkip(int count)
         {
             nj.pos += count;
@@ -295,10 +319,12 @@ namespace Imp.Image
             nj.length -= count;
             if (nj.size < 0) nj.error = nj_result_t.NJ_SYNTAX_ERROR;
         }
+
         public ushort njDecode16(int pos)
         {
-            return (ushort)((nj.posb[pos] << 8) | nj.posb[pos + 1]);
+            return (ushort) ((nj.posb[pos] << 8) | nj.posb[pos + 1]);
         }
+
         public void njDecodeLength()
         {
             if (nj.size < 2) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
@@ -306,11 +332,13 @@ namespace Imp.Image
             if (nj.length > nj.size) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
             njSkip(2);
         }
+
         public void njSkipMarker()
         {
             njDecodeLength();
             njSkip(nj.length);
         }
+
         public void njDecodeSOF()
         {
             int i, ssxmax = 0, ssymax = 0;
@@ -372,12 +400,13 @@ namespace Imp.Image
             }
             njSkip(nj.length);
         }
+
         public void njDecodeDHT()
         {
             int codelen, currcnt, remain, spread, i, j;
             nj_vlc_code_t[] vlc;
             int vlcc;
-            byte[] counts = new byte[16];
+            var counts = new byte[16];
             njDecodeLength();
             while (nj.length >= 17)
             {
@@ -401,12 +430,12 @@ namespace Imp.Image
                     if (remain < 0) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
                     for (i = 0; i < currcnt; ++i)
                     {
-                        byte code = nj.posb[nj.pos + i];
+                        var code = nj.posb[nj.pos + i];
                         for (j = spread; j != 0; --j)
                         {
                             if (vlcc < 65536)
                             {
-                                vlc[vlcc].bits = (byte)codelen;
+                                vlc[vlcc].bits = (byte) codelen;
                                 vlc[vlcc].code = code;
                                 vlcc++;
                             }
@@ -425,6 +454,7 @@ namespace Imp.Image
             }
             if (nj.length != 0) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
         }
+
         public void njDecodeDQT()
         {
             int i;
@@ -442,6 +472,7 @@ namespace Imp.Image
             }
             if (nj.length != 0) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
         }
+
         public void njDecodeDRI()
         {
             njDecodeLength();
@@ -449,14 +480,19 @@ namespace Imp.Image
             nj.rstinterval = njDecode16(nj.pos);
             njSkip(nj.length);
         }
+
         public int njGetVLC(nj_vlc_code_t[] vlc, ref byte code)
         {
-            int value = njShowBits(16);
+            var value = njShowBits(16);
             int bits = vlc[value].bits;
-            if (bits == 0) { nj.error = nj_result_t.NJ_SYNTAX_ERROR; return 0; }
+            if (bits == 0)
+            {
+                nj.error = nj_result_t.NJ_SYNTAX_ERROR;
+                return 0;
+            }
             njSkipBits(bits);
             value = vlc[value].code;
-            code = (byte)value;
+            code = (byte) value;
             bits = value & 15;
             if (bits == 0) return 0;
             value = njGetBits(bits);
@@ -464,6 +500,7 @@ namespace Imp.Image
                 value += ((-1) << bits) + 1;
             return value;
         }
+
         public void njDecodeBlock(nj_component_t c, int outv)
         {
             byte discard = 0;
@@ -479,13 +516,14 @@ namespace Imp.Image
                 if ((code & 0x0F) == 0 && (code != 0xF0)) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
                 coef += (code >> 4) + 1;
                 if (coef > 63) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
-                nj.block[(int)njZZ[coef]] = value * nj.qtab[c.qtsel][coef];
+                nj.block[(int) njZZ[coef]] = value * nj.qtab[c.qtsel][coef];
             } while (coef < 63);
             for (coef = 0; coef < 64; coef += 8)
                 njRowIDCT(nj.block, coef);
             for (coef = 0; coef < 8; ++coef)
                 njColIDCT(nj.block, coef, c.pixels, outv + coef, c.stride);
         }
+
         public void njDecodeScan()
         {
             int i, mbx, mby, sbx, sby;
@@ -506,7 +544,7 @@ namespace Imp.Image
             }
             if (nj.posb[nj.pos] != 0 || (nj.posb[nj.pos + 1] != 63) || nj.posb[nj.pos + 2] != 0) njThrow(nj_result_t.NJ_UNSUPPORTED);
             njSkip(nj.length);
-            for (mbx = mby = 0; ; )
+            for (mbx = mby = 0;;)
             {
                 for (i = 0; i < nj.ncomp; ++i)
                 {
@@ -538,25 +576,15 @@ namespace Imp.Image
             }
             nj.error = nj_result_t.__NJ_FINISHED;
         }
-        public static readonly int CF4A = (-9);
-        public static readonly int CF4B = (111);
-        public static readonly int CF4C = (29);
-        public static readonly int CF4D = (-3);
-        public static readonly int CF3A = (28);
-        public static readonly int CF3B = (109);
-        public static readonly int CF3C = (-9);
-        public static readonly int CF3X = (104);
-        public static readonly int CF3Y = (27);
-        public static readonly int CF3Z = (-3);
-        public static readonly int CF2A = (139);
-        public static readonly int CF2B = (-11);
+
         public static byte CF(int x)
         {
             return njClip(((x) + 64) >> 7);
         }
+
         public void njUpsampleH(nj_component_t c)
         {
-            int xmax = c.width - 3;
+            var xmax = c.width - 3;
             byte[] outv;
             int lin = 0, lout = 0;
             int x, y;
@@ -582,6 +610,7 @@ namespace Imp.Image
             c.stride = c.width;
             c.pixels = outv;
         }
+
         public void njUpsampleV(nj_component_t c)
         {
             int w = c.width, s1 = c.stride, s2 = s1 + s1;
@@ -594,25 +623,33 @@ namespace Imp.Image
             {
                 cin = x;
                 cout = x;
-                outv[cout] = CF(CF2A * c.pixels[cin] + CF2B * c.pixels[cin + s1]); cout += w;
-                outv[cout] = CF(CF3X * c.pixels[cin] + CF3Y * c.pixels[cin + s1] + CF3Z * c.pixels[cin + s2]); cout += w;
-                outv[cout] = CF(CF3A * c.pixels[cin] + CF3B * c.pixels[cin + s1] + CF3C * c.pixels[cin + s2]); cout += w;
+                outv[cout] = CF(CF2A * c.pixels[cin] + CF2B * c.pixels[cin + s1]);
+                cout += w;
+                outv[cout] = CF(CF3X * c.pixels[cin] + CF3Y * c.pixels[cin + s1] + CF3Z * c.pixels[cin + s2]);
+                cout += w;
+                outv[cout] = CF(CF3A * c.pixels[cin] + CF3B * c.pixels[cin + s1] + CF3C * c.pixels[cin + s2]);
+                cout += w;
                 cin += s1;
                 for (y = c.height - 3; y != 0; --y)
                 {
-                    outv[cout] = CF(CF4A * c.pixels[cin + -s1] + CF4B * c.pixels[cin] + CF4C * c.pixels[cin + s1] + CF4D * c.pixels[cin + s2]); cout += w;
-                    outv[cout] = CF(CF4D * c.pixels[cin + -s1] + CF4C * c.pixels[cin] + CF4B * c.pixels[cin + s1] + CF4A * c.pixels[cin + s2]); cout += w;
+                    outv[cout] = CF(CF4A * c.pixels[cin + -s1] + CF4B * c.pixels[cin] + CF4C * c.pixels[cin + s1] + CF4D * c.pixels[cin + s2]);
+                    cout += w;
+                    outv[cout] = CF(CF4D * c.pixels[cin + -s1] + CF4C * c.pixels[cin] + CF4B * c.pixels[cin + s1] + CF4A * c.pixels[cin + s2]);
+                    cout += w;
                     cin += s1;
                 }
                 cin += s1;
-                outv[cout] = CF(CF3A * c.pixels[cin] + CF3B * c.pixels[cin - s1] + CF3C * c.pixels[cin - s2]); cout += w;
-                outv[cout] = CF(CF3X * c.pixels[cin] + CF3Y * c.pixels[cin - s1] + CF3Z * c.pixels[cin - s2]); cout += w;
+                outv[cout] = CF(CF3A * c.pixels[cin] + CF3B * c.pixels[cin - s1] + CF3C * c.pixels[cin - s2]);
+                cout += w;
+                outv[cout] = CF(CF3X * c.pixels[cin] + CF3Y * c.pixels[cin - s1] + CF3Z * c.pixels[cin - s2]);
+                cout += w;
                 outv[cout] = CF(CF2A * c.pixels[cin] + CF2B * c.pixels[cin - s1]);
             }
             c.height <<= 1;
             c.stride = c.width;
             c.pixels = outv;
         }
+
         public void njConvert()
         {
             int i;
@@ -638,9 +675,9 @@ namespace Imp.Image
                 {
                     for (x = 0; x < nj.width; ++x)
                     {
-                        int y = nj.comp[0].pixels[py + x] << 8;
-                        int cb = nj.comp[1].pixels[pcb + x] - 128;
-                        int cr = nj.comp[2].pixels[pcr + x] - 128;
+                        var y = nj.comp[0].pixels[py + x] << 8;
+                        var cb = nj.comp[1].pixels[pcb + x] - 128;
+                        var cr = nj.comp[2].pixels[pcr + x] - 128;
                         nj.rgb[prgb++] = njClip((y + 359 * cr + 128) >> 8);
                         nj.rgb[prgb++] = njClip((y - 88 * cb - 183 * cr + 128) >> 8);
                         nj.rgb[prgb++] = njClip((y + 454 * cb + 128) >> 8);
@@ -653,26 +690,28 @@ namespace Imp.Image
             else if (nj.comp[0].width != nj.comp[0].stride)
             {
                 // grayscale . only remove stride
-                int pin = nj.comp[0].stride;
-                int pout = nj.comp[0].width;
+                var pin = nj.comp[0].stride;
+                var pout = nj.comp[0].width;
                 int y;
                 for (y = nj.comp[0].height - 1; y != 0; --y)
                 {
                     Buffer.BlockCopy(nj.comp[0].pixels,
-                    pout,
-                    nj.comp[0].pixels,
-                    pin,
-                    nj.comp[0].width);
+                        pout,
+                        nj.comp[0].pixels,
+                        pin,
+                        nj.comp[0].width);
                     pin += nj.comp[0].stride;
                     pout += nj.comp[0].width;
                 }
                 nj.comp[0].stride = nj.comp[0].width;
             }
         }
+
         public void njInit()
         {
             nj = new nj_context_t();
         }
+
         public nj_result_t njDecode(byte[] jpeg)
         {
             try
@@ -690,13 +729,25 @@ namespace Imp.Image
                     njSkip(2);
                     switch (nj.posb[nj.pos - 1])
                     {
-                        case 0xC0: njDecodeSOF(); break;
+                        case 0xC0:
+                            njDecodeSOF();
+                            break;
                         // case 0xC2: njDecodeSOF(); break;
-                        case 0xC4: njDecodeDHT(); break;
-                        case 0xDB: njDecodeDQT(); break;
-                        case 0xDD: njDecodeDRI(); break;
-                        case 0xDA: njDecodeScan(); break;
-                        case 0xFE: njSkipMarker(); break;
+                        case 0xC4:
+                            njDecodeDHT();
+                            break;
+                        case 0xDB:
+                            njDecodeDQT();
+                            break;
+                        case 0xDD:
+                            njDecodeDRI();
+                            break;
+                        case 0xDA:
+                            njDecodeScan();
+                            break;
+                        case 0xFE:
+                            njSkipMarker();
+                            break;
                         default:
                             if ((nj.posb[nj.pos - 1] & 0xF0) == 0xE0)
                                 njSkipMarker();
@@ -715,26 +766,32 @@ namespace Imp.Image
                 return nj.error;
             }
         }
+
         public int njGetWidth()
         {
             return nj.width;
         }
+
         public int njGetHeight()
         {
             return nj.height;
         }
+
         public bool njIsColor()
         {
             return nj.ncomp != 1;
         }
+
         public byte[] njGetImage()
         {
             return nj.ncomp == 1 ? nj.comp[0].pixels : nj.rgb;
         }
+
         public int njGetImageSize()
         {
             return nj.width * nj.height * nj.ncomp;
         }
     }
 }
+
 #pragma warning restore 1591

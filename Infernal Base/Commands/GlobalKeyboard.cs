@@ -1,16 +1,28 @@
-﻿using System.Windows.Input;
+﻿#region Usings
+
+using System.Windows.Input;
+
+#endregion
 
 namespace Base.Commands
 {
     public static class GlobalKeyboard
     {
+        #region Static Fields and Constants
+
         private static ModifierKeys modKeys;
+
+        #endregion
+
+        #region Properties
+
+        public static ModifierKeys ModKeys => modKeys;
+
+        #endregion
 
         public static void SetModifierKeys(ModifierKeys _modKeys)
         {
             modKeys = _modKeys;
         }
-
-        public static ModifierKeys ModKeys => modKeys;
     }
 }

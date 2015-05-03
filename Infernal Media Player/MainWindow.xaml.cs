@@ -1,10 +1,10 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Base;
@@ -12,10 +12,11 @@ using Base.Commands;
 using Base.FileData;
 using Base.FileLoading;
 using Base.Libraries;
-using Base.ListLogic;
 using Imp.Controllers;
 using Imp.Libraries;
 using ImpControls.Gui;
+
+#endregion
 
 namespace Imp
 {
@@ -24,32 +25,111 @@ namespace Imp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly MainController mainC;
-        public readonly StyleLib Styling = new StyleLib();
-        private ExtWindowState extWindowState;
-
-        private Rect backupRect;
-        private bool allowStateChange; // prevents screen sizing when required
-        public bool Updating;
-        public bool WindowClosed;
-
-        private MouseStates mouseState = MouseStates.None;
-
+        #region Helpers
 
         public delegate void Update();
+
+        #endregion
+
+        #region Fields
+
+        public readonly StyleLib Styling = new StyleLib();
+        public bool Updating;
+        public bool WindowClosed;
+        private readonly MainController mainC;
+        private ExtWindowState extWindowState;
+        private Rect backupRect;
+        private bool allowStateChange; // prevents screen sizing when required
+        private MouseStates mouseState = MouseStates.None;
+
+        #endregion
+
+        #region Properties
+
+        public ExtWindowState ExtWindowState
+        {
+            get { return extWindowState; }
+            set
+            {
+                if (ExtWindowState == value) return;
+
+                allowStateChange = true;
+                if ((int) value < 2)
+                {
+                    ResizeMode = ResizeMode.CanResize;
+                    WindowState = (WindowState) value;
+                    if (ExtWindowState > ExtWindowState.Minimized)
+                    {
+                        setRect(this, backupRect);
+                    }
+
+                    Topmost = false;
+                    ButtonMax.CurrentState = 0;
+                    //If value = IMP4.ExtWindowState.Minimized Then
+                    //    _ExtWindowState = value
+                    //    Exit Property
+                    //End If
+                }
+                else
+                {
+                    if (value == ExtWindowState.Fullscreen)
+                    {
+                        //Me.Topmost = True
+                        backupRect = LibImp.GetWindowRect(this);
+                        ResizeMode = ResizeMode.CanMinimize;
+                        WindowState = WindowState.Maximized;
+                    }
+                    else
+                    {
+                        //Me.Topmost = False
+                        backupRect = LibImp.GetWindowRect(this);
+                        ResizeMode = ResizeMode.CanMinimize;
+                        WindowState = WindowState.Normal;
+                        var area = LibImp.GetWorkArea(this);
+
+                        setRect(this, area);
+                        //Me.SizeToContent = Windows.SizeToContent.WidthAndHeight ' =SystemParameters.WorkArea 
+                    }
+                    ButtonMax.CurrentState = 1;
+                }
+
+                extWindowState = value;
+                if (ExtWindowState > ExtWindowState.Minimized)
+                {
+                    Focus();
+                }
+                allowStateChange = false;
+            }
+        }
+
+        private bool MouseOverGrid
+        {
+            get
+            {
+                return grid.IsMouseDirectlyOver ||
+                       LabelTopic.IsMouseOver ||
+                       BarBottom.IsMouseDirectlyOver ||
+                       BarTop.IsMouseDirectlyOver ||
+                       BarTop2.IsMouseDirectlyOver ||
+                       ImageViewer.IsMouseDirectlyOver ||
+                       LogoViewer.IsMouseDirectlyOver ||
+                       PanelOpen.LabelTopic.IsMouseOver ||
+                       PanelPlaylist.LabelTopic.IsMouseOver ||
+                       PlayerBottom.LabelPosition.IsMouseOver;
+            }
+        }
+
+        #endregion
 
         public MainWindow()
         {
             InitializeComponent();
 
             mainC = new MainController(this);
-            
+
             SetStyles();
             SetButtonEvents();
-            
-            
         }
-
 
         /// <summary>
         /// Sets the events for button so that they can be used.
@@ -63,10 +143,6 @@ namespace Imp
             ButtonExit.Clicked += Exit;
         }
 
-
-        
-
-
         /// <summary>
         /// Sets the styles for buttons and panels.
         /// </summary>
@@ -77,7 +153,7 @@ namespace Imp
             PanelOpen.SetStyles(Styling, mainC);
             PanelPlaylist.SetStyles(Styling, mainC);
             PlayerBottom.SetStyles(Styling, mainC);
-            
+
 
             Styling.SetStyle(ButtonOpen, BtnNumber.Open);
             Styling.SetStyle(ButtonPlayList, BtnNumber.Playlist);
@@ -96,7 +172,6 @@ namespace Imp
             SplitterLeft.Fill = Styling.GetForeground();
             SplitterRight.Fill = Styling.GetForeground();
         }
-
 
         public void PlayPause(object sender)
         {
@@ -128,10 +203,8 @@ namespace Imp
             mainC.Exec(ImpCommand.Exit);
         }
 
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             var timerUpdater = new Thread(new ThreadStart(positionUpdate));
             timerUpdater.Priority = ThreadPriority.Lowest;
             timerUpdater.Start();
@@ -140,29 +213,28 @@ namespace Imp
             OpenFileLinesFromMessaging();
 
 
-            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            var source = PresentationSource.FromVisual(Application.Current.MainWindow);
             if (source != null)
             {
-                double dpiX = source.CompositionTarget.TransformToDevice.M11;
-                double dpiY = source.CompositionTarget.TransformToDevice.M22;
+                var dpiX = source.CompositionTarget.TransformToDevice.M11;
+                var dpiY = source.CompositionTarget.TransformToDevice.M22;
 
                 var rect = LibImp.GetWorkArea(this);
-                this.Width = Math.Min(1200 * dpiX, rect.Width * dpiX);
-                this.Height = Math.Min(800 * dpiY, rect.Height * dpiY);
+                Width = Math.Min(1200 * dpiX, rect.Width * dpiX);
+                Height = Math.Min(800 * dpiY, rect.Height * dpiY);
             }
         }
-
 
         private void positionUpdate()
         {
             do
             {
-                System.Threading.Thread.Sleep(15);
+                Thread.Sleep(15);
 
                 if ((!Updating))
                 {
                     Updating = true;
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Update(mainC.Update));
+                    Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Update(mainC.Update));
 
                     //if (mainC.skipFrame)
                     //{
@@ -171,70 +243,9 @@ namespace Imp
                     //    //End If
                     //    mainC.skipFrame = false;
                     //}
-
                 }
             } while ((!WindowClosed));
         }
-        
-
-        public ExtWindowState ExtWindowState
-        {
-            get { return extWindowState; }
-            set
-            {
-                if (ExtWindowState == value) return;
-
-                allowStateChange = true;
-                if ((int)value < 2)
-                {
-                    this.ResizeMode = ResizeMode.CanResize;
-                    WindowState = (WindowState) value;
-                    if (ExtWindowState > ExtWindowState.Minimized)
-                    {
-                        setRect(this, backupRect);
-                    }
-
-                    this.Topmost = false;
-                    this.ButtonMax.CurrentState = 0;
-                    //If value = IMP4.ExtWindowState.Minimized Then
-                    //    _ExtWindowState = value
-                    //    Exit Property
-                    //End If
-                }
-                else
-                {
-                    if (value == ExtWindowState.Fullscreen)
-                    {
-                        //Me.Topmost = True
-                        backupRect = LibImp.GetWindowRect(this);
-                        this.ResizeMode = ResizeMode.CanMinimize;
-                        this.WindowState = WindowState.Maximized;
-
-                    }
-                    else
-                    {
-                        //Me.Topmost = False
-                        backupRect = LibImp.GetWindowRect(this);
-                        this.ResizeMode = ResizeMode.CanMinimize;
-                        this.WindowState = WindowState.Normal;
-                        Rect area = LibImp.GetWorkArea(this);
-
-                        setRect(this, area);
-                        //Me.SizeToContent = Windows.SizeToContent.WidthAndHeight ' =SystemParameters.WorkArea 
-                    }
-                    this.ButtonMax.CurrentState = 1;
-                }
-
-                extWindowState = value;
-                if (ExtWindowState > ExtWindowState.Minimized)
-                {
-                    this.Focus();
-                }
-                allowStateChange = false;
-            }
-        }
-
-
 
         private void grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -254,7 +265,7 @@ namespace Imp
             }
             // set focus to "something", when clicking away from text boxes
             if (!IsMouseOverList() && !IsMouseOverTextbox())
-                ButtonExit.Focus(); 
+                ButtonExit.Focus();
         }
 
         private void grid_MouseMove(object sender, MouseEventArgs e)
@@ -274,7 +285,6 @@ namespace Imp
                 }
 
 
-
                 if (MouseOverGrid && extWindowState == ExtWindowState.Normal)
                     DragMove();
             }
@@ -282,34 +292,14 @@ namespace Imp
             {
                 if (SplitterLeft.IsMouseOver || SplitterRight.IsMouseOver)
                 {
-                    this.Cursor = Cursors.SizeWE;
+                    Cursor = Cursors.SizeWE;
                 }
                 else
                 {
-                    this.Cursor = null;
+                    Cursor = null;
                 }
             }
-            
         }
-
-
-        private bool MouseOverGrid
-        {
-            get
-            {
-                return grid.IsMouseDirectlyOver ||
-                       LabelTopic.IsMouseOver ||
-                       BarBottom.IsMouseDirectlyOver ||
-                       BarTop.IsMouseDirectlyOver ||
-                       BarTop2.IsMouseDirectlyOver ||
-                       ImageViewer.IsMouseDirectlyOver ||
-                       LogoViewer.IsMouseDirectlyOver ||
-                       PanelOpen.LabelTopic.IsMouseOver ||
-                       PanelPlaylist.LabelTopic.IsMouseOver ||
-                       PlayerBottom.LabelPosition.IsMouseOver;
-            }
-        }
-
 
         private void grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -318,29 +308,26 @@ namespace Imp
             if (e.ChangedButton == MouseButton.Right)
             {
                 if (PanelPlaylist.ListPlaylist.IsMouseDirectlyOver)
-                    mainC.ContextMenu(CursorPositionInDesktop(e), Base.ContextMenuEnum.Playlist);
+                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.Playlist);
                 else if (PanelOpen.ListFiles.IsMouseDirectlyOver)
-                    mainC.ContextMenu(CursorPositionInDesktop(e), Base.ContextMenuEnum.FileList);
+                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.FileList);
                 else if (PanelOpen.ListDirectories.IsMouseDirectlyOver)
-                    mainC.ContextMenu(CursorPositionInDesktop(e), Base.ContextMenuEnum.FolderList);
+                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.FolderList);
                 else if (PanelOpen.ListPlaces.IsMouseDirectlyOver)
-                    mainC.ContextMenu(CursorPositionInDesktop(e), Base.ContextMenuEnum.PlacesList);
-                else 
-                    mainC.ContextMenu(CursorPositionInDesktop(e), Base.ContextMenuEnum.None);
+                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.PlacesList);
+                else
+                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.None);
             }
-                
-                
         }
-
 
         private Point CursorPositionInDesktop(MouseButtonEventArgs e)
         {
             var location = PointToScreen(e.GetPosition(this));
-            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            var source = PresentationSource.FromVisual(Application.Current.MainWindow);
             if (source != null)
             {
-                double dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
-                double dpiY = 96.0 * source.CompositionTarget.TransformToDevice.M22;
+                var dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
+                var dpiY = 96.0 * source.CompositionTarget.TransformToDevice.M22;
                 return new Point(location.X * 96.0 / dpiX, location.Y * 96.0 / dpiY);
             }
             return location;
@@ -349,7 +336,6 @@ namespace Imp
             //else
             //    return e.GetPosition(null);
         }
-
 
         /// <summary>
         /// Overridden to ensure that ExtWindowState keeps up to date.
@@ -360,7 +346,6 @@ namespace Imp
                 base.OnStateChanged(e);
             else
                 ExtWindowState = (ExtWindowState) WindowState;
-
         }
 
         private void setRect(Window o, Rect r)
@@ -381,7 +366,7 @@ namespace Imp
             if (!mainC.ContentMenu.IsMouseOver)
             {
                 mouseState = MouseStates.None;
-                mainC.PanelC.CheckPanelHide(new Point(double.MaxValue, double.MaxValue));    
+                mainC.PanelC.CheckPanelHide(new Point(double.MaxValue, double.MaxValue));
             }
         }
 
@@ -408,7 +393,6 @@ namespace Imp
             mainC.Exec(ImpCommand.VolumeChange, Math.Sign(e.Delta) * 0.03);
         }
 
-
         private bool IsMouseOverList()
         {
             if (PanelOpen.ListPlaces.IsMouseOver ||
@@ -418,7 +402,6 @@ namespace Imp
                 return true;
             return false;
         }
-
 
         private bool IsMouseOverTextbox()
         {
@@ -438,7 +421,6 @@ namespace Imp
             mainC.PanelC.CheckResize();
         }
 
-
         public void OpenFileLinesFromMessaging()
         {
             if (OpenLines(ImpMessaging.List)) return;
@@ -446,10 +428,9 @@ namespace Imp
             ImpMessaging.List.Clear();
         }
 
-
         private bool OpenLines(IEnumerable<string> list)
         {
-            List<FileImpInfo> files = new List<FileImpInfo>();
+            var files = new List<FileImpInfo>();
             foreach (var path in list)
             {
                 if (Directory.Exists(path))
@@ -469,7 +450,7 @@ namespace Imp
                     catch (Exception e)
                     {
                         // doesn't matter why path choosing failed, no files available in this folder
-                        ImpError error = new ImpError(ErrorType.FailedToOpenFolder, e.Message);
+                        var error = new ImpError(ErrorType.FailedToOpenFolder, e.Message);
                         mainC.EventC.ShowError(error);
                         return true;
                     }
@@ -487,7 +468,7 @@ namespace Imp
                 else
                 {
                     // File or folder could not be identified
-                    ImpError error = new ImpError(path, ErrorType.FileNotFound);
+                    var error = new ImpError(path, ErrorType.FileNotFound);
                     mainC.EventC.ShowError(error);
                 }
             }
@@ -502,7 +483,6 @@ namespace Imp
             }
             return false;
         }
-
 
         private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -520,8 +500,6 @@ namespace Imp
         private void Window_Activated(object sender, EventArgs e)
         {
             ImpMessaging.DeclareActive();
-
-            
         }
 
         private void Window_Drop(object sender, DragEventArgs e)
@@ -531,7 +509,6 @@ namespace Imp
                 OpenLines((IEnumerable<string>) e.Data.GetData(DataFormats.FileDrop));
             }
         }
-
 
         private void MenuList_MouseDown(object sender, MouseButtonEventArgs e)
         {

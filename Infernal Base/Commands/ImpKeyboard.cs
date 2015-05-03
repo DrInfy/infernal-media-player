@@ -1,15 +1,29 @@
-﻿using System.Collections.Generic;
+﻿#region Usings
+
+using System.Collections.Generic;
 using System.Windows.Input;
+
+#endregion
 
 namespace Base.Commands
 {
     public class ImpKeyboard<TCmdType>
     {
+        #region Fields
+
         private readonly List<KeyCommand<TCmdType>> activeCommands;
         private readonly List<KeyCommand<TCmdType>> commands;
         private readonly KeyboardState currentState;
         private readonly KeyboardState lastState;
         private ModifierKeys modifierKeys;
+
+        #endregion
+
+        #region Properties
+
+        public ModifierKeys ModKeys => modifierKeys;
+
+        #endregion
 
         public ImpKeyboard()
         {
@@ -18,8 +32,6 @@ namespace Base.Commands
             commands = new List<KeyCommand<TCmdType>>(50);
             activeCommands = new List<KeyCommand<TCmdType>>(5);
         }
-
-        public ModifierKeys ModKeys => modifierKeys;
 
         public void Add(KeyCommand<TCmdType> command)
         {
@@ -46,7 +58,7 @@ namespace Base.Commands
             if (currentState.Get(Key.LeftCtrl) || currentState.Get(Key.RightCtrl))
                 modifierKeys |= ModifierKeys.Control;
 
-            foreach (KeyCommand<TCmdType> impCommand in commands)
+            foreach (var impCommand in commands)
             {
                 if (!HasAnyFlagInCommon(impCommand.AllowedStyle, allowedStyles)
                     || (!isWindowActive && !impCommand.Anywhere))

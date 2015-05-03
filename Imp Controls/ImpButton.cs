@@ -1,25 +1,29 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Base.Interfaces;
 
+#endregion
+
 namespace ImpControls
 {
-
     public class ImpButton : ImpBaseControl, IStateButton
     {
-        public int? GeometryMargin { get; set; } = null;
+        #region Fields
+
         protected object[] sContent;
         protected int sCheckStates = 1;
-
         protected int sCurrentState = 0;
 
-        public ImpButton()
-        {
-            sContent = new object[sCheckStates];
-        }
+        #endregion
+
+        #region Properties
+
+        public int? GeometryMargin { get; set; } = null;
 
         public virtual int CheckStates
         {
@@ -35,13 +39,12 @@ namespace ImpControls
             }
         }
 
-
         public int CurrentState
         {
             get { return sCurrentState; }
             set
             {
-                int temp = sCurrentState;
+                var temp = sCurrentState;
                 if (sCurrentState != value)
                 {
                     sCurrentState = value;
@@ -52,19 +55,25 @@ namespace ImpControls
                     sCurrentState = CheckStates - 1;
                 if (sCurrentState != temp)
                 {
-                    this.InvalidateVisual();
+                    InvalidateVisual();
                 }
             }
+        }
+
+        #endregion
+
+        public ImpButton()
+        {
+            sContent = new object[sCheckStates];
         }
 
         public void SetContent(object content, int index = 0)
         {
             if (index >= 0 & index < CheckStates)
             {
-                this.sContent[index] = content;
+                sContent[index] = content;
             }
         }
-
 
         protected override void DrawContent(DrawingContext drawingContext)
         {
@@ -84,16 +93,15 @@ namespace ImpControls
             double x = 0;
             double y = 0;
             var content = GetCurrentContent();
- 
+
             x = SetupTranslation(x, ref y);
 
 
-            if (content == null | this.ActualHeight < 1 | this.ActualWidth < 1)
+            if (content == null | ActualHeight < 1 | ActualWidth < 1)
                 return;
 
-            if (content is List<BitmapSource>) 
+            if (content is List<BitmapSource>)
             {
-
                 BitmapSource bitmap;
                 var bitmapSources = (List<BitmapSource>) content;
                 //= GetCurrentContent()
@@ -107,53 +115,51 @@ namespace ImpControls
                 // adjust properly to pixel perfection
                 x += 0.5;
                 y += 0.5;
-                var r = new Rect(Math.Floor(this.ActualWidth / 2 - bitmap.PixelWidth / 2) + x,
-                    Math.Floor(this.ActualHeight / 2 - bitmap.PixelHeight / 2) + y, 
-                    bitmap.PixelWidth, 
+                var r = new Rect(Math.Floor(ActualWidth / 2 - bitmap.PixelWidth / 2) + x,
+                    Math.Floor(ActualHeight / 2 - bitmap.PixelHeight / 2) + y,
+                    bitmap.PixelWidth,
                     bitmap.PixelHeight);
 
 
                 drawingContext.DrawImage(bitmap, r);
-
             }
             else if (content is PathGeometry)
             {
-                var geometry = (Geometry)content;
+                var geometry = (Geometry) content;
 
 
-                if (right / this.ActualWidth > bottom / this.ActualHeight) 
+                if (right / ActualWidth > bottom / ActualHeight)
                 {
-                    geometry.Transform = new MatrixTransform((this.ActualWidth - margin * 2) / right, 
+                    geometry.Transform = new MatrixTransform((ActualWidth - margin * 2) / right,
                         0,
                         0,
-                        (this.ActualWidth - margin * 2) / right, margin + x, 
-                        (this.ActualHeight - bottom * (this.ActualWidth - margin * 2) / right) / 2 + y);
-                } 
-                else 
+                        (ActualWidth - margin * 2) / right, margin + x,
+                        (ActualHeight - bottom * (ActualWidth - margin * 2) / right) / 2 + y);
+                }
+                else
                 {
-                    geometry.Transform = new MatrixTransform((this.ActualHeight - margin * 2) / bottom, 
+                    geometry.Transform = new MatrixTransform((ActualHeight - margin * 2) / bottom,
                         0,
-                        0, 
-                        (this.ActualHeight - margin * 2) / bottom,
-                        (this.ActualWidth - right * (this.ActualHeight - margin * 2) / bottom) / 2 + x, 
+                        0,
+                        (ActualHeight - margin * 2) / bottom,
+                        (ActualWidth - right * (ActualHeight - margin * 2) / bottom) / 2 + x,
                         margin + y);
                 }
-                drawingContext.DrawGeometry(null, new System.Windows.Media.Pen(renderData.FrontBrush, 1), geometry);
-            } 
-            else if (content is string) {
-
-                FormattedText text = new FormattedText((string)content, System.Globalization.CultureInfo.CurrentCulture,
+                drawingContext.DrawGeometry(null, new Pen(renderData.FrontBrush, 1), geometry);
+            }
+            else if (content is string)
+            {
+                var text = new FormattedText((string) content, System.Globalization.CultureInfo.CurrentCulture,
                     FlowDirection.LeftToRight, new Typeface("Arial"), 12, renderData.FrontBrush);
 
-                text.MaxTextWidth = Math.Max(0, this.ActualWidth - 6);
+                text.MaxTextWidth = Math.Max(0, ActualWidth - 6);
                 //text.MaxTextHeight = Me.ActualHeight
                 text.MaxLineCount = 1;
                 text.TextAlignment = TextAlignment.Center;
                 text.Trimming = TextTrimming.CharacterEllipsis;
-                drawingContext.DrawText(text, new System.Windows.Point(3 + x, this.ActualHeight / 2 - 6 + y));
+                drawingContext.DrawText(text, new Point(3 + x, ActualHeight / 2 - 6 + y));
             }
         }
-
 
         protected virtual double SetupTranslation(double x, ref double y)
         {
@@ -164,7 +170,6 @@ namespace ImpControls
             }
             return x;
         }
-
 
         protected virtual object GetCurrentContent()
         {

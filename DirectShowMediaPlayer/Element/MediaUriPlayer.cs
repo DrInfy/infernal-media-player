@@ -1,18 +1,24 @@
-﻿using System;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
+﻿#region Usings
+
+using System;
 using Base.Interfaces;
 using Base.Libraries;
 using MediaPlayer.Player;
+
+#endregion
 
 namespace MediaPlayer.Element
 {
     public class MediaUriPlayer : D3DRenderer, IMediaUriPlayer
     {
-        public event Action MediaPlayerEnded;
+        #region Fields
 
         private PlayerController controller;
         private double volume = 1;
+
+        #endregion
+
+        #region Properties
 
         public PlayerController Controller
         {
@@ -24,7 +30,7 @@ namespace MediaPlayer.Element
                     if (controller.Equals(value))
                         return;
                     controller.Command(MediaCommand.Close);
-                    
+
                     //while (!controller.Released)
                     //{
                     //    // wait for media player closure
@@ -39,71 +45,19 @@ namespace MediaPlayer.Element
             }
         }
 
-
-        public void Play()
+        public bool IsPlaying
         {
-            if (controller != null)
-            controller.Command(MediaCommand.Play);
+            get { return controller != null; }
         }
-
-        public void Pause()
-        {
-            if (controller != null)
-                controller.Command(MediaCommand.Pause);
-        }
-
-
-        public void Stop()
-        {
-            if (controller != null)
-                controller.Command(MediaCommand.Stop);
-        }
-
-
-        protected virtual void InitializeMediaPlayer()
-        {
-
-
-            /* Hook into the normal .NET events */
-            //MediaPlayerBase.MediaClosed += OnMediaPlayerClosedPrivate;
-            //MediaPlayerBase.MediaFailed += OnMediaPlayerFailedPrivate;
-            controller.MediaEnded += OnMediaPlayerEnded;
-
-            /* These events fire when we get new D3Dsurfaces or frames */
-            controller.NewAllocatorFrame += OnMediaPlayerNewAllocatorFramePrivate;
-            controller.NewAllocatorSurface += OnMediaPlayerNewAllocatorSurfacePrivate;
-
-            controller.Volume = Volume;
-            var result = controller.Activate();
-            
-            // TODO: raise event for error message
-        }
-
-        public void Clear()
-        {
-            if (controller != null)
-                controller.Command(MediaCommand.Close);
-            controller = null;
-        }
-
-
-        public bool IsPlaying { get { return controller != null; } }
-
 
         public double Duration
         {
-            get
-            {
-                return controller != null ? LibImp.TicksToSeconds(controller.Duration) : 0;
-            }
+            get { return controller != null ? LibImp.TicksToSeconds(controller.Duration) : 0; }
         }
 
         public double Position
         {
-            get
-            {
-                return controller != null ? LibImp.TicksToSeconds(controller.Position) : 0;
-            }
+            get { return controller != null ? LibImp.TicksToSeconds(controller.Position) : 0; }
             set
             {
                 if (controller != null)
@@ -131,6 +85,51 @@ namespace MediaPlayer.Element
             }
         }
 
+        #endregion
+
+        public void Play()
+        {
+            if (controller != null)
+                controller.Command(MediaCommand.Play);
+        }
+
+        public void Pause()
+        {
+            if (controller != null)
+                controller.Command(MediaCommand.Pause);
+        }
+
+        public void Stop()
+        {
+            if (controller != null)
+                controller.Command(MediaCommand.Stop);
+        }
+
+        public void Clear()
+        {
+            if (controller != null)
+                controller.Command(MediaCommand.Close);
+            controller = null;
+        }
+
+        public event Action MediaPlayerEnded;
+
+        protected virtual void InitializeMediaPlayer()
+        {
+            /* Hook into the normal .NET events */
+            //MediaPlayerBase.MediaClosed += OnMediaPlayerClosedPrivate;
+            //MediaPlayerBase.MediaFailed += OnMediaPlayerFailedPrivate;
+            controller.MediaEnded += OnMediaPlayerEnded;
+
+            /* These events fire when we get new D3Dsurfaces or frames */
+            controller.NewAllocatorFrame += OnMediaPlayerNewAllocatorFramePrivate;
+            controller.NewAllocatorSurface += OnMediaPlayerNewAllocatorSurfacePrivate;
+
+            controller.Volume = Volume;
+            var result = controller.Activate();
+
+            // TODO: raise event for error message
+        }
 
         /// <summary>
         /// Is executes when a new D3D surfaces has been allocated
@@ -138,15 +137,13 @@ namespace MediaPlayer.Element
         /// <param name="pSurface">The pointer to the D3D surface</param>
         private void OnMediaPlayerNewAllocatorSurfacePrivate(object sender, IntPtr pSurface)
         {
-            SetBackBuffer(pSurface); 
+            SetBackBuffer(pSurface);
         }
-
 
         private void OnMediaPlayerNewAllocatorFramePrivate()
         {
             InvalidateVideoImage();
         }
-
 
         private void OnMediaPlayerEnded()
         {

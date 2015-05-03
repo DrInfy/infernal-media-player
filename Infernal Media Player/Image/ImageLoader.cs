@@ -1,27 +1,26 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Base;
 using Base.FileLoading;
-using Base.Libraries;
 using Ipv.Image;
+
+#endregion
 
 namespace Imp.Image
 {
     public class ImageLoader : FileLoader<BitmapSource>
     {
-        
-        public ImageLoader(Dispatcher dispatcher) : base(dispatcher)
-        {
-        }
-
+        public ImageLoader(Dispatcher dispatcher) : base(dispatcher) {}
 
         protected override BitmapSource Load(string path, out ImpError error)
         {
             error = null;
-            Uri myUri = new Uri(path, UriKind.RelativeOrAbsolute);
-            ImageType type = GetType(path);
+            var myUri = new Uri(path, UriKind.RelativeOrAbsolute);
+            var type = GetType(path);
 
             BitmapDecoder decoder = null;
 
@@ -33,7 +32,7 @@ namespace Imp.Image
                         try
                         {
                             decoder = new JpegBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
-                                                         BitmapCacheOption.OnLoad);
+                                BitmapCacheOption.OnLoad);
                         }
                         catch (Exception)
                         {
@@ -45,37 +44,37 @@ namespace Imp.Image
                         try
                         {
                             decoder = new PngBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
-                                                             BitmapCacheOption.OnLoad);
+                                BitmapCacheOption.OnLoad);
                         }
                         catch (Exception)
                         {
                             var impPngDecoder = new ImpPngDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
-                                                         BitmapCacheOption.OnLoad);
+                                BitmapCacheOption.OnLoad);
                             return impPngDecoder.Source;
                         }
                         break;
                     case ImageType.Gif:
                         decoder = new GifBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
-                                                         BitmapCacheOption.OnLoad);
+                            BitmapCacheOption.OnLoad);
                         break;
                     case ImageType.Bmp:
                         decoder = new BmpBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
-                                                        BitmapCacheOption.OnLoad);
+                            BitmapCacheOption.OnLoad);
                         break;
                     case ImageType.Tiff:
                         decoder = new TiffBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
-                                                         BitmapCacheOption.OnLoad);
+                            BitmapCacheOption.OnLoad);
                         break;
                     case ImageType.Tga:
                         error = new ImpError(ErrorType.NotSupportedFile);
                         break;
                     case ImageType.Icon:
                         decoder = new IconBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
-                                                         BitmapCacheOption.OnLoad);
+                            BitmapCacheOption.OnLoad);
                         break;
                     case ImageType.WindowsMediaPhoto:
                         decoder = new WmpBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
-                                                         BitmapCacheOption.OnLoad);
+                            BitmapCacheOption.OnLoad);
                         break;
                     default:
                         error = new ImpError(ErrorType.UnknownFileType);
@@ -86,13 +85,12 @@ namespace Imp.Image
             {
                 error = new ImpError(ErrorType.FailedToOpenFile);
             }
-            
+
             if (error != null)
                 return null;
 
             return decoder.Frames[0];
         }
-
 
         protected ImageType GetType(string path)
         {
@@ -101,45 +99,44 @@ namespace Imp.Image
 
             var extension = s.ToLowerInvariant();
 
-            if (System.String.Compare(extension, ".jpg", System.StringComparison.OrdinalIgnoreCase) == 0 ||
-                System.String.Compare(extension, ".jpeg", System.StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(extension, ".jpg", StringComparison.OrdinalIgnoreCase) == 0 ||
+                String.Compare(extension, ".jpeg", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return ImageType.Jpg;
             }
-            if (System.String.Compare(extension, ".bmp", System.StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(extension, ".bmp", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return ImageType.Bmp;
             }
-            if (System.String.Compare(extension, ".gif", System.StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(extension, ".gif", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return ImageType.Gif;
             }
-            if (System.String.Compare(extension, ".tiff", System.StringComparison.OrdinalIgnoreCase) == 0 ||
-                System.String.Compare(extension, ".tif", System.StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(extension, ".tiff", StringComparison.OrdinalIgnoreCase) == 0 ||
+                String.Compare(extension, ".tif", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return ImageType.Tiff;
             }
-            if (System.String.Compare(extension, ".icon", System.StringComparison.OrdinalIgnoreCase) == 0 ||
-                System.String.Compare(extension, ".ico", System.StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(extension, ".icon", StringComparison.OrdinalIgnoreCase) == 0 ||
+                String.Compare(extension, ".ico", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return ImageType.Icon;
             }
-            if (System.String.Compare(extension, ".png", System.StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(extension, ".png", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return ImageType.Png;
             }
-            if (System.String.Compare(extension, ".tga", System.StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(extension, ".tga", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return ImageType.Tga;
             }
-            if (System.String.Compare(extension, ".jxr", System.StringComparison.OrdinalIgnoreCase) == 0 ||
-                System.String.Compare(extension, ".hdp", System.StringComparison.OrdinalIgnoreCase) == 0 ||
-                System.String.Compare(extension, ".wdp", System.StringComparison.OrdinalIgnoreCase) == 0)
+            if (String.Compare(extension, ".jxr", StringComparison.OrdinalIgnoreCase) == 0 ||
+                String.Compare(extension, ".hdp", StringComparison.OrdinalIgnoreCase) == 0 ||
+                String.Compare(extension, ".wdp", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return ImageType.WindowsMediaPhoto;
             }
             return ImageType.Unknown;
         }
-
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -6,22 +8,31 @@ using System.Windows.Interop;
 using System.Windows.Threading;
 using TheCodeKing.Net.Messaging;
 
+#endregion
 
 namespace Imp.Libraries
 {
-    static class ImpMessaging
+    internal static class ImpMessaging
     {
+        #region Helpers
+
+        /// <summary>
+        /// Delegate used for invoke callback.
+        /// </summary>
+        /// <remarks></remarks>
+        private delegate void UpdateFiles();
+
+        #endregion
+
+        #region Static Fields and Constants
+
         private const string CHANNEL_NAME = "IMP5";
         public const string START_EVENT = "¤started¤";
         public const string CMD_LINES = "¤cmdls¤";
-
         private const string MAKE_ACTIVE = "¤Make this Active¤";
-
         public const string NAME_SEPARATOR = "?";
         public const string DoNotDoAnythingMsg = "donot";
-        public static bool LastActive { get; set; }
-
-        static MainWindow imp = null;
+        private static MainWindow imp = null;
         public static int handle = 0;
         public static string lastMsg = "";
         public static List<string> List = new List<string>();
@@ -36,14 +47,15 @@ namespace Imp.Libraries
         /// </summary>
         private static IXDBroadcast broadcast;
 
-        /// <summary>
-        /// Delegate used for invoke callback.
-        /// </summary>
-        /// <remarks></remarks>
-        private delegate void UpdateFiles();
-
-
         private static string handleText;
+
+        #endregion
+
+        #region Properties
+
+        public static bool LastActive { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Initialize the broadcast and listener mode.
@@ -69,18 +81,16 @@ namespace Imp.Libraries
             broadcast = XDBroadcast.CreateBroadcast(mode, false);
         }
 
-
         public static void SetImp(MainWindow imppi)
         {
             imp = imppi;
-            
+
             //IMPController.InitializeMode(TheCodeKing.Net.Messaging.XDTransportMode.IOStream)
             var helper = new WindowInteropHelper(imp);
-            ImpMessaging.handle = helper.Handle.ToInt32();
+            handle = helper.Handle.ToInt32();
 
             handleText = handle.ToString(CultureInfo.InvariantCulture);
         }
-
 
         public static void DeclareActive()
         {
@@ -89,7 +99,6 @@ namespace Imp.Libraries
             SendMessage(MAKE_ACTIVE);
         }
 
-
         /// <summary>
         /// The delegate which processes all cross AppDomain messages and writes them to screen.
         /// </summary>
@@ -97,32 +106,31 @@ namespace Imp.Libraries
         /// <param name="e"></param>
         private static void OnMessageReceived(object sender, XDMessageEventArgs e)
         {
-            
-            if (e.DataGram.Message.IndexOf(START_EVENT, System.StringComparison.Ordinal) > 0 & LastActive)
+            if (e.DataGram.Message.IndexOf(START_EVENT, StringComparison.Ordinal) > 0 & LastActive)
             {
                 SendMessage(DoNotDoAnythingMsg);
             }
 
             if (handle != 0) // this instance of imp has a working window
             {
-                int handleIndex = e.DataGram.Message.IndexOf(handleText, System.StringComparison.Ordinal);
+                var handleIndex = e.DataGram.Message.IndexOf(handleText, StringComparison.Ordinal);
 
                 if (handleIndex != 0) // if this is the handle, then the message came from this instance
                 {
                     lastMsg = e.DataGram.Message;
-                    if (e.DataGram.Message.IndexOf(START_EVENT, System.StringComparison.Ordinal) > 0 & LastActive)
+                    if (e.DataGram.Message.IndexOf(START_EVENT, StringComparison.Ordinal) > 0 & LastActive)
                     {
                         Debug.WriteLine("donot sent");
                         SendMessage(DoNotDoAnythingMsg);
                     }
-                    else if (e.DataGram.Message.IndexOf(CMD_LINES, System.StringComparison.Ordinal) > 0 & LastActive)
+                    else if (e.DataGram.Message.IndexOf(CMD_LINES, StringComparison.Ordinal) > 0 & LastActive)
                     {
-                        int i = 0;
-                        int j = 0;
+                        var i = 0;
+                        var j = 0;
                         do
                         {
                             i = lastMsg.IndexOf(NAME_SEPARATOR);
-                            j = lastMsg.IndexOf(NAME_SEPARATOR, i + 1, System.StringComparison.Ordinal);
+                            j = lastMsg.IndexOf(NAME_SEPARATOR, i + 1, StringComparison.Ordinal);
 
                             if (i < 0)
                                 break; // no more separators found
@@ -132,14 +140,14 @@ namespace Imp.Libraries
 
                             List.Add(lastMsg.Substring(i + 1, j - i - 1));
                             if (j == lastMsg.Length)
-                                break;  // this was the last command, exit
+                                break; // this was the last command, exit
 
                             lastMsg = lastMsg.Substring(j);
                         } while (true);
 
                         imp.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new UpdateFiles(imp.OpenFileLinesFromMessaging));
                     }
-                    else if (e.DataGram.Message.IndexOf(MAKE_ACTIVE, System.StringComparison.Ordinal) > 0)
+                    else if (e.DataGram.Message.IndexOf(MAKE_ACTIVE, StringComparison.Ordinal) > 0)
                     {
                         Debug.WriteLine("LastActive False");
                         LastActive = false;

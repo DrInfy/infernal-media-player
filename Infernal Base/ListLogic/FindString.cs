@@ -6,6 +6,8 @@
     /// </summary>
     public class FindString
     {
+        #region Fields
+
         /// <summary>
         /// The piece of text that is searched for in the content string 
         /// </summary>
@@ -16,8 +18,9 @@
         /// </summary>
         public int Count;
 
+        #endregion
 
-        public FindString(string text,int count)
+        public FindString(string text, int count)
         {
             Text = text;
             Count = count;

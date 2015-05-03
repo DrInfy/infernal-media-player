@@ -1,43 +1,47 @@
-﻿using System.Collections.Generic;
+﻿#region Usings
+
+using System.Collections.Generic;
 using System.IO;
 using Base.Libraries;
-using Base.ListLogic;
 using Microsoft.WindowsAPICodePack.Shell;
+
+#endregion
 
 namespace ImpControls.SpecialFolder
 {
     public static class SpecialFolderLoader
     {
-        
+        #region Static Fields and Constants
+
         public const string VideoFolderName = "Videos";
         public const string MusicFolderName = "Music";
         public const string DownloadFolderName = "Downloads";
 
+        #endregion
 
         public static SpecialFolderContent LoadSpecialFolder(string pathData)
         {
             if (!StringHandler.IsSpecialFolder(pathData)) return null;
 
             var folderContent = new SpecialFolderContent(pathData);
-            
+
             if (System.String.Compare(pathData, "$" + VideoFolderName, System.StringComparison.Ordinal) == 0)
             {
-                var folders = (NonFileSystemKnownFolder)KnownFolders.VideosLibrary;
+                var folders = (NonFileSystemKnownFolder) KnownFolders.VideosLibrary;
                 LoadSpecialFolder(folders, folderContent);
             }
             else if (System.String.Compare(pathData, "$" + MusicFolderName, System.StringComparison.Ordinal) == 0)
             {
-                var folders = (NonFileSystemKnownFolder)KnownFolders.MusicLibrary;
+                var folders = (NonFileSystemKnownFolder) KnownFolders.MusicLibrary;
                 LoadSpecialFolder(folders, folderContent);
             }
             else if (System.String.Compare(pathData, "$" + DownloadFolderName, System.StringComparison.Ordinal) == 0)
             {
-                var folders = (FileSystemKnownFolder)KnownFolders.Downloads;
+                var folders = (FileSystemKnownFolder) KnownFolders.Downloads;
                 LoadSpecialFolder(folders, folderContent);
             }
             return folderContent;
         }
-
 
         private static void LoadSpecialFolder(IEnumerable<ShellObject> folders, SpecialFolderContent folderContent)
         {
@@ -53,7 +57,6 @@ namespace ImpControls.SpecialFolder
                     if (!Path.HasExtension(shellFolder.ParsingName))
                         folderContent.FolderPaths.Add(shellFolder.ParsingName);
                 }
-                    
             }
         }
     }

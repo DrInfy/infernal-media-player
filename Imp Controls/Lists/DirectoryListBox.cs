@@ -1,51 +1,51 @@
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Base.Libraries;
 using Base.ListLogic;
 using ImpControls.SpecialFolder;
-using Microsoft.WindowsAPICodePack.Shell;
-using SelectionMode = Base.ListLogic.SelectionMode;
+
+#endregion
 
 namespace ImpControls
 {
     public class DirectoryListBox : ImpListBox<ImpFolder>
     {
+        #region Fields
+
         private string path = string.Empty;
-        
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Read-only string representing current path
         /// </summary>
-        public string Path {
+        public string Path
+        {
             get { return path; }
         }
 
-
+        #endregion
 
         public DirectoryListBox() : base(true, false)
         {
             MouseDoubleClick += OnDoubleClick;
-            
         }
-
 
         protected override void UpdateItems()
         {
             base.UpdateItems();
-            
         }
-
 
         protected override void GetTooltip()
         {
             toolTip.Content = controller.GetContent(MouseoverIndex).Value;
         }
-
 
         private void OnDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -53,7 +53,6 @@ namespace ImpControls
             if (selected != null)
                 SetPath(selected.Value);
         }
-
 
         /// <summary>
         /// Sets the path.
@@ -78,11 +77,11 @@ namespace ImpControls
                 controller.AddItemUnfiltered(@select);
                 //list.Add(select);
 
-                foreach (string folderPath in specialFolder.FolderPaths)
+                foreach (var folderPath in specialFolder.FolderPaths)
                     list.Add(new ImpFolder(folderPath, "  " + StringHandler.GetFilename(folderPath)));
 
                 list.Sort(new ComparerFolderSmart());
-                
+
                 controller.AddItems(list);
             }
             else
@@ -91,13 +90,13 @@ namespace ImpControls
                 controller.Clear();
 
                 // add drive
-                string firstCharacter = pathData.Substring(0, 1);
+                var firstCharacter = pathData.Substring(0, 1);
                 var newPath = firstCharacter.ToUpper() + @":\";
                 controller.AddItemUnfiltered(new ImpFolder(newPath, newPath));
 
-                int index = 3;
-                int lastIndex = 2;
-                int depth = 1;
+                var index = 3;
+                var lastIndex = 2;
+                var depth = 1;
                 if (path.Length > 3)
                 {
                     do
@@ -120,7 +119,7 @@ namespace ImpControls
                         depth++;
                     }
                 }
-                
+
                 try
                 {
                     foreach (var directory in Directory.GetDirectories(path))
@@ -129,10 +128,7 @@ namespace ImpControls
                         list.Add(CreatePathItem(directory, directory.Length, depth, lastIndex));
                     }
                 }
-                catch (Exception)
-                {
-
-                }
+                catch (Exception) {}
 
                 list.Sort(new ComparerFolderSmart());
                 controller.AddItems(list);
@@ -141,13 +137,11 @@ namespace ImpControls
             controller.Select(select);
         }
 
-
         private static ImpFolder CreatePathItem(string path, int length, int depth, int lastIndex)
         {
             return new ImpFolder(path.Substring(0, length),
-                                    new string(' ', depth * 2) + path.Substring(lastIndex + 1, length - lastIndex - 1));
+                new string(' ', depth * 2) + path.Substring(lastIndex + 1, length - lastIndex - 1));
         }
-
 
         public void Refresh()
         {

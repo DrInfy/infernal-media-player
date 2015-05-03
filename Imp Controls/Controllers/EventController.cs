@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Controls;
@@ -8,23 +10,25 @@ using Base.Interfaces;
 using Base.Libraries;
 using Imp.Controllers;
 
+#endregion
+
 namespace ImpControls.Controllers
 {
     public class EventController : IEventController
     {
+        #region Fields
+
         private readonly Dispatcher dispatcher;
         private readonly Label eventLabel;
         private readonly Label titleLabel;
         private readonly object eventLock = new object();
-
         private readonly DispatcherTimer eventTimer;
         private readonly Queue<EventText> events;
-
-        
         private bool LastEventInterrupted;
         private string TitleText = "";
         private EventText lastEvent;
 
+        #endregion
 
         public EventController(Dispatcher dispatcher, Label eventLabel, Label titleLabel)
         {
@@ -36,15 +40,12 @@ namespace ImpControls.Controllers
             eventTimer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
             eventTimer.Tick += EventTimer_Elapsed;
             SetTitleText();
-            
         }
-
 
         public void ShowError(ImpError error)
         {
             SetEvent(new EventText("Error " + (int) error.Type + ": " + error.Text, 2, EventType.Delayed));
         }
-
 
         public void SetEvent(EventText eventText)
         {
@@ -70,7 +71,6 @@ namespace ImpControls.Controllers
             }
         }
 
-
         public void SetTitle(string title)
         {
             TitleText = title;
@@ -79,7 +79,6 @@ namespace ImpControls.Controllers
                 SetTitleText();
             }
         }
-
 
         private void SetEventText(EventText eventText)
         {
@@ -93,12 +92,10 @@ namespace ImpControls.Controllers
             eventLabel.Content = eventText.Text;
         }
 
-
         private bool EnsureMainThread()
         {
             return Thread.CurrentThread != dispatcher.Thread;
         }
-
 
         private void EventTimer_Elapsed(object sender, EventArgs eventArgs)
         {
@@ -122,7 +119,6 @@ namespace ImpControls.Controllers
             LastEventInterrupted = false;
         }
 
-
         private void ShowNextEvent()
         {
             lastEvent = events.Dequeue();
@@ -131,7 +127,6 @@ namespace ImpControls.Controllers
             eventTimer.Interval = new TimeSpan((long) (lastEvent.Duration * LibImp.SecondToTicks));
             eventTimer.IsEnabled = true;
         }
-
 
         private void SetTitleText()
         {

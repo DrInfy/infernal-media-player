@@ -1,24 +1,35 @@
-﻿using System.IO;
+﻿#region Usings
+
+using System.IO;
 using Base.FileData;
 using Base.FileData.FileReading;
 using Base.Libraries;
+
+#endregion
 
 namespace Base.ListLogic
 {
     public class PlaylistItem
     {
+        #region Fields
+
+        public long DateModified;
+
+        #endregion
+
+        #region Properties
+
         public string FullPath { get; set; }
         public string Filename { get; set; }
         public string SmartName { get; set; }
-
-        public long DateModified;
         public string AdditionalInfo { get; set; }
         public int Bitrate { get; set; }
         public string Name { get; set; }
-
         public bool Playing { get; set; }
-
         public FileTypes FileType { get; set; }
+
+        #endregion
+
         public PlaylistItem(string path)
         {
             var fileInfo = new FileImpInfo(path);
@@ -30,7 +41,6 @@ namespace Base.ListLogic
             var fileInfo = new FileImpInfo(info);
             CopyFileInfo(fileInfo);
         }
-
 
         public PlaylistItem(FileImpInfo info)
         {
@@ -47,12 +57,10 @@ namespace Base.ListLogic
             FileType = FileTypeFinder.DetermineFileType(info.Name);
         }
 
-
         public override string ToString()
         {
             return Name;
         }
-
 
         /// <summary>
         /// This method reads file info from files, things like ID3v2 in mp3 files and FLAC fileinfo.
@@ -120,13 +128,11 @@ namespace Base.ListLogic
             }
         }
 
-
         public void SetDefaultSongSmartName()
         {
             var folderName = Path.GetDirectoryName(FullPath);
             SmartName = folderName + " " + SmartName;
         }
-
 
         /// <summary>
         /// Converts File information according to what we know of the file to a single like

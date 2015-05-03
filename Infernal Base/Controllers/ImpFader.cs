@@ -1,5 +1,9 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using Base.Libraries;
+
+#endregion
 
 namespace Base.Controllers
 {
@@ -17,28 +21,34 @@ namespace Base.Controllers
 
     public class ImpFader
     {
-        const long FADEDOWNTIME = 30 * LibImp.NANOTOMILLI;
-        const long FADEUPTIME = 50 * LibImp.NANOTOMILLI;
-        const long MOVEINTERVALTIME = 200 * LibImp.NANOTOMILLI;
-        const double UPMINIMUMFADE = 0.005;
-        const double DOWNMINIMUMFADE = 0.005;
+        #region Static Fields and Constants
+
+        private const long FADEDOWNTIME = 30 * LibImp.NANOTOMILLI;
+        private const long FADEUPTIME = 50 * LibImp.NANOTOMILLI;
+        private const long MOVEINTERVALTIME = 200 * LibImp.NANOTOMILLI;
+        private const double UPMINIMUMFADE = 0.005;
+        private const double DOWNMINIMUMFADE = 0.005;
         private const double UPMAXFADE = 0.15;
+        private const double DOWNMAXFADE = 0.15;
 
-        const double DOWNMAXFADE = 0.15;
+        #endregion
 
-        FadeType fade = FadeType.None;
-        long posTarget = 0;
+        #region Fields
 
-        double volumeTarget = 0;
-        long LastSetTime = 0;
+        private FadeType fade = FadeType.None;
+        private long posTarget = 0;
+        private double volumeTarget = 0;
+        private long LastSetTime = 0;
+        private long LastPositionSetTime = 0;
+        private long startuptotalwait;
 
-        long LastPositionSetTime = 0;
-        
-        long startuptotalwait;
+        #endregion
+
+        #region Properties
 
         public bool Active { get; private set; }
 
-        
+        #endregion
 
         public void Play()
         {
@@ -63,8 +73,6 @@ namespace Base.Controllers
             StartFade();
         }
 
-
-
         public void SetVolume(double value)
         {
             volumeTarget = value;
@@ -86,7 +94,6 @@ namespace Base.Controllers
         /// Starts fading towards desired position
         /// </summary>
         /// <param name="value">Pass the desired position</param>
-
         public void SetPosition(long value)
         {
             if (value < 0)
@@ -138,7 +145,6 @@ namespace Base.Controllers
             posTarget = -1;
         }
 
-
         /// <summary>
         /// Update from the main thread to update smooth position and volume changes.
         /// </summary>
@@ -172,7 +178,6 @@ namespace Base.Controllers
 
                     if ((volume == 0))
                     {
-
                         if ((LastPositionSetTime + MOVEINTERVALTIME < DateTime.Now.Ticks))
                         {
                             LastPositionSetTime = DateTime.Now.Ticks;
@@ -299,6 +304,4 @@ namespace Base.Controllers
             volume = value;
         }
     }
-
-
 }

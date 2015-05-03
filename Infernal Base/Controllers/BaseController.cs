@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -10,29 +12,38 @@ using Base.Libraries;
 using Base.ListLogic;
 using Imp.Controllers;
 
+#endregion
+
 namespace Base.Controllers
 {
     public delegate void ExecDelegate<in T>(T cmd, object argument = null);
 
     public abstract class BaseController : KeyboardController<ImpCommand>
     {
+        #region Fields
+
         public IPanelController PanelC;
         public MediaController MediaC;
         public Settings Settings;
-
-        private readonly string settingsPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\settings.xml";
-
-        private long lastExitAttempt = 0;
         protected PlaylistItem loadingItem;
         protected PlaylistItem playingItem;
         protected PlaylistItem itemOnPlayer;
+        private readonly string settingsPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\settings.xml";
+        private long lastExitAttempt = 0;
 
+        #endregion
+
+        #region Properties
+
+        public abstract bool IsMostRecentInstance { get; }
+
+        #endregion
 
         protected BaseController()
         {
             try
             {
-                Settings = (Settings)ImpSerializer.ReadFile(settingsPath, typeof(Settings));
+                Settings = (Settings) ImpSerializer.ReadFile(settingsPath, typeof (Settings));
             }
             catch (Exception e)
             {
@@ -50,8 +61,6 @@ namespace Base.Controllers
         }
 
         public abstract List<PlaylistItem> GetSelectedPlaylistItems();
-
-        public abstract bool IsMostRecentInstance { get; }
 
         public void ContextMenu(Point cursorPositionInDesktop, ContextMenuEnum menuEnumPosition)
         {
@@ -102,9 +111,7 @@ namespace Base.Controllers
             CreateContextMenu(cursorPositionInDesktop, cmdList);
         }
 
-
         protected abstract void CreateContextMenu(Point cursorPositionInDesktop, List<ImpTextAndCommand> cmdList);
-
 
         public override void Exec(ImpCommand cmd, object argument = null)
         {
@@ -333,71 +340,29 @@ namespace Base.Controllers
         }
 
         protected abstract void Shuffle();
-
         protected abstract void ClearPlayers();
-
-
         protected abstract void RemoveSelectedPath();
-
-
         protected abstract void DeleteOpenFolder();
-
-
         protected abstract void AddSelectedFolderToPaths();
-
-
         protected abstract void AddSelectedFolderFolders();
-
-
         protected abstract void AddSelectedFolderFiles();
-
-
         protected abstract void PlaySelectedFolderFiles();
-
-
         protected abstract void RequestDeleteOpenFiles();
-
-
         protected abstract void AddSelectedOpenFiles();
-
-
         protected abstract void PlaySelectedOpenFiles();
-
-
         protected abstract void RequestPlaylistFileDeletion();
-
-
         protected abstract void OpenSelectedInExplorer();
-
-
         protected abstract void OpenSelectedInPlayList();
-
-
         protected abstract void PlaylistSort(FileSortMode fileSortMode);
-
-
         protected abstract void RemoveSelectedFromPlaylist();
-
-
         protected abstract void OpenRandom();
-
-
         protected abstract void OpenPrev();
-
-
         protected abstract void OpenNext();
-
-
         protected abstract void ClearPlayList();
-
         protected abstract void AddFile(FileImpInfo fileImpInfo);
-
         protected abstract void ToggleMaximize();
-
         protected abstract void ToggleFullscreen();
-
         protected abstract void Minimize();
-
 
         protected void Exit()
         {
@@ -422,7 +387,6 @@ namespace Base.Controllers
 
         protected abstract void UpdateSettings();
 
-
         private void WriteSettings(string path, Settings settings)
         {
             try
@@ -435,11 +399,8 @@ namespace Base.Controllers
             }
         }
 
-
         protected abstract void CloseWindows();
-
         protected abstract void OpenFile(PlaylistItem item);
-
         protected abstract void OpenFile(FileImpInfo file);
         public abstract void MediaEnded();
     }

@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿#region Usings
+
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Base.Commands;
 using Imp.Controllers;
 using ImpControls.Gui;
-using Ipv;
+
+#endregion
 
 namespace Imp.Panels
 {
@@ -24,14 +15,16 @@ namespace Imp.Panels
     /// </summary>
     public partial class MediaPlayerBottom : UserControl
     {
+        #region Fields
+
         private MainController mainC;
 
+        #endregion
 
         public MediaPlayerBottom()
         {
             InitializeComponent();
         }
-
 
         public void SetStyles(StyleLib styleLib, MainController mainController)
         {

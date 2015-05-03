@@ -20,7 +20,6 @@
             <ColumnDefinition Width="9*" />
         </Grid.ColumnDefinitions>
 
-
         <Label x:Name="LabelTopic" Background="#FFF4F4F5" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,90,0" VerticalAlignment="Stretch"  Grid.ColumnSpan="2" Content="Open" FontSize="16"/>
         <ImpControls:ImpButton x:Name="ButtonRefresh" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,60,0" VerticalAlignment="Stretch" Width="30" Clicked="Refresh"/>
         <ImpControls:ImpButton x:Name="ButtonMaximizePanel" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Stretch" Width="30" Clicked="ButtonMaximizePanel_Clicked" CheckStates="2"/>
@@ -28,7 +27,6 @@
 
         <ImpControls:PlacesListBox x:Name="ListPlaces" Grid.ColumnSpan="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" SelectionChanged="ListPlaces_SelectionChanged" />
         <ImpControls:DirectoryListBox x:Name="ListDirectories" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1"  VerticalAlignment="Stretch" SelectionChanged="ListDirectories_SelectionChanged" />
-
         
         <Grid x:Name="FilterGrid"
                 Width="auto"
@@ -50,24 +48,13 @@
             <ImpControls:PushDownButton x:Name="ButtonFilterPlaylist" HorizontalAlignment="Stretch" Height="30" Margin="0,0,0,0" Grid.Column="3" VerticalAlignment="Stretch" CheckStates="2" Clicked="ButtonFilter_Clicked"/>
             <ImpControls:PushDownButton x:Name="ButtonFilterStream" HorizontalAlignment="Stretch"  Grid.Column="4" VerticalAlignment="Stretch" CheckStates="2" Clicked="ButtonFilter_Clicked"/>
         </Grid>
-
-
-
-
-
-
+        
         <TextBox x:Name="TextBoxFind" HorizontalAlignment="Stretch" Height="30" Margin="0,0,160,0" Grid.Row="3" VerticalAlignment="Stretch"  Grid.ColumnSpan="2" TextChanged="TextBoxFind_TextChanged"/>
         <ImpControls:ImpButton x:Name="ButtonSort" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right"  Margin="0,0,120,0" Grid.Row="3" VerticalAlignment="Stretch" Width="40" CheckStates="2" Clicked="ButtonSort_Clicked" />
         <ImpControls:ImpButton x:Name="ButtonAddSubFolder" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right"  Margin="0,0,90,0" Grid.Row="3" VerticalAlignment="Stretch" Width="30" Clicked="ButtonAddSubFolder_Clicked"/>
         <ImpControls:ImpButton x:Name="ButtonAddFolder" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right"  Margin="0,0,60,0" Grid.Row="3" VerticalAlignment="Stretch" Width="30" Clicked="ButtonAddFolder_Clicked"/>
         <ImpControls:ImpButton x:Name="ButtonAddSelected" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right"  Margin="0,0,30,0" Grid.Row="3" VerticalAlignment="Stretch" Width="30" Clicked="ButtonAddSelected_Clicked"/>
         <ImpControls:ImpButton x:Name="ButtonClearPlaylist" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,0,0" Grid.Row="3" VerticalAlignment="Stretch" Width="30" Clicked="ButtonClearPlaylist_Clicked"/>
-
-        
-        
-        
-
-        
 
         <ImpControls:FileListBox x:Name="ListFiles" Margin="0,0,0,0" Grid.Row="4" Grid.ColumnSpan="2" MouseDoubleClick="ListFiles_MouseDoubleClick"/>
 

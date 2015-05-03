@@ -1,5 +1,9 @@
-﻿using System.Windows.Controls;
+﻿#region Usings
+
+using System.Windows.Controls;
 using System.Windows.Media;
+
+#endregion
 
 namespace ImpControls.Gui
 {

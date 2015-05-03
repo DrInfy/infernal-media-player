@@ -1,38 +1,42 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Threading;
 
+#endregion
+
 namespace Base.ListLogic
 {
     public class PlaylistThreadedUpdater
     {
+        #region Fields
+
         public ConcurrentQueue<PlaylistItem> FinishedAdding = new ConcurrentQueue<PlaylistItem>();
-        private Thread updaterThread;
-        private ConcurrentQueue<PlaylistItem> itemsToAdd = new ConcurrentQueue<PlaylistItem>();
-        private ConcurrentQueue<string> pathsToRemove = new ConcurrentQueue<string>();
         public HashSet<string> ExistingPaths = new HashSet<string>();
-
-        private Dispatcher dispatcher;
-
         public Action CallForFinalAddAction;
+        private readonly ConcurrentQueue<PlaylistItem> itemsToAdd = new ConcurrentQueue<PlaylistItem>();
+        private readonly ConcurrentQueue<string> pathsToRemove = new ConcurrentQueue<string>();
+        private readonly Dispatcher dispatcher;
+        private readonly object addLock = new object();
+        private Thread updaterThread;
         private bool adding = false;
         private bool clear;
 
-        private readonly object addLock = new object();
+        #endregion
+
         public PlaylistThreadedUpdater(Dispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
         }
-
 
         public void Add(PlaylistItem item)
         {
             itemsToAdd.Enqueue(item);
             CallForUpdate();
         }
-
 
         public void Remove(string path)
         {
@@ -53,7 +57,6 @@ namespace Base.ListLogic
             }
         }
 
-
         private void ThreadedUpdate()
         {
             PlaylistItem item;
@@ -69,15 +72,14 @@ namespace Base.ListLogic
 
                 if (!itemsToAdd.IsEmpty)
                 {
-                    
                     var success = itemsToAdd.TryDequeue(out item);
                     if (success)
                     {
                         //if (!ExistingPaths.Contains(item.FullPath))
                         //{
-                            
-                            item.ReadFileData();
-                            FinishedAdding.Enqueue(item);
+
+                        item.ReadFileData();
+                        FinishedAdding.Enqueue(item);
                         //}
                     }
                 }
@@ -98,11 +100,10 @@ namespace Base.ListLogic
                 else
                 {
                     adding = false;
-                }    
+                }
             }
             dispatcher.Invoke(CallForFinalAddAction, DispatcherPriority.Background);
         }
-
 
         public void Clear()
         {

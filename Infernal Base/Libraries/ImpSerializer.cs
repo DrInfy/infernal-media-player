@@ -1,6 +1,10 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.IO;
 using System.Xml.Serialization;
+
+#endregion
 
 namespace Base.Libraries
 {
@@ -18,7 +22,6 @@ namespace Base.Libraries
             using (var outputStream = new FileStream(filename, FileMode.Create))
                 serializer.Serialize(outputStream, instance);
         }
-
 
         public static object ReadFile(string filename, Type instanceType)
         {

@@ -1,11 +1,15 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using Base.FileData;
 using Base.Libraries;
 
+#endregion
+
 namespace Base.ListLogic
 {
-    public class ComparerSelectableFileName: IComparer<Selectable<FileImpInfo>>
+    public class ComparerSelectableFileName : IComparer<Selectable<FileImpInfo>>
     {
         public int Compare(Selectable<FileImpInfo> x, Selectable<FileImpInfo> y)
         {
@@ -61,6 +65,7 @@ namespace Base.ListLogic
             return LibImp.Rnd.Next(-10000, 10000);
         }
     }
+
     public class ComparerPlayListItemName : IComparer<Selectable<PlaylistItem>>
     {
         public int Compare(Selectable<PlaylistItem> x, Selectable<PlaylistItem> y)

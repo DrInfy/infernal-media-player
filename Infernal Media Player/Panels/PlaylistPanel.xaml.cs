@@ -1,11 +1,14 @@
-﻿using System.Windows.Controls;
+﻿#region Usings
+
+using System.Windows.Controls;
 using System.Windows.Input;
 using Base;
 using Base.Commands;
 using Base.ListLogic;
 using Imp.Controllers;
 using ImpControls.Gui;
-using Ipv;
+
+#endregion
 
 namespace Imp.Panels
 {
@@ -14,7 +17,11 @@ namespace Imp.Panels
     /// </summary>
     public partial class PlaylistPanel : UserControl
     {
+        #region Fields
+
         private MainController mainC;
+
+        #endregion
 
         public PlaylistPanel()
         {
@@ -22,10 +29,6 @@ namespace Imp.Panels
             ListPlaylist.LoadPlaylistItem += LoadPlayListItem;
             ListPlaylist.SetDispatcher(Dispatcher);
         }
-
-
-       
-
 
         public void SetStyles(StyleLib styleLib, MainController mainController)
         {
@@ -46,7 +49,7 @@ namespace Imp.Panels
 
         private void ButtonClosePanel_Clicked(object sender)
         {
-            mainC.Exec(Base.Commands.ImpCommand.PanelPlaylist);
+            mainC.Exec(ImpCommand.PanelPlaylist);
         }
 
         private void ListPlaylist_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -87,7 +90,5 @@ namespace Imp.Panels
         {
             mainC.Exec(ImpCommand.PanelPlaylist, PanelCommand.MaxToggle);
         }
-
-        
     }
 }

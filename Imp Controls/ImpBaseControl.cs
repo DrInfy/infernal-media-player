@@ -1,83 +1,37 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Base;
+
+#endregion
 
 namespace ImpControls
 {
     public abstract class ImpBaseControl : Control
     {
-        protected ControlRenderData renderData;
+        #region Helpers
 
+        public delegate void OpenRightClickMenuEventHandler(object sender, MouseButtonEventArgs e);
+
+        public delegate void SClickedEventHandler(object sender);
+
+        #endregion
+
+        #region Fields
+
+        protected ControlRenderData renderData;
         protected bool sPressed;
         protected bool sMouseover;
         protected bool sSolid = false;
-
         protected bool sGluedFocus;
-
         protected StyleClass sStyle = new StyleClass();
 
+        #endregion
 
-        /// <summary>
-        /// Proper event for clicking a button
-        /// </summary>
-        public event SClickedEventHandler Clicked;
-        public delegate void SClickedEventHandler(object sender);
-
-
-        /// <summary>
-        /// Call out for opening menu for right clicking if available.
-        /// </summary>
-        public event OpenRightClickMenuEventHandler OpenRightClick_Menu;
-        public delegate void OpenRightClickMenuEventHandler(object sender, System.Windows.Input.MouseButtonEventArgs e);
-
-
-        public ImpBaseControl()
-        {
-
-            this.IsEnabledChanged += OnEnabledChange;
-            IsVisibleChanged += OnVisibilityChanged;
-            IsTabStop = false;
-        }
-
-
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
-        {
-            base.OnPreviewKeyDown(e);
-            if (e.Key == Key.Tab || e.Key == Key.Left || e.Key == Key.Right || e.Key == Key.Down || e.Key == Key.Up)
-            {
-                e.Handled = true;
-            }
-        }
-
-
-        protected virtual void OnVisibilityChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(bool)e.NewValue && (bool)e.OldValue)
-            {
-                ControlGetsHidden();
-            }
-            
-        }
-
-
-        protected virtual void ControlGetsHidden()
-        {
-            MouseOver = false;
-            Pressed = false;
-            InvalidateVisual();
-        }
-
-
-        private void OnEnabledChange(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            MouseOver = false;
-            Pressed = false;
-            InvalidateVisual();
-        }
-
+        #region Properties
 
         /// <summary>
         /// Is the left mouse button being pressed over this control?
@@ -90,7 +44,7 @@ namespace ImpControls
                 if (value == Pressed)
                     return;
                 sPressed = value;
-                this.InvalidateVisual();
+                InvalidateVisual();
             }
         }
 
@@ -108,8 +62,58 @@ namespace ImpControls
                 if (value == sMouseover)
                     return;
                 sMouseover = value;
-                this.InvalidateVisual();
+                InvalidateVisual();
             }
+        }
+
+        #endregion
+
+        public ImpBaseControl()
+        {
+            IsEnabledChanged += OnEnabledChange;
+            IsVisibleChanged += OnVisibilityChanged;
+            IsTabStop = false;
+        }
+
+        /// <summary>
+        /// Proper event for clicking a button
+        /// </summary>
+        public event SClickedEventHandler Clicked;
+
+        /// <summary>
+        /// Call out for opening menu for right clicking if available.
+        /// </summary>
+        public event OpenRightClickMenuEventHandler OpenRightClick_Menu;
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+            if (e.Key == Key.Tab || e.Key == Key.Left || e.Key == Key.Right || e.Key == Key.Down || e.Key == Key.Up)
+            {
+                e.Handled = true;
+            }
+        }
+
+        protected virtual void OnVisibilityChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool) e.NewValue && (bool) e.OldValue)
+            {
+                ControlGetsHidden();
+            }
+        }
+
+        protected virtual void ControlGetsHidden()
+        {
+            MouseOver = false;
+            Pressed = false;
+            InvalidateVisual();
+        }
+
+        private void OnEnabledChange(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            MouseOver = false;
+            Pressed = false;
+            InvalidateVisual();
         }
 
         /// <summary>
@@ -121,7 +125,7 @@ namespace ImpControls
             sStyle = value;
         }
 
-        protected override void OnMouseEnter(System.Windows.Input.MouseEventArgs e)
+        protected override void OnMouseEnter(MouseEventArgs e)
         {
             if (IsEnabled & !Pressed)
             {
@@ -130,26 +134,24 @@ namespace ImpControls
             base.OnMouseEnter(e);
         }
 
-        protected override void OnMouseLeave(System.Windows.Input.MouseEventArgs e)
+        protected override void OnMouseLeave(MouseEventArgs e)
         {
             Pressed = false;
-            if (this.IsEnabled & !Pressed)
+            if (IsEnabled & !Pressed)
             {
                 MouseOver = false;
             }
             base.OnMouseLeave(e);
         }
 
-        
-
-        protected override void OnPreviewMouseDown(System.Windows.Input.MouseButtonEventArgs e)
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
-            if (this.IsEnabled && e.LeftButton == MouseButtonState.Pressed && IsMouseDirectlyOver)
+            if (IsEnabled && e.LeftButton == MouseButtonState.Pressed && IsMouseDirectlyOver)
             {
                 //If e.MouseDevice.DirectlyOver Is e.MouseDevice.Target Then
                 sMouseover = true;
                 Pressed = true;
-                this.CaptureMouse();
+                CaptureMouse();
                 //End If
             }
 
@@ -163,19 +165,17 @@ namespace ImpControls
             base.OnPreviewMouseDown(e);
         }
 
-
-        protected override void OnMouseDown(System.Windows.Input.MouseButtonEventArgs e)
+        protected override void OnMouseDown(MouseButtonEventArgs e)
         {
-            this.Focus();
+            Focus();
             base.OnMouseDown(e);
         }
 
-
-        protected override void OnMouseUp(System.Windows.Input.MouseButtonEventArgs e)
+        protected override void OnMouseUp(MouseButtonEventArgs e)
         {
-            this.ReleaseMouseCapture();
-            
-            if (this.IsEnabled && Pressed)
+            ReleaseMouseCapture();
+
+            if (IsEnabled && Pressed)
             {
                 // e.MouseDevice.DirectlyOver Is e.MouseDevice.Target And Pressed Then
                 if (HitTest(e.GetPosition(this)))
@@ -187,7 +187,6 @@ namespace ImpControls
             base.OnMouseUp(e);
         }
 
-
         protected void OnClicked()
         {
             if (Clicked != null)
@@ -196,9 +195,7 @@ namespace ImpControls
             }
         }
 
-        
-
-        protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             if (Pressed)
             {
@@ -214,10 +211,9 @@ namespace ImpControls
             base.OnMouseMove(e);
         }
 
-
-        protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
+        protected override void OnRender(DrawingContext drawingContext)
         {
-            if (this.ActualHeight <= 0 | this.ActualWidth <= 0)
+            if (ActualHeight <= 0 | ActualWidth <= 0)
                 return; // not visible
 
             AdjustRenderColors();
@@ -227,26 +223,20 @@ namespace ImpControls
             Drawborders(drawingContext, renderData.BorderBrush);
         }
 
-
-        
-
         private void DrawBackground(DrawingContext drawingContext, Brush brush)
         {
-            drawingContext.DrawRectangle(brush, null, new Rect(0, 0, this.ActualWidth, this.ActualHeight));
-
+            drawingContext.DrawRectangle(brush, null, new Rect(0, 0, ActualWidth, ActualHeight));
         }
 
         protected abstract void DrawContent(DrawingContext drawingContext);
 
-
         private void Drawborders(DrawingContext drawingContext, Brush borderbrush)
         {
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Left), new Point(0.5, GetSH()), new Point(0.5, GetSH(false)));
-            drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Top), new Point(0.5, GetSH()), new Point(this.ActualWidth - 0.5, GetSH()));
-            drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Right), new Point(this.ActualWidth - 0.5, GetSH()), new Point(this.ActualWidth - 0.5, GetSH(false)));
-            drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Bottom), new Point(0.5, GetSH(false)), new Point(this.ActualWidth - 0.5, GetSH(false)));
+            drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Top), new Point(0.5, GetSH()), new Point(ActualWidth - 0.5, GetSH()));
+            drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Right), new Point(ActualWidth - 0.5, GetSH()), new Point(ActualWidth - 0.5, GetSH(false)));
+            drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Bottom), new Point(0.5, GetSH(false)), new Point(ActualWidth - 0.5, GetSH(false)));
         }
-
 
         /// <summary>
         /// Get Scroller height, as in position where to draw
@@ -259,7 +249,7 @@ namespace ImpControls
             if (upper)
                 value = 0.5;
             else
-                value = Math.Floor(this.ActualHeight) - 0.5;
+                value = Math.Floor(ActualHeight) - 0.5;
 
             return value;
         }
@@ -269,7 +259,7 @@ namespace ImpControls
         /// </summary>
         protected virtual void AdjustRenderColors()
         {
-            if( !IsEnabled)
+            if (!IsEnabled)
             {
                 renderData.BackBrush = sStyle.BackDisabledBrush;
                 renderData.BorderBrush = sStyle.BorderDisabledBrush;
@@ -301,7 +291,7 @@ namespace ImpControls
 
         public virtual bool HitTest(Point cursorPos)
         {
-            if (cursorPos.X < 0 | cursorPos.X > this.ActualWidth | cursorPos.Y < 0 | cursorPos.Y > this.ActualHeight)
+            if (cursorPos.X < 0 | cursorPos.X > ActualWidth | cursorPos.Y < 0 | cursorPos.Y > ActualHeight)
             {
                 return false;
             }
@@ -319,11 +309,11 @@ namespace ImpControls
         /// <returns></returns>
         public static Point GetDpiSafeLocation(Point location)
         {
-            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            var source = PresentationSource.FromVisual(Application.Current.MainWindow);
             if (source != null)
             {
-                double dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
-                double dpiY = 96.0 * source.CompositionTarget.TransformToDevice.M22;
+                var dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
+                var dpiY = 96.0 * source.CompositionTarget.TransformToDevice.M22;
                 return new Point(location.X * 96.0 / dpiX, location.Y * 96.0 / dpiY);
             }
             return location;

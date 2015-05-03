@@ -1,6 +1,10 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Windows;
 using System.Windows.Media;
+
+#endregion
 
 namespace ImpControls.Gui
 {
@@ -32,12 +36,12 @@ namespace ImpControls.Gui
     }
 
 
-    static class GeometryCreator
+    internal static class GeometryCreator
     {
         public static Geometry GetGeometry(BtnNumber btn, int state)
         {
-            PathFigureCollection pFC = new PathFigureCollection();
-            PathGeometry pG = new PathGeometry();
+            var pFC = new PathFigureCollection();
+            var pG = new PathGeometry();
 
             switch (btn)
             {
@@ -64,7 +68,7 @@ namespace ImpControls.Gui
                     }
 
                     return UnmuteGeo(pFC, pG);
-                    
+
                 case BtnNumber.Open:
                     return OpenGeo(pFC, pG);
                 case BtnNumber.Help:
@@ -119,7 +123,8 @@ namespace ImpControls.Gui
             AddLine(new Point(80, 50), new Point(50, 5), pFC);
 
             AddLine(new Point(20, 95), new Point(50, 50), pFC);
-            AddLine(new Point(80, 95), new Point(50, 50), pFC); ;
+            AddLine(new Point(80, 95), new Point(50, 50), pFC);
+            ;
 
             pG.Figures = pFC;
             return pG;
@@ -131,7 +136,8 @@ namespace ImpControls.Gui
             AddLine(new Point(80, 50), new Point(50, 95), pFC);
 
             AddLine(new Point(20, 5), new Point(50, 50), pFC);
-            AddLine(new Point(80, 5), new Point(50, 50), pFC); ;
+            AddLine(new Point(80, 5), new Point(50, 50), pFC);
+            ;
 
             pG.Figures = pFC;
             return pG;
@@ -160,9 +166,6 @@ namespace ImpControls.Gui
             AddLine(new Point(10, 65), new Point(50, 65), pFC);
 
 
-            
-            
-
             // arrow
             AddLine(new Point(55, 50 + y), new Point(85, 50 + y), pFC);
             AddLine(new Point(85, 50 + y), new Point(85, 40 + y), pFC);
@@ -175,12 +178,11 @@ namespace ImpControls.Gui
             return pG;
         }
 
-
         private static void AddLine(Point p1, Point p2, PathFigureCollection pathF)
         {
-            PathFigure polkuFigure = new PathFigure();
-            LineSegment myLineSegment = new LineSegment();
-            PathSegmentCollection pathS = new PathSegmentCollection();
+            var polkuFigure = new PathFigure();
+            var myLineSegment = new LineSegment();
+            var pathS = new PathSegmentCollection();
             polkuFigure.StartPoint = p1;
             myLineSegment.Point = p2;
             pathS.Add(myLineSegment);
@@ -191,15 +193,14 @@ namespace ImpControls.Gui
 
         private static void AddRect(Rect box, PathGeometry geom)
         {
-            RectangleGeometry loota = new RectangleGeometry();
+            var loota = new RectangleGeometry();
             loota.Rect = box;
             geom.AddGeometry(loota);
         }
 
-
         private static void AddCircle(Rect box, PathGeometry geom)
         {
-            EllipseGeometry pallo = new EllipseGeometry(box);
+            var pallo = new EllipseGeometry(box);
             geom.AddGeometry(pallo);
         }
 
@@ -268,6 +269,7 @@ namespace ImpControls.Gui
             pG.Figures = pFC;
             return pG;
         }
+
         private static PathFigureCollection MuteLines(PathFigureCollection pFC)
         {
             AddLine(new Point(0, 50), new Point(40, 0), pFC);
@@ -280,8 +282,6 @@ namespace ImpControls.Gui
             AddLine(new Point(40, 100), new Point(50, 50), pFC);
             return pFC;
         }
-
-        
 
         private static PathGeometry OpenGeo(PathFigureCollection pFC, PathGeometry pG)
         {
@@ -320,7 +320,6 @@ namespace ImpControls.Gui
 
         private static PathGeometry SettingsGeo(PathFigureCollection pFC, PathGeometry pG)
         {
-
             AddLine(new Point(0, 40), new Point(40, 0), pFC);
             AddLine(new Point(0, 40), new Point(15, 55), pFC);
             AddLine(new Point(40, 0), new Point(55, 15), pFC);
@@ -356,6 +355,7 @@ namespace ImpControls.Gui
             pG.Figures = pFC;
             return pG;
         }
+
         private static PathGeometry NormalizeGeo(PathFigureCollection pFC, PathGeometry pG)
         {
             AddLine(new Point(20, 0), new Point(20, 20), pFC);
@@ -366,6 +366,7 @@ namespace ImpControls.Gui
             AddRect(new Rect(0, 20, 80, 80), pG);
             return pG;
         }
+
         private static PathGeometry MaximizeGeo(PathFigureCollection pFC, PathGeometry pG)
         {
             AddRect(new Rect(0, 0, 100, 20), pG);
@@ -375,7 +376,6 @@ namespace ImpControls.Gui
 
         private static PathGeometry ExitGeo(PathFigureCollection pFC, PathGeometry pG)
         {
-
             AddLine(new Point(0, 0), new Point(100, 100), pFC);
             AddLine(new Point(100, 0), new Point(0, 100), pFC);
 
@@ -396,7 +396,6 @@ namespace ImpControls.Gui
             pG.Figures = pFC;
             return pG;
         }
-
 
         private static Geometry NoLoop(PathFigureCollection pFC, PathGeometry pG)
         {
@@ -458,7 +457,6 @@ namespace ImpControls.Gui
 
         private static Geometry AddFolder(PathFigureCollection pFC, PathGeometry pG)
         {
-
             AddLine(new Point(0, 0), new Point(0, 85), pFC);
             AddLine(new Point(0, 85), new Point(30, 100), pFC);
 
@@ -487,7 +485,6 @@ namespace ImpControls.Gui
             pG.Figures = pFC;
             return pG;
         }
-
 
         private static Geometry AddSubFolder(PathFigureCollection pFC, PathGeometry pG)
         {
@@ -564,9 +561,6 @@ namespace ImpControls.Gui
 
             pG.Figures = pFC;
             return pG;
-
         }
-
-
     }
 }

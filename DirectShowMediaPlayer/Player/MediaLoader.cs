@@ -1,16 +1,16 @@
-﻿using System;
+﻿#region Usings
+
 using System.Windows.Threading;
 using Base;
 using Base.FileLoading;
+
+#endregion
 
 namespace MediaPlayer.Player
 {
     public class MediaLoader : FileLoader<PlayerController>
     {
-        public MediaLoader(Dispatcher dispatcher) : base(dispatcher)
-        {
-        }
-
+        public MediaLoader(Dispatcher dispatcher) : base(dispatcher) {}
 
         protected override PlayerController Load(string path, out ImpError error)
         {

@@ -31,7 +31,7 @@ namespace Base.FileData
         public bool IsFileType(string e)
         {
             return acceptableExtensions.Exists(
-                extension => String.Compare(e, extension, StringComparison.OrdinalIgnoreCase) == 0);
+                extension => string.Compare(e, extension, StringComparison.OrdinalIgnoreCase) == 0);
         }
 
         public static List<string> GetFiltersList(FileTypes allowedFileTypes)

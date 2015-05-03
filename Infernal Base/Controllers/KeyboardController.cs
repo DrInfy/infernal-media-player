@@ -1,24 +1,37 @@
-﻿using System.Collections.Generic;
+﻿#region Usings
+
+using System.Collections.Generic;
 using Base.Commands;
 using Base.Interfaces;
+
+#endregion
 
 namespace Base.Controllers
 {
     public abstract class KeyboardController<TCmdType> : IUpdateable, IBaseController<TCmdType>
     {
+        #region Fields
+
         protected ImpKeyboard<TCmdType> keyboard;
         protected bool globalKeyboard;
+
+        #endregion
+
+        #region Properties
+
         public abstract bool Focused { get; }
         public abstract bool Selected { get; }
         public IEventController EventC { get; protected set; }
         public PlayerStyle AllowedStyles { get; protected set; }
 
+        #endregion
+
         public abstract void Exec(TCmdType cmd, object arg = null);
 
         public virtual void Update()
         {
-            List<KeyCommand<TCmdType>> cmdList = keyboard.Update(Selected, AllowedStyles);
-            GlobalKeyboard.SetModifierKeys(keyboard.ModKeys); 
+            var cmdList = keyboard.Update(Selected, AllowedStyles);
+            GlobalKeyboard.SetModifierKeys(keyboard.ModKeys);
             if (Focused)
             {
                 foreach (var command in cmdList)
@@ -37,7 +50,7 @@ namespace Base.Controllers
             if (isGlobalKeyboard)
             {
                 globalKeyboard = true;
-                GlobalKeyboard.SetModifierKeys(keyboard.ModKeys); 
+                GlobalKeyboard.SetModifierKeys(keyboard.ModKeys);
             }
         }
     }

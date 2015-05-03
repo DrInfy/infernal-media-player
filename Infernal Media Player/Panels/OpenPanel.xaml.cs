@@ -1,7 +1,9 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,9 +19,9 @@ using Imp.Controllers;
 using ImpControls;
 using ImpControls.Gui;
 using ImpControls.SpecialFolder;
-using Ipv;
 //using Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
-using System.Threading.Tasks;
+
+#endregion
 
 namespace Imp.Panels
 {
@@ -28,17 +30,19 @@ namespace Imp.Panels
     /// </summary>
     public partial class OpenPanel : UserControl
     {
+        #region Fields
+
         private MainController mainC;
         private List<string> filterList = null; // store filters, reload only when required
         private Task loader;
         private bool refreshing = false;
 
+        #endregion
 
         public OpenPanel()
         {
             InitializeComponent();
         }
-
 
         public void SetStyles(StyleLib styleLib, MainController mainController)
         {
@@ -76,7 +80,6 @@ namespace Imp.Panels
             styleLib.SetStyle(LabelTopic);
         }
 
-
         private void ListFiles_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var file = ListFiles.GetSelected();
@@ -87,18 +90,16 @@ namespace Imp.Panels
             //    mainC.Exec(ImpCommand.OpenFile, files[0]);
         }
 
-
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             LoadPlaces();
             ListPlaces.Select(0);
         }
 
-
         private void LoadPlaces()
         {
             var customPlaces = new DoubleString[mainC.Settings.CustomPaths.Count];
-            for (int i = 0; i < mainC.Settings.CustomPaths.Count; i++)
+            for (var i = 0; i < mainC.Settings.CustomPaths.Count; i++)
             {
                 customPlaces[i] = new DoubleString(mainC.Settings.CustomPaths[i],
                     StringHandler.GetFilename(mainC.Settings.CustomPaths[i]));
@@ -106,19 +107,16 @@ namespace Imp.Panels
             ListPlaces.LoadPlaces(customPlaces);
         }
 
-
         private void ButtonSort_Clicked(object sender)
         {
             ButtonSort.CurrentState++;
             ListFiles.SortMode = (FileSortMode) ButtonSort.CurrentState;
         }
 
-
         private void ButtonClosePanel_Clicked(object sender)
         {
             mainC.Exec(ImpCommand.PanelOpen);
         }
-
 
         private void ListPlaces_SelectionChanged()
         {
@@ -133,7 +131,6 @@ namespace Imp.Panels
             }
         }
 
-
         private void ListDirectories_SelectionChanged()
         {
             if (ListDirectories.GetSelected() != null)
@@ -141,7 +138,6 @@ namespace Imp.Panels
                 ListFiles.SetPath(ListDirectories.GetSelected().Value, filterList);
             }
         }
-
 
         public List<string> GetFilters()
         {
@@ -154,11 +150,10 @@ namespace Imp.Panels
             return null;
         }
 
-
         public FileTypes GetFileTypes()
         {
             var filter = FileTypes.Any;
-            int filterCount = 0;
+            var filterCount = 0;
             //if (ButtonFilterPlaylist.CurrentState != 0)
             //{
             //    filter |= FileTypes.Playlist;
@@ -184,7 +179,6 @@ namespace Imp.Panels
             return filter;
         }
 
-
         private void ButtonFilter_Clicked(object sender)
         {
             (sender as ImpButton).CurrentState++;
@@ -208,7 +202,6 @@ namespace Imp.Panels
             refreshing = false;
         }
 
-
         private void TextBoxFind_TextChanged(object sender, TextChangedEventArgs e)
         {
             ListFiles.FindText = TextBoxFind.Text;
@@ -229,7 +222,6 @@ namespace Imp.Panels
             }
         }
 
-
         private void ButtonAddSubFolder_Clicked(object sender)
         {
             var path = ListDirectories.GetSelected()?.Value;
@@ -243,7 +235,6 @@ namespace Imp.Panels
                 GetFileTypes()));
         }
 
-
         private void ButtonAddFolder_Clicked(object sender)
         {
             var path = ListDirectories.GetSelected()?.Value;
@@ -255,7 +246,6 @@ namespace Imp.Panels
                 SearchOption.TopDirectoryOnly,
                 GetFileTypes()));
         }
-
 
         public void PrepareFolderLoader(DirectoryLoadOptions options)
         {
@@ -273,7 +263,6 @@ namespace Imp.Panels
             loader = Task.Factory.StartNew(() => LoadDirectories(options));
         }
 
-
         public void ButtonAddSelected_Clicked(object sender)
         {
             var list = ListFiles.GetSelectedList();
@@ -283,20 +272,17 @@ namespace Imp.Panels
             }
         }
 
-
         private void LoadDirectories(DirectoryLoadOptions options)
         {
             AddFolderToPlayList(options, options.RootPath);
             Dispatcher.Invoke(FixFolderButtons);
         }
 
-
         private void FixFolderButtons()
         {
             ButtonAddSubFolder.IsEnabled = true;
             ButtonAddFolder.IsEnabled = true;
         }
-
 
         private void AddFolderToPlayList(DirectoryLoadOptions options, string path)
         {
@@ -311,7 +297,7 @@ namespace Imp.Panels
             {
                 var specialFolder = SpecialFolderLoader.LoadSpecialFolder(path);
                 fileInfos = new FileInfo[specialFolder.FilePaths.Count];
-                for (int i = 0; i < specialFolder.FilePaths.Count; i++)
+                for (var i = 0; i < specialFolder.FilePaths.Count; i++)
                     fileInfos[i] = new FileInfo(specialFolder.FilePaths[i]);
             }
             else
@@ -326,7 +312,7 @@ namespace Imp.Panels
                 catch (Exception e)
                 {
                     // doesn't matter why path choosing failed, no files available in this folder
-                    ImpError error = new ImpError(ErrorType.FailedToOpenFolder, e.Message);
+                    var error = new ImpError(ErrorType.FailedToOpenFolder, e.Message);
                     mainC.EventC.ShowError(error);
                     return;
                 }
@@ -334,7 +320,7 @@ namespace Imp.Panels
             if (fileInfos.Length < 1)
                 return;
 
-            var files =  options.FilterFiles(fileInfos, options.FilterOptions.HasFlag(FilterOptions.Files));
+            var files = options.FilterFiles(fileInfos, options.FilterOptions.HasFlag(FilterOptions.Files));
 
             IComparer<FileImpInfo> comparer;
             switch ((FileSortMode) ButtonSort.CurrentState)
@@ -368,7 +354,6 @@ namespace Imp.Panels
             }
         }
 
-
         private bool LoadSubDirectories(DirectoryLoadOptions options, string path)
         {
             DirectoryInfo[] folderinfos;
@@ -376,7 +361,7 @@ namespace Imp.Panels
             {
                 var specialFolder = SpecialFolderLoader.LoadSpecialFolder(path);
                 folderinfos = new DirectoryInfo[specialFolder.FolderPaths.Count];
-                for (int i = 0; i < specialFolder.FolderPaths.Count; i++)
+                for (var i = 0; i < specialFolder.FolderPaths.Count; i++)
                     folderinfos[i] = new DirectoryInfo(specialFolder.FolderPaths[i]);
             }
             else
@@ -389,7 +374,7 @@ namespace Imp.Panels
                 }
                 catch (Exception e)
                 {
-                    ImpError error = new ImpError(ErrorType.FailedToOpenFolder, e.Message);
+                    var error = new ImpError(ErrorType.FailedToOpenFolder, e.Message);
                     mainC.EventC.ShowError(error);
                     return true;
                 }
@@ -413,16 +398,14 @@ namespace Imp.Panels
                     AddFolderToPlayList(options, folderinfo.FullName);
                 }
             }
-            
+
             return false;
         }
-
 
         private void ButtonClearPlaylist_Clicked(object sender)
         {
             mainC.Exec(ImpCommand.ClearPlaylist);
         }
-
 
         private void ButtonMaximizePanel_Clicked(object sender)
         {
@@ -435,7 +418,7 @@ namespace Imp.Panels
             {
                 MainGrid.RowDefinitions[1].Height = new GridLength(2, GridUnitType.Star);
             }
-            else if (MainGrid.RowDefinitions[4].ActualHeight < 1) {}
+            else if (MainGrid.RowDefinitions[4].ActualHeight < 1) { }
             else
             {
                 MainGrid.RowDefinitions[4].Height = new GridLength(0);
@@ -444,7 +427,7 @@ namespace Imp.Panels
 
         private void EnlargeUpwards_Clicked(object sender)
         {
-            if (MainGrid.RowDefinitions[1].ActualHeight < 1) {}
+            if (MainGrid.RowDefinitions[1].ActualHeight < 1) { }
             else if (MainGrid.RowDefinitions[4].ActualHeight < 1)
             {
                 MainGrid.RowDefinitions[4].Height = new GridLength(3, GridUnitType.Star);

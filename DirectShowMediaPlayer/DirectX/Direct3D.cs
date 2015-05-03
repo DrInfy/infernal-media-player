@@ -1,8 +1,12 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security;
 using DirectShowLib;
+
+#endregion
 
 namespace WPFMediaKit.DirectX
 {
@@ -24,56 +28,72 @@ namespace WPFMediaKit.DirectX
     {
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int TestCooperativeLevel();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         uint GetAvailableTextureMem();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int EvictManagedResources();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetDirect3D([Out] out IDirect3D9 ppD3D9);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetDeviceCaps([In, Out] ref D3DCAPS9 pCaps);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetDisplayMode(uint iSwapChain, D3DDISPLAYMODE pMode);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetCreationParameters([In, Out] ref D3DDEVICE_CREATION_PARAMETERS pParameters);
+
         int SetCursorProperties();
         int SetCursorPosition();
         int ShowCursor(bool bShow);
         int CreateAdditionalSwapChain();
         int GetSwapChain();
         uint GetNumberOfSwapChains();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int Reset([In, Out] ref D3DPRESENT_PARAMETERS pPresentationParameters);
+
         int Present();
         int GetBackBuffer();
         int GetRasterStatus();
         int SetDialogBoxMode();
         int SetGammaRamp();
         int GetGammaRamp();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int CreateTexture(int Width, int Height, int Levels, int Usage, D3DFORMAT Format, int Pool,
-                          out IDirect3DTexture9 ppTexture, IntPtr pSharedHandle);
+            out IDirect3DTexture9 ppTexture, IntPtr pSharedHandle);
 
         int CreateVolumeTexture();
         int CreateCubeTexture();
         int CreateVertexBuffer();
         int CreateIndexBuffer();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int CreateRenderTarget(int width, int height, D3DFORMAT Format, D3DMULTISAMPLE_TYPE MultiSample,
-                                 uint MultisampleQuality, [MarshalAs(UnmanagedType.Bool)] bool Lockable, [Out]out IntPtr pSurface,
-                                 IntPtr pSharedSurface);
+            uint MultisampleQuality, [MarshalAs(UnmanagedType.Bool)] bool Lockable, [Out] out IntPtr pSurface,
+            IntPtr pSharedSurface);
+
         int CreateDepthStencilSurface();
         int UpdateSurface();
         int UpdateTexture();
         int GetRenderTargetData();
         int GetFrontBufferData();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int StretchRect(IntPtr pSourceSurface, DsRect pSourceRect, IDirect3DSurface9 pDestSurface, DsRect pDestRect, int Filter);
+
         int ColorFill();
         int CreateOffscreenPlainSurface();
         int SetRenderTarget();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
-        int GetRenderTarget([Out]out IntPtr pSurface);
+        int GetRenderTarget([Out] out IntPtr pSurface);
+
         int SetDepthStencilSurface();
         int GetDepthStencilSurface();
         int BeginScene();
@@ -162,43 +182,56 @@ namespace WPFMediaKit.DirectX
     {
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int TestCooperativeLevel();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int GetAvailableTextureMem();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int EvictManagedResources();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int GetDirect3D([Out] out IDirect3D9 ppD3D9);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int GetDeviceCaps([In, Out] ref D3DCAPS9 pCaps);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int GetDisplayMode(uint iSwapChain, D3DDISPLAYMODE pMode);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int GetCreationParameters([In, Out] ref D3DDEVICE_CREATION_PARAMETERS pParameters);
+
         new int SetCursorProperties();
         new int SetCursorPosition();
         new int ShowCursor(bool bShow);
         new int CreateAdditionalSwapChain();
         new int GetSwapChain();
         new int GetNumberOfSwapChains();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int Reset([In, Out] ref D3DPRESENT_PARAMETERS pPresentationParameters);
+
         new int Present();
         new int GetBackBuffer();
         new int GetRasterStatus();
         new int SetDialogBoxMode();
         new int SetGammaRamp();
         new int GetGammaRamp();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int CreateTexture(int Width, int Height, int Levels, int Usage, D3DFORMAT Format, int Pool,
-                          out IDirect3DTexture9 ppTexture, IntPtr pSharedHandle);
+            out IDirect3DTexture9 ppTexture, IntPtr pSharedHandle);
+
         new int CreateVolumeTexture();
         new int CreateCubeTexture();
         new int CreateVertexBuffer();
         new int CreateIndexBuffer();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int CreateRenderTarget(int width, int height, D3DFORMAT Format, D3DMULTISAMPLE_TYPE MultiSample,
-                                 uint MultisampleQuality, [MarshalAs(UnmanagedType.Bool)] bool Lockable, [Out]out IntPtr pSurface,
-                                 IntPtr pSharedSurface);
+            uint MultisampleQuality, [MarshalAs(UnmanagedType.Bool)] bool Lockable, [Out] out IntPtr pSurface,
+            IntPtr pSharedSurface);
+
         new int CreateDepthStencilSurface();
         new int UpdateSurface();
         new int UpdateTexture();
@@ -208,8 +241,10 @@ namespace WPFMediaKit.DirectX
         new int ColorFill();
         new int CreateOffscreenPlainSurface();
         new int SetRenderTarget();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
-        new int GetRenderTarget([Out]out IntPtr pSurface);
+        new int GetRenderTarget([Out] out IntPtr pSurface);
+
         new int SetDepthStencilSurface();
         new int GetDepthStencilSurface();
         new int BeginScene();
@@ -290,8 +325,10 @@ namespace WPFMediaKit.DirectX
         new int DrawTriPatch();
         new int DeletePatch(uint Handle);
         new int CreateQuery();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int SetConvolutionMonoKernel(int width, int height, IntPtr rows, IntPtr columns);
+
         int ComposeRects();
         int PresentEx();
         int GetGPUThreadPriority();
@@ -300,12 +337,15 @@ namespace WPFMediaKit.DirectX
         int CheckResourceResidency();
         int SetMaximumFrameLatency();
         int GetMaximumFrameLatency();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int CheckDeviceState(IntPtr hWnd);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int CreateRenderTargetEx(int width, int height, D3DFORMAT Format, D3DMULTISAMPLE_TYPE MultiSample,
-                                 uint MultisampleQuality, [MarshalAs(UnmanagedType.Bool)] bool Lockable, [Out]out IntPtr pSurface,
-                                 [In, Out]ref IntPtr pSharedSurface, uint Usage);
+            uint MultisampleQuality, [MarshalAs(UnmanagedType.Bool)] bool Lockable, [Out] out IntPtr pSurface,
+            [In, Out] ref IntPtr pSharedSurface, uint Usage);
+
         /*
          STDMETHOD(SetConvolutionMonoKernel)(THIS_ UINT width,UINT height,float* rows,float* columns) PURE;
     STDMETHOD(ComposeRects)(THIS_ IDirect3DSurface9* pSrc,IDirect3DSurface9* pDst,IDirect3DVertexBuffer9* pSrcRectDescs,UINT NumRects,IDirect3DVertexBuffer9* pDstRectDescs,D3DCOMPOSERECTSOP Operation,int Xoffset,int Yoffset) PURE;
@@ -326,31 +366,41 @@ namespace WPFMediaKit.DirectX
     }
 
     [ComImport, SuppressUnmanagedCodeSecurity,
-    Guid("0CFBAF3A-9FF6-429a-99B3-A2796AF8B89B"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]
+     Guid("0CFBAF3A-9FF6-429a-99B3-A2796AF8B89B"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]
     public interface IDirect3DSurface9
     {
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void GetDevice(out IDirect3DDevice9 ppDevice);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void SetPrivateData(Guid refguid, IntPtr pData, int SizeOfData, int Flags);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void GetPrivateData(Guid refguid, IntPtr pData, out int pSizeOfData);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void FreePrivateData(Guid refguid);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int SetPriority(int PriorityNew);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetPriority();
+
         void PreLoad();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         D3DRESOURCETYPE GetType();
+
         void GetContainer(Guid riid, out object ppContainer);
         void GetDesc(out D3DSURFACE_DESC pDesc);
         void LockRect(D3DLOCKED_RECT pLockedRect, Rectangle pRect, int Flags);
         void UnlockRect();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetDC(out IntPtr phdc);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int ReleaseDC(IntPtr hdc);
     }
@@ -363,153 +413,149 @@ namespace WPFMediaKit.DirectX
         D3DRTYPE_VOLUMETEXTURE = 4,
         D3DRTYPE_CUBETEXTURE = 5,
         D3DRTYPE_VERTEXBUFFER = 6,
-        D3DRTYPE_INDEXBUFFER = 7,           //if this changes, change _D3DDEVINFO_RESOURCEMANAGER definition
+        D3DRTYPE_INDEXBUFFER = 7, //if this changes, change _D3DDEVINFO_RESOURCEMANAGER definition
 
 
         D3DRTYPE_FORCE_DWORD = 0x7fffffff
     }
 
-       [StructLayout(LayoutKind.Sequential)]
-    public struct D3DLOCKED_RECT
-    {
-    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct D3DLOCKED_RECT {}
 
 
-        [StructLayout(LayoutKind.Sequential)]
-    public struct D3DSURFACE_DESC
-    {
-    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct D3DSURFACE_DESC {}
 
 
     [StructLayout(LayoutKind.Sequential)]
     public struct D3DDEVICE_CREATION_PARAMETERS
     {
-        uint            AdapterOrdinal;
-        D3DDEVTYPE      DeviceType;
-        IntPtr            hFocusWindow;
-        int           BehaviorFlags;
+        private readonly uint AdapterOrdinal;
+        private readonly D3DDEVTYPE DeviceType;
+        private readonly IntPtr hFocusWindow;
+        private readonly int BehaviorFlags;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct D3DCAPS9
     {
         /* Device Info */
-        public D3DDEVTYPE  DeviceType;
-        public uint        AdapterOrdinal;
+        public D3DDEVTYPE DeviceType;
+        public uint AdapterOrdinal;
 
         /* Caps from DX7 Draw */
-        public int   Caps;
-        public int   Caps2;
-        public int   Caps3;
-        public int   PresentationIntervals;
+        public int Caps;
+        public int Caps2;
+        public int Caps3;
+        public int PresentationIntervals;
 
         /* Cursor Caps */
-        public int   CursorCaps;
+        public int CursorCaps;
 
         /* 3D Device Caps */
-        public int   DevCaps;
+        public int DevCaps;
 
-        public int   PrimitiveMiscCaps;
-        public int   RasterCaps;
-        public int   ZCmpCaps;
-        public int   SrcBlendCaps;
-        public int   DestBlendCaps;
-        public int   AlphaCmpCaps;
-        public int   ShadeCaps;
-        public int   TextureCaps;
-        public int   TextureFilterCaps;          // D3DPTFILTERCAPS for IDirect3DTexture9's
-        public int   CubeTextureFilterCaps;      // D3DPTFILTERCAPS for IDirect3DCubeTexture9's
-        public int   VolumeTextureFilterCaps;    // D3DPTFILTERCAPS for IDirect3DVolumeTexture9's
-        public int   TextureAddressCaps;         // D3DPTADDRESSCAPS for IDirect3DTexture9's
-        public int   VolumeTextureAddressCaps;   // D3DPTADDRESSCAPS for IDirect3DVolumeTexture9's
+        public int PrimitiveMiscCaps;
+        public int RasterCaps;
+        public int ZCmpCaps;
+        public int SrcBlendCaps;
+        public int DestBlendCaps;
+        public int AlphaCmpCaps;
+        public int ShadeCaps;
+        public int TextureCaps;
+        public int TextureFilterCaps; // D3DPTFILTERCAPS for IDirect3DTexture9's
+        public int CubeTextureFilterCaps; // D3DPTFILTERCAPS for IDirect3DCubeTexture9's
+        public int VolumeTextureFilterCaps; // D3DPTFILTERCAPS for IDirect3DVolumeTexture9's
+        public int TextureAddressCaps; // D3DPTADDRESSCAPS for IDirect3DTexture9's
+        public int VolumeTextureAddressCaps; // D3DPTADDRESSCAPS for IDirect3DVolumeTexture9's
 
-        public int   LineCaps;                   // D3DLINECAPS
+        public int LineCaps; // D3DLINECAPS
 
-        public int   MaxTextureWidth, MaxTextureHeight;
-        public int   MaxVolumeExtent;
+        public int MaxTextureWidth, MaxTextureHeight;
+        public int MaxVolumeExtent;
 
-        public int   MaxTextureRepeat;
-        public int   MaxTextureAspectRatio;
-        public int   MaxAnisotropy;
-        float   MaxVertexW;
+        public int MaxTextureRepeat;
+        public int MaxTextureAspectRatio;
+        public int MaxAnisotropy;
+        private readonly float MaxVertexW;
 
-        float   GuardBandLeft;
-        float   GuardBandTop;
-        float   GuardBandRight;
-        float   GuardBandBottom;
+        private readonly float GuardBandLeft;
+        private readonly float GuardBandTop;
+        private readonly float GuardBandRight;
+        private readonly float GuardBandBottom;
 
-        float   ExtentsAdjust;
-        public int   StencilCaps;
+        private readonly float ExtentsAdjust;
+        public int StencilCaps;
 
-        public int   FVFCaps;
-        public int   TextureOpCaps;
-        public int   MaxTextureBlendStages;
-        public int   MaxSimultaneousTextures;
+        public int FVFCaps;
+        public int TextureOpCaps;
+        public int MaxTextureBlendStages;
+        public int MaxSimultaneousTextures;
 
-        public int   VertexProcessingCaps;
-        public int   MaxActiveLights;
-        public int   MaxUserClipPlanes;
-        public int   MaxVertexBlendMatrices;
-        public int   MaxVertexBlendMatrixIndex;
+        public int VertexProcessingCaps;
+        public int MaxActiveLights;
+        public int MaxUserClipPlanes;
+        public int MaxVertexBlendMatrices;
+        public int MaxVertexBlendMatrixIndex;
 
-        float   MaxPointSize;
+        private readonly float MaxPointSize;
 
-        public int   MaxPrimitiveCount;          // max number of primitives per DrawPrimitive call
-        public int   MaxVertexIndex;
-        public int   MaxStreams;
-        public int   MaxStreamStride;            // max stride for SetStreamSource
+        public int MaxPrimitiveCount; // max number of primitives per DrawPrimitive call
+        public int MaxVertexIndex;
+        public int MaxStreams;
+        public int MaxStreamStride; // max stride for SetStreamSource
 
-        public int   VertexShaderVersion;
-        public int   MaxVertexShaderConst;       // number of vertex shader constant registers
+        public int VertexShaderVersion;
+        public int MaxVertexShaderConst; // number of vertex shader constant registers
 
-        public int   PixelShaderVersion;
-        float   PixelShader1xMaxValue;      // max value storable in registers of ps.1.x shaders
+        public int PixelShaderVersion;
+        private readonly float PixelShader1xMaxValue; // max value storable in registers of ps.1.x shaders
 
         // Here are the DX9 specific ones
-        public int   DevCaps2;
+        public int DevCaps2;
 
-        float   MaxNpatchTessellationLevel;
-        public int   Reserved5;
+        private readonly float MaxNpatchTessellationLevel;
+        public int Reserved5;
 
-        public uint    MasterAdapterOrdinal;       // ordinal of master adaptor for adapter group
-        public uint    AdapterOrdinalInGroup;      // ordinal inside the adapter group
-        public uint    NumberOfAdaptersInGroup;    // number of adapters in this adapter group (only if master)
-        public int   DeclTypes;                  // Data types, supported in vertex declarations
-        public int   NumSimultaneousRTs;         // Will be at least 1
-        public int   StretchRectFilterCaps;      // Filter caps supported by StretchRect
-        D3DVSHADERCAPS2_0 VS20Caps;
-        D3DPSHADERCAPS2_0 PS20Caps;
-        public int   VertexTextureFilterCaps;    // D3DPTFILTERCAPS for IDirect3DTexture9's for texture, used in vertex shaders
-        public int   MaxVShaderInstructionsExecuted; // maximum number of vertex shader instructions that can be executed
-        public int   MaxPShaderInstructionsExecuted; // maximum number of pixel shader instructions that can be executed
-        public int   MaxVertexShader30InstructionSlots; 
-        public int   MaxPixelShader30InstructionSlots;
-    } 
+        public uint MasterAdapterOrdinal; // ordinal of master adaptor for adapter group
+        public uint AdapterOrdinalInGroup; // ordinal inside the adapter group
+        public uint NumberOfAdaptersInGroup; // number of adapters in this adapter group (only if master)
+        public int DeclTypes; // Data types, supported in vertex declarations
+        public int NumSimultaneousRTs; // Will be at least 1
+        public int StretchRectFilterCaps; // Filter caps supported by StretchRect
+        private readonly D3DVSHADERCAPS2_0 VS20Caps;
+        private readonly D3DPSHADERCAPS2_0 PS20Caps;
+        public int VertexTextureFilterCaps; // D3DPTFILTERCAPS for IDirect3DTexture9's for texture, used in vertex shaders
+        public int MaxVShaderInstructionsExecuted; // maximum number of vertex shader instructions that can be executed
+        public int MaxPShaderInstructionsExecuted; // maximum number of pixel shader instructions that can be executed
+        public int MaxVertexShader30InstructionSlots;
+        public int MaxPixelShader30InstructionSlots;
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct D3DVSHADERCAPS2_0
     {
-        int Caps;
-        int DynamicFlowControlDepth;
-        int NumTemps;
-        int StaticFlowControlDepth;
-    } 
+        private readonly int Caps;
+        private readonly int DynamicFlowControlDepth;
+        private readonly int NumTemps;
+        private readonly int StaticFlowControlDepth;
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct D3DPSHADERCAPS2_0
     {
-        int Caps;
-        int DynamicFlowControlDepth;
-        int NumTemps;
-        int StaticFlowControlDepth;
-        int NumInstructionSlots;
+        private readonly int Caps;
+        private readonly int DynamicFlowControlDepth;
+        private readonly int NumTemps;
+        private readonly int StaticFlowControlDepth;
+        private readonly int NumInstructionSlots;
     }
 
     public enum D3DSCANLINEORDERING
     {
-        D3DSCANLINEORDERING_UNKNOWN                    = 0, 
-        D3DSCANLINEORDERING_PROGRESSIVE                = 1,
-        D3DSCANLINEORDERING_INTERLACED                 = 2,
+        D3DSCANLINEORDERING_UNKNOWN = 0,
+        D3DSCANLINEORDERING_PROGRESSIVE = 1,
+        D3DSCANLINEORDERING_INTERLACED = 2,
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -524,20 +570,25 @@ namespace WPFMediaKit.DirectX
     }
 
     [ComImport, SuppressUnmanagedCodeSecurity,
-    Guid("85C31227-3DE5-4f00-9B3A-F11AC38C18B5"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]
+     Guid("85C31227-3DE5-4f00-9B3A-F11AC38C18B5"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]
     public interface IDirect3DTexture9
     {
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void GetDevice();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void SetPrivateData(Guid refguid, IntPtr pData, int SizeOfData, int Flags);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void GetPrivateData(Guid refguid, IntPtr pData, IntPtr pSizeOfData);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void FreePrivateData(Guid refguid);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void SetPriority(int PriorityNew);
+
         void GetPriority();
         void PreLoad();
         void GetType();
@@ -547,27 +598,31 @@ namespace WPFMediaKit.DirectX
         void SetAutoGenFilterType(int FilterType);
         int GetAutoGenFilterType();
         void GenerateMipSubLevels();
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void GetLevelDesc(int Level, IntPtr pDesc);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetSurfaceLevel(int Level, out IDirect3DSurface9 ppSurfaceLevel);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
-        void LockRect(int Level, ref D3DLOCKED_RECT pLockedRect,  RECT  pRect, int Flags);
+        void LockRect(int Level, ref D3DLOCKED_RECT pLockedRect, RECT pRect, int Flags);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void UnlockRect(int Level);
+
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         void AddDirtyRect(RECT pDirtyRect);
     }
 
-    
 
     [ComImport, SuppressUnmanagedCodeSecurity,
-    Guid("02177241-69FC-400C-8FF1-93A44DF6861D"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]
+     Guid("02177241-69FC-400C-8FF1-93A44DF6861D"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]
     public interface IDirect3D9Ex : IDirect3D9
     {
         [PreserveSig, SuppressUnmanagedCodeSecurity]
-        new int RegisterSoftwareDevice([In, Out]IntPtr pInitializeFunction);
+        new int RegisterSoftwareDevice([In, Out] IntPtr pInitializeFunction);
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int GetAdapterCount();
@@ -582,9 +637,10 @@ namespace WPFMediaKit.DirectX
         new int EnumAdapterModes(uint Adapter, D3DFORMAT Format, uint Mode, [Out] out D3DDISPLAYMODE pMode);
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
-        new int GetAdapterDisplayMode(ushort Adapter, [Out]out D3DFORMAT Format);
+        new int GetAdapterDisplayMode(ushort Adapter, [Out] out D3DFORMAT Format);
 
         #region Method Placeholders
+
         [PreserveSig]
         new int CheckDeviceType();
 
@@ -602,6 +658,7 @@ namespace WPFMediaKit.DirectX
 
         [PreserveSig]
         new int GetDeviceCaps();
+
         #endregion
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
@@ -609,12 +666,11 @@ namespace WPFMediaKit.DirectX
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         new int CreateDevice(int Adapter,
-                          D3DDEVTYPE DeviceType,
-                          IntPtr hFocusWindow,
-                          CreateFlags BehaviorFlags,
-                          [In, Out]
-                          ref D3DPRESENT_PARAMETERS pPresentationParameters,
-                          [Out]out IntPtr ppReturnedDeviceInterface);
+            D3DDEVTYPE DeviceType,
+            IntPtr hFocusWindow,
+            CreateFlags BehaviorFlags,
+            [In, Out] ref D3DPRESENT_PARAMETERS pPresentationParameters,
+            [Out] out IntPtr ppReturnedDeviceInterface);
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         uint GetAdapterModeCountEx();
@@ -627,26 +683,24 @@ namespace WPFMediaKit.DirectX
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int CreateDeviceEx(int Adapter,
-                          D3DDEVTYPE DeviceType,
-                          IntPtr hFocusWindow,
-                          CreateFlags BehaviorFlags,
-                          [In, Out]
-                          ref D3DPRESENT_PARAMETERS pPresentationParameters,
-                          [In, Out]
-                          IntPtr pFullscreenDisplayMode,
-                          [Out]out IntPtr ppReturnedDeviceInterface);
+            D3DDEVTYPE DeviceType,
+            IntPtr hFocusWindow,
+            CreateFlags BehaviorFlags,
+            [In, Out] ref D3DPRESENT_PARAMETERS pPresentationParameters,
+            [In, Out] IntPtr pFullscreenDisplayMode,
+            [Out] out IntPtr ppReturnedDeviceInterface);
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetAdapterLUID();
     }
 
     [ComImport, SuppressUnmanagedCodeSecurity,
-    Guid("81BDCBCA-64D4-426d-AE8D-AD0147F4275C"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]
+     Guid("81BDCBCA-64D4-426d-AE8D-AD0147F4275C"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]
     public interface IDirect3D9
     {
         [PreserveSig, SuppressUnmanagedCodeSecurity]
-        int RegisterSoftwareDevice([In, Out]IntPtr pInitializeFunction);
+        int RegisterSoftwareDevice([In, Out] IntPtr pInitializeFunction);
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int GetAdapterCount();
@@ -658,12 +712,13 @@ namespace WPFMediaKit.DirectX
         uint GetAdapterModeCount(uint Adapter, D3DFORMAT Format);
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
-        int EnumAdapterModes(uint Adapter, D3DFORMAT Format, uint Mode, [Out] out D3DDISPLAYMODE  pMode);
+        int EnumAdapterModes(uint Adapter, D3DFORMAT Format, uint Mode, [Out] out D3DDISPLAYMODE pMode);
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
-        int GetAdapterDisplayMode(ushort Adapter, [Out]out D3DFORMAT Format);
+        int GetAdapterDisplayMode(ushort Adapter, [Out] out D3DFORMAT Format);
 
         #region Method Placeholders
+
         [PreserveSig]
         int CheckDeviceType();
 
@@ -681,6 +736,7 @@ namespace WPFMediaKit.DirectX
 
         [PreserveSig]
         int GetDeviceCaps();
+
         #endregion
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
@@ -688,12 +744,11 @@ namespace WPFMediaKit.DirectX
 
         [PreserveSig, SuppressUnmanagedCodeSecurity]
         int CreateDevice(int Adapter,
-                          D3DDEVTYPE DeviceType, 
-                          IntPtr hFocusWindow,
-                          CreateFlags BehaviorFlags,
-                          [In, Out]
-                          ref D3DPRESENT_PARAMETERS pPresentationParameters, 
-                          [Out]out IntPtr ppReturnedDeviceInterface);
+            D3DDEVTYPE DeviceType,
+            IntPtr hFocusWindow,
+            CreateFlags BehaviorFlags,
+            [In, Out] ref D3DPRESENT_PARAMETERS pPresentationParameters,
+            [Out] out IntPtr ppReturnedDeviceInterface);
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -703,20 +758,20 @@ namespace WPFMediaKit.DirectX
         public uint Height;
         public uint RefreshRate;
         public D3DFORMAT Format;
-    } 
+    }
 
     [Flags]
-    public enum CreateFlags 
+    public enum CreateFlags
     {
-         D3DCREATE_FPU_PRESERVE = 0x00000002,
-         D3DCREATE_MULTITHREADED = 0x00000004,
-         D3DCREATE_PUREDEVICE = 0x00000010,
-         D3DCREATE_SOFTWARE_VERTEXPROCESSING = 0x00000020,
-         D3DCREATE_HARDWARE_VERTEXPROCESSING = 0x00000040,
-         D3DCREATE_MIXED_VERTEXPROCESSING = 0x00000080,
-         D3DCREATE_DISABLE_DRIVER_MANAGEMENT = 0x00000100,
-         D3DCREATE_ADAPTERGROUP_DEVICE = 0x00000200,
-         D3DCREATE_DISABLE_DRIVER_MANAGEMENT_EX = 0x00000400      
+        D3DCREATE_FPU_PRESERVE = 0x00000002,
+        D3DCREATE_MULTITHREADED = 0x00000004,
+        D3DCREATE_PUREDEVICE = 0x00000010,
+        D3DCREATE_SOFTWARE_VERTEXPROCESSING = 0x00000020,
+        D3DCREATE_HARDWARE_VERTEXPROCESSING = 0x00000040,
+        D3DCREATE_MIXED_VERTEXPROCESSING = 0x00000080,
+        D3DCREATE_DISABLE_DRIVER_MANAGEMENT = 0x00000100,
+        D3DCREATE_ADAPTERGROUP_DEVICE = 0x00000200,
+        D3DCREATE_DISABLE_DRIVER_MANAGEMENT_EX = 0x00000400
     }
 
     [Flags]
@@ -794,7 +849,7 @@ namespace WPFMediaKit.DirectX
     }
 
     [Flags]
-    public enum D3DSWAPEFFECT 
+    public enum D3DSWAPEFFECT
     {
         D3DSWAPEFFECT_DISCARD = 1,
         D3DSWAPEFFECT_FLIP = 2,
@@ -802,7 +857,7 @@ namespace WPFMediaKit.DirectX
     }
 
     [Flags]
-    public enum D3DMULTISAMPLE_TYPE 
+    public enum D3DMULTISAMPLE_TYPE
     {
         D3DMULTISAMPLE_NONE = 0,
         D3DMULTISAMPLE_NONMASKABLE = 1,
@@ -824,12 +879,12 @@ namespace WPFMediaKit.DirectX
     }
 
     [Flags]
-    public enum D3DPRESENTFLAG 
+    public enum D3DPRESENTFLAG
     {
         D3DPRESENTFLAG_LOCKABLE_BACKBUFFER = 0x00000001,
         D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL = 0x00000002,
         D3DPRESENTFLAG_DEVICECLIP = 0x00000004,
-        D3DPRESENTFLAG_VIDEO = 0x00000010      
+        D3DPRESENTFLAG_VIDEO = 0x00000010
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -855,12 +910,12 @@ namespace WPFMediaKit.DirectX
     public class Direct3D
     {
         [DllImport("d3d9.dll", EntryPoint = "Direct3DCreate9", CallingConvention = CallingConvention.StdCall),
-        SuppressUnmanagedCodeSecurity]
+         SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Interface)]
         internal static extern IDirect3D9 Direct3DCreate9(ushort SDKVersion);
 
         [DllImport("d3d9.dll", EntryPoint = "Direct3DCreate9Ex", CallingConvention = CallingConvention.StdCall),
-        SuppressUnmanagedCodeSecurity]
-        internal static extern int Direct3DCreate9Ex(ushort SDKVersion, [Out]out IDirect3D9Ex ex);
+         SuppressUnmanagedCodeSecurity]
+        internal static extern int Direct3DCreate9Ex(ushort SDKVersion, [Out] out IDirect3D9Ex ex);
     }
 }

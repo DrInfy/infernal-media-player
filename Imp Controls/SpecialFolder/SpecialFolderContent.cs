@@ -1,18 +1,20 @@
-﻿using System;
+﻿#region Usings
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Base.ListLogic;
+
+#endregion
 
 namespace ImpControls.SpecialFolder
 {
     public class SpecialFolderContent
     {
+        #region Fields
+
         public readonly string PathData;
         public readonly List<string> FilePaths = new List<string>();
         public readonly List<string> FolderPaths = new List<string>();
 
+        #endregion
 
         public SpecialFolderContent(string pathData)
         {

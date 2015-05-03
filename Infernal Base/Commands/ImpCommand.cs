@@ -12,8 +12,10 @@
         StopFile,
 
         AddFile,
+
         /// <summary>Open from a file path</summary>
         OpenFile,
+
         /// <summary>Open from a playlist</summary>
         Open,
         OpenNext,
@@ -21,6 +23,7 @@
 
         SetPosition,
         ChangePosition,
+
         /// <summary>Pictures only</summary>
         SetDuration,
 
@@ -33,8 +36,10 @@
 
         /// <summary>Pictures only</summary>
         SetZoom,
+
         /// <summary>Pictures only</summary>
         ChangeZoom,
+
         /// <summary>Pictures only</summary>
         ToggleZoom,
 
@@ -61,9 +66,6 @@
 
         ShowFilepath,
 
-        
-
-        
 
         LoopChange,
 
@@ -108,20 +110,20 @@
         PanDown,
 
         PanLeftup,
-        PanRightup, 
+        PanRightup,
         PanRightdown,
         PanLeftdown,
 
         ResizeLeft,
-        ResizeUp, 
+        ResizeUp,
         ResizeRight,
         ResizeDown,
 
         ResizeLeftup,
-        ResizeRightup, 
+        ResizeRightup,
         ResizeRightdown,
         ResizeLeftdown,
-        
+
         PlaySelectedOpenFiles,
         AddSelectedOpenFiles,
         DeleteOpenFiles,

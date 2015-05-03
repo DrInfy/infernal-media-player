@@ -1,5 +1,9 @@
-﻿using System.Windows;
+﻿#region Usings
+
+using System.Windows;
 using Base;
+
+#endregion
 
 namespace Imp.Controllers
 {
@@ -7,12 +11,10 @@ namespace Imp.Controllers
     {
         void CommandPanelOpen(PanelCommand? panelCommand);
         void CommandPanelPlaylist(PanelCommand? panelCommand);
-
         void RememberThisPanelPosition(Point cursorPosition, Point cursorOnControl);
-
         void PanelPanLeft(Point cursorPosition);
-
         void PanelPanRight(Point cursorPosition);
+
         /// <summary>
         /// Ensures that grid doesn't break down with all columns being 0
         /// </summary>

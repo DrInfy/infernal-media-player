@@ -1,14 +1,15 @@
-﻿using System;
+﻿#region Usings
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+
+#endregion
 
 namespace MediaPlayer.Element
 {
@@ -18,7 +19,35 @@ namespace MediaPlayer.Element
     /// </summary>
     public abstract class D3DRenderer : Control
     {
+        protected D3DRenderer()
+        {
+            InitializeD3DVideo();
+
+            /* Hook into the framework events */
+            Loaded += D3DRendererLoaded;
+            Unloaded += D3DRendererUnloaded;
+        }
+
+        /// <summary>
+        /// Creates a clone of the D3DRenderer.  This is a work for the visual
+        /// brush not working cross-threaded
+        /// </summary>
+        /// <returns></returns>
+        public D3DRenderer CloneD3DRenderer()
+        {
+            var renderer = new ClonedD3DRenderer();
+
+            lock (m_clonedD3Drenderers)
+            {
+                m_clonedD3Drenderers.Add(new WeakReference(renderer));
+            }
+
+            renderer.SetBackBuffer(m_pBackBuffer);
+            return renderer;
+        }
+
         #region Local Instances
+
         /// <summary>
         /// The D3DImage used to render video
         /// </summary>
@@ -58,12 +87,13 @@ namespace MediaPlayer.Element
         /// This is used to remember the value for when the control is loaded and unloaded.
         /// </summary>
         private bool m_renderOnCompositionTargetRenderingTemp;
+
         #endregion
 
-        #region Dependency Properties
         #region Stretch
+
         public static readonly DependencyProperty StretchProperty =
-            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(D3DRenderer),
+            DependencyProperty.Register("Stretch", typeof (Stretch), typeof (D3DRenderer),
                 new FrameworkPropertyMetadata(Stretch.Uniform,
                     new PropertyChangedCallback(OnStretchChanged)));
 
@@ -72,25 +102,26 @@ namespace MediaPlayer.Element
         /// </summary>
         public Stretch Stretch
         {
-            get { return (Stretch)GetValue(StretchProperty); }
+            get { return (Stretch) GetValue(StretchProperty); }
             set { SetValue(StretchProperty, value); }
         }
 
         private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((D3DRenderer)d).OnStretchChanged(e);
+            ((D3DRenderer) d).OnStretchChanged(e);
         }
 
         private void OnStretchChanged(DependencyPropertyChangedEventArgs e)
         {
-            m_videoImage.Stretch = (Stretch)e.NewValue;
+            m_videoImage.Stretch = (Stretch) e.NewValue;
         }
+
         #endregion
 
         #region StretchDirection
 
         public static readonly DependencyProperty StretchDirectionProperty =
-            DependencyProperty.Register("StretchDirection", typeof(StretchDirection), typeof(D3DRenderer),
+            DependencyProperty.Register("StretchDirection", typeof (StretchDirection), typeof (D3DRenderer),
                 new FrameworkPropertyMetadata(StretchDirection.Both,
                     new PropertyChangedCallback(OnStretchDirectionChanged)));
 
@@ -99,18 +130,18 @@ namespace MediaPlayer.Element
         /// </summary>
         public StretchDirection StretchDirection
         {
-            get { return (StretchDirection)GetValue(StretchDirectionProperty); }
+            get { return (StretchDirection) GetValue(StretchDirectionProperty); }
             set { SetValue(StretchDirectionProperty, value); }
         }
 
         private static void OnStretchDirectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((D3DRenderer)d).OnStretchDirectionChanged(e);
+            ((D3DRenderer) d).OnStretchDirectionChanged(e);
         }
 
         protected virtual void OnStretchDirectionChanged(DependencyPropertyChangedEventArgs e)
         {
-            m_videoImage.StretchDirection = (StretchDirection)e.NewValue;
+            m_videoImage.StretchDirection = (StretchDirection) e.NewValue;
         }
 
         #endregion
@@ -118,7 +149,7 @@ namespace MediaPlayer.Element
         #region IsRenderingEnabled
 
         public static readonly DependencyProperty IsRenderingEnabledProperty =
-            DependencyProperty.Register("IsRenderingEnabled", typeof(bool), typeof(D3DRenderer),
+            DependencyProperty.Register("IsRenderingEnabled", typeof (bool), typeof (D3DRenderer),
                 new FrameworkPropertyMetadata(true));
 
         /// <summary>
@@ -126,7 +157,7 @@ namespace MediaPlayer.Element
         /// </summary>
         public bool IsRenderingEnabled
         {
-            get { return (bool)GetValue(IsRenderingEnabledProperty); }
+            get { return (bool) GetValue(IsRenderingEnabledProperty); }
             set { SetValue(IsRenderingEnabledProperty, value); }
         }
 
@@ -135,7 +166,7 @@ namespace MediaPlayer.Element
         #region NaturalVideoHeight
 
         private static readonly DependencyPropertyKey NaturalVideoHeightPropertyKey
-            = DependencyProperty.RegisterReadOnly("NaturalVideoHeight", typeof(int), typeof(D3DRenderer),
+            = DependencyProperty.RegisterReadOnly("NaturalVideoHeight", typeof (int), typeof (D3DRenderer),
                 new FrameworkPropertyMetadata(0));
 
         public static readonly DependencyProperty NaturalVideoHeightProperty
@@ -147,7 +178,7 @@ namespace MediaPlayer.Element
         /// </summary>
         public int NaturalVideoHeight
         {
-            get { return (int)GetValue(NaturalVideoHeightProperty); }
+            get { return (int) GetValue(NaturalVideoHeightProperty); }
         }
 
         /// <summary>
@@ -163,7 +194,7 @@ namespace MediaPlayer.Element
         #region NaturalVideoWidth
 
         private static readonly DependencyPropertyKey NaturalVideoWidthPropertyKey
-            = DependencyProperty.RegisterReadOnly("NaturalVideoWidth", typeof(int), typeof(D3DRenderer),
+            = DependencyProperty.RegisterReadOnly("NaturalVideoWidth", typeof (int), typeof (D3DRenderer),
                 new FrameworkPropertyMetadata(0));
 
         public static readonly DependencyProperty NaturalVideoWidthProperty
@@ -175,7 +206,7 @@ namespace MediaPlayer.Element
         /// </summary>
         public int NaturalVideoWidth
         {
-            get { return (int)GetValue(NaturalVideoWidthProperty); }
+            get { return (int) GetValue(NaturalVideoWidthProperty); }
         }
 
         /// <summary>
@@ -188,8 +219,6 @@ namespace MediaPlayer.Element
 
         #endregion
 
-        #endregion
-
         #region Private Methods
 
         /// <summary>
@@ -197,7 +226,6 @@ namespace MediaPlayer.Element
         /// </summary>
         private void D3DRendererUnloaded(object sender, RoutedEventArgs e)
         {
-
             /* Remember what the property value was */
             m_renderOnCompositionTargetRenderingTemp = RenderOnCompositionTargetRendering;
 
@@ -230,8 +258,8 @@ namespace MediaPlayer.Element
             D3DImage.IsFrontBufferAvailableChanged += D3DImageIsFrontBufferAvailableChanged;
 
             /* Set our default stretch value of our video */
-            m_videoImage.Stretch = (Stretch)StretchProperty.DefaultMetadata.DefaultValue;
-            m_videoImage.StretchDirection = (StretchDirection)StretchProperty.DefaultMetadata.DefaultValue;
+            m_videoImage.Stretch = (Stretch) StretchProperty.DefaultMetadata.DefaultValue;
+            m_videoImage.StretchDirection = (StretchDirection) StretchProperty.DefaultMetadata.DefaultValue;
 
             /* Our source of the video image is the D3DImage */
             m_videoImage.Source = D3DImage;
@@ -240,11 +268,11 @@ namespace MediaPlayer.Element
             AddVisualChild(m_videoImage);
 
             /* Bind the horizontal alignment dp of this control to that of the video image */
-            var horizontalAlignmentBinding = new Binding("HorizontalAlignment") { Source = this };
+            var horizontalAlignmentBinding = new Binding("HorizontalAlignment") {Source = this};
             m_videoImage.SetBinding(HorizontalAlignmentProperty, horizontalAlignmentBinding);
 
             /* Bind the vertical alignment dp of this control to that of the video image */
-            var verticalAlignmentBinding = new Binding("VerticalAlignment") { Source = this };
+            var verticalAlignmentBinding = new Binding("VerticalAlignment") {Source = this};
             m_videoImage.SetBinding(VerticalAlignmentProperty, verticalAlignmentBinding);
         }
 
@@ -278,7 +306,7 @@ namespace MediaPlayer.Element
             {
                 var deadObjects = new List<WeakReference>();
 
-                for (int i = 0; i < m_clonedD3Drenderers.Count; i++)
+                for (var i = 0; i < m_clonedD3Drenderers.Count; i++)
                 {
                     if (!m_clonedD3Drenderers[i].IsAlive)
                         deadObjects.Add(m_clonedD3Drenderers[i]);
@@ -320,7 +348,7 @@ namespace MediaPlayer.Element
 
             if (!D3DImage.Dispatcher.CheckAccess())
             {
-                D3DImage.Dispatcher.BeginInvoke((Action)(() => SetBackBufferInternal(backBuffer)));
+                D3DImage.Dispatcher.BeginInvoke((Action) (() => SetBackBufferInternal(backBuffer)));
                 return;
             }
 
@@ -335,8 +363,7 @@ namespace MediaPlayer.Element
                 D3DImage.Unlock();
                 SetNaturalWidthHeight();
             }
-            catch (Exception ex)
-            { }
+            catch (Exception ex) {}
 
             /* Clear our flag, so this won't be ran again
              * until a new surface is sent */
@@ -370,11 +397,12 @@ namespace MediaPlayer.Element
         /// <summary>
         /// Used as a clone for a D3DRenderer
         /// </summary>
-        private class ClonedD3DRenderer : D3DRenderer
-        { }
+        private class ClonedD3DRenderer : D3DRenderer {}
+
         #endregion
 
         #region Protected Methods
+
         protected override Size MeasureOverride(Size availableSize)
         {
             m_videoImage.Measure(availableSize);
@@ -389,10 +417,7 @@ namespace MediaPlayer.Element
 
         protected override int VisualChildrenCount
         {
-            get
-            {
-                return 1;
-            }
+            get { return 1; }
         }
 
         protected override Visual GetVisualChild(int index)
@@ -405,18 +430,12 @@ namespace MediaPlayer.Element
 
         protected D3DImage D3DImage
         {
-            get
-            {
-                return m_d3dImage;
-            }
+            get { return m_d3dImage; }
         }
 
         protected Image VideoImage
         {
-            get
-            {
-                return m_videoImage;
-            }
+            get { return m_videoImage; }
         }
 
         /// <summary>
@@ -424,10 +443,7 @@ namespace MediaPlayer.Element
         /// </summary>
         protected bool RenderOnCompositionTargetRendering
         {
-            get
-            {
-                return m_renderOnCompositionTargetRendering;
-            }
+            get { return m_renderOnCompositionTargetRendering; }
             set
             {
                 /* If it is being set to true and it was previously false
@@ -458,7 +474,7 @@ namespace MediaPlayer.Element
             {
                 if (!D3DImage.Dispatcher.CheckAccess())
                 {
-                    D3DImage.Dispatcher.Invoke((Action)(() => SetBackBuffer(backBuffer)), DispatcherPriority.Render);
+                    D3DImage.Dispatcher.Invoke((Action) (() => SetBackBuffer(backBuffer)), DispatcherPriority.Render);
                     return;
                 }
             }
@@ -490,7 +506,7 @@ namespace MediaPlayer.Element
             /* Ensure we run on the correct Dispatcher */
             if (!D3DImage.Dispatcher.CheckAccess())
             {
-                D3DImage.Dispatcher.Invoke((Action)(() => InvalidateVideoImage()));
+                D3DImage.Dispatcher.Invoke((Action) (() => InvalidateVideoImage()));
                 return;
             }
 
@@ -506,45 +522,18 @@ namespace MediaPlayer.Element
                     /* Invalidate the entire image */
                     D3DImage.Lock();
                     D3DImage.AddDirtyRect(new Int32Rect(0, /* Left */
-                                                        0, /* Top */
-                                                        D3DImage.PixelWidth, /* Width */
-                                                        D3DImage.PixelHeight /* Height */));
+                        0, /* Top */
+                        D3DImage.PixelWidth, /* Width */
+                        D3DImage.PixelHeight /* Height */));
                     D3DImage.Unlock();
                 }
-                catch (Exception)
-                { }
+                catch (Exception) {}
             }
 
             /* Invalidate all of our cloned D3DRenderers */
             InvalidateClonedVideoImages();
         }
+
         #endregion
-
-        protected D3DRenderer()
-        {
-            InitializeD3DVideo();
-
-            /* Hook into the framework events */
-            Loaded += D3DRendererLoaded;
-            Unloaded += D3DRendererUnloaded;
-        }
-
-        /// <summary>
-        /// Creates a clone of the D3DRenderer.  This is a work for the visual
-        /// brush not working cross-threaded
-        /// </summary>
-        /// <returns></returns>
-        public D3DRenderer CloneD3DRenderer()
-        {
-            var renderer = new ClonedD3DRenderer();
-
-            lock (m_clonedD3Drenderers)
-            {
-                m_clonedD3Drenderers.Add(new WeakReference(renderer));
-            }
-
-            renderer.SetBackBuffer(m_pBackBuffer);
-            return renderer;
-        }
     }
 }
