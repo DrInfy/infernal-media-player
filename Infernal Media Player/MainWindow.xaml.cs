@@ -220,8 +220,8 @@ namespace Imp
                 var dpiY = source.CompositionTarget.TransformToDevice.M22;
 
                 var rect = ImpNativeMethods.GetWorkArea(this);
-                Width = Math.Min(1200 * dpiX, rect.Width * dpiX);
-                Height = Math.Min(800 * dpiY, rect.Height * dpiY);
+                Width = Math.Min(1200 / dpiX, rect.Width * dpiX);
+                Height = Math.Min(800 / dpiY, rect.Height * dpiY);
             }
         }
 
