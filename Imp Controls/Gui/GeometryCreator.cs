@@ -33,6 +33,7 @@ namespace ImpControls.Gui
         AddFile,
         EnlargeUp,
         EnlargeDown,
+        Next,
     }
 
 
@@ -110,11 +111,24 @@ namespace ImpControls.Gui
                     return EnlargeUp(pFc, pG);
                 case BtnNumber.EnlargeDown:
                     return EnlargeDown(pFc, pG);
+                case BtnNumber.Next:
+                    return Next(pFc, pG);
                 default:
 
                     throw new Exception("Unidentified button");
             }
             return null;
+        }
+
+        private static Geometry Next(PathFigureCollection pFc, PathGeometry pG)
+        {
+            AddLine(new Point(0, 10), new Point(80, 50), pFc);
+            AddLine(new Point(0, 10), new Point(0, 90), pFc);
+            AddLine(new Point(0, 90), new Point(80, 50), pFc);
+            AddLine(new Point(100, 10), new Point(100, 90), pFc);
+
+            pG.Figures = pFc;
+            return pG;
         }
 
         private static Geometry EnlargeUp(PathFigureCollection pFc, PathGeometry pG)

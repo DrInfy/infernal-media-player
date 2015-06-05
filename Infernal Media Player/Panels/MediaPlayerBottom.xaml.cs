@@ -32,6 +32,7 @@ namespace Imp.Panels
 
             styleLib.SetStyle(ButtonPlay, BtnNumber.Play);
             styleLib.SetStyle(ButtonLoop, BtnNumber.Loop);
+            styleLib.SetStyle(ButtonNext, BtnNumber.Next);
             styleLib.SetStyle(ButtonMute, BtnNumber.Mute);
 
             LabelPosition.Foreground = styleLib.GetForeground();
@@ -88,6 +89,11 @@ namespace Imp.Panels
         private void ButtonMute_Clicked(object sender)
         {
             mainC.Exec(ImpCommand.VolumeMute);
+        }
+
+        private void ButtonNext_Clicked(object sender)
+        {
+            mainC.Exec(ImpCommand.OpenNext);
         }
     }
 }
