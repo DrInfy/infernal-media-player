@@ -20,21 +20,33 @@ namespace Base.FileLoading
         public bool PlayFirstFile = false;
         public FilterOptions FilterOptions = FilterOptions.Files;
         private readonly List<string> filterList;
-        private string findText;
+        private string findFilesText;
+        private string findDirectoriesText;
 
         #endregion
 
         #region Properties
 
-        public FindString[] FindWords { get; private set; }
+        public FindString[] FindFilesWords { get; private set; }
+        public FindString[] FindDirectoriesWords { get; private set; }
 
-        public string FindText
+        public string FindFilesText
         {
-            get { return findText; }
+            get { return findFilesText; }
             set
             {
-                findText = value;
-                FindWords = string.IsNullOrWhiteSpace(findText) ? null : StringHandler.GetFindWords(findText);
+                findFilesText = value;
+                FindFilesWords = string.IsNullOrWhiteSpace(findFilesText) ? null : StringHandler.GetFindWords(findFilesText);
+            }
+        }
+
+        public string FindDirectoriesText
+        {
+            get { return findDirectoriesText; }
+            set
+            {
+                findDirectoriesText = value;
+                FindDirectoriesWords = string.IsNullOrWhiteSpace(findDirectoriesText) ? null : StringHandler.GetFindWords(findDirectoriesText);
             }
         }
 
@@ -45,7 +57,6 @@ namespace Base.FileLoading
             RootPath = rootPath;
             SearchOption = searchOption;
             filterList = FileTypeFinder.GetFiltersList(fileTypes);
-            FindText = findText;
         }
 
         public DirectoryLoadOptions(string rootPath, SearchOption searchOption, FileTypes fileTypes, string findText)
@@ -53,19 +64,19 @@ namespace Base.FileLoading
             RootPath = rootPath;
             SearchOption = searchOption;
             filterList = FileTypeFinder.GetFiltersList(fileTypes);
-            FindText = findText;
+            FindFilesText = findText;
         }
 
         public FileImpInfo[] FilterFiles(FileInfo[] files, bool filter)
         {
             var fileInfos = LibImp.FilterFiles(files, filterList);
-            if (FindWords == null || !filter)
+            if (FindFilesWords == null || !filter)
                 return fileInfos;
 
             var added = 0;
             for (var i = 0; i < fileInfos.Length; i++)
             {
-                if (StringHandler.FindFound(fileInfos[i].Name, FindWords))
+                if (StringHandler.FindFound(fileInfos[i].Name, FindFilesWords))
                 {
                     fileInfos[added] = fileInfos[i];
                     added++;

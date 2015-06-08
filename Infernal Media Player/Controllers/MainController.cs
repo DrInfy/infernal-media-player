@@ -535,10 +535,20 @@ namespace Imp.Controllers
                 window.PlayerBottom.SliderTime.Maximum = duration;
                 window.PlayerBottom.SliderTime.Value = position;
 
-                window.PlayerBottom.LabelPosition.Content =
+                if (window.Width > 400)
+                {
+                    window.PlayerBottom.LabelPosition.Content =
                     string.Format("{0} / {1}",
-                        StringHandler.SecondsToTimeText((int) Math.Round(position)),
-                        StringHandler.SecondsToTimeText((int) Math.Round(duration)));
+                        StringHandler.SecondsToTimeText((int)Math.Round(position)),
+                        StringHandler.SecondsToTimeText((int)Math.Round(duration)));
+
+                }
+                else
+                {
+                    window.PlayerBottom.LabelPosition.Content =
+                        StringHandler.SecondsToTimeText((int)Math.Round(position));
+                }
+
 
                 if (osInfo.Version.Major >= 6)
                 {
@@ -553,10 +563,7 @@ namespace Imp.Controllers
             {
                 window.PlayerBottom.SliderTime.Value = 0;
                 window.PlayerBottom.SliderTime.Maximum = 1;
-                window.PlayerBottom.LabelPosition.Content =
-                    string.Format("{0} / {1}",
-                        StringHandler.SecondsToTimeText(0),
-                        StringHandler.SecondsToTimeText(0));
+                window.PlayerBottom.LabelPosition.Content = null; // "-:--:--";
 
                 if (osInfo.Version.Major >= 6)
                 {

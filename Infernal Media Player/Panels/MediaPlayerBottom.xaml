@@ -33,7 +33,7 @@
         
         <!--<Path Name="pathDash"  Stroke="DarkRed" StrokeThickness="3" Data="M 0,0 l 0,1 M 1,0 l 0,1 M 2,0 l 0,1 M 3,0 l 0,1 M 4,0 l 0,1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="90,1,60,28" Stretch="Fill" IsHitTestVisible="False" MouseMove="sliderTime_MouseMove" MouseUp="sliderTime_MouseUp" MouseDown="sliderTime_MouseDown" >
         </Path>-->
-        <Label Name="LabelPosition" Grid.ColumnSpan="2" HorizontalAlignment="center" Margin="50,15,50,0" FontSize="14" FontWeight="Bold" IsTabStop="False">"0:00:00 / 0:00:00"</Label>
+        <Label Name="LabelPosition" Grid.ColumnSpan="2" HorizontalAlignment="center" Margin="120,15,75,-5" FontSize="14" FontWeight="Bold" IsTabStop="False">"-:--:--"</Label>
 
         <Grid Grid.Column="1"
               MinWidth="15"

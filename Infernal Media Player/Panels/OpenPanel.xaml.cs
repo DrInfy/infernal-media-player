@@ -61,7 +61,6 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonFilterVideo, "video");
             styleLib.SetStyle(ButtonFilterMusic, "audio");
             styleLib.SetStyle(ButtonFilterPictures, "image");
-            styleLib.SetStyle(ButtonFilterFolder, "Files", "Folder");
 
             styleLib.SetStyle(ButtonEnlargeDownwards, BtnNumber.EnlargeDown);
             styleLib.SetStyle(ButtonEnlargeUpwards, BtnNumber.EnlargeUp);
@@ -73,12 +72,17 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonRefresh, BtnNumber.Refresh);
 
             styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
+            styleLib.SetStyle(ButtonClearFindFolder, BtnNumber.Close);
+
+            styleLib.SetStyle(ButtonAddPath, "+++");
+            styleLib.SetStyle(ButtonClearPath, "---");
 
             styleLib.SetStyle(ButtonSort, "Name");
             ButtonSort.SetContent("Date", 1);
 
             Background = styleLib.GetGridBrush(false);
             styleLib.SetStyle(TextBoxFind);
+            styleLib.SetStyle(TextBoxFindFolder);
             styleLib.SetStyle(LabelTopic);
         }
 
@@ -188,12 +192,6 @@ namespace Imp.Panels
             Refresh(null);
         }
 
-        private void ButtonFolderFilter_Clicked(object sender)
-        {
-            (sender as ImpButton).CurrentState++;
-            ApplyWordFilter();
-        }
-
         public void Refresh(object sender)
         {
             refreshing = true;
@@ -209,21 +207,6 @@ namespace Imp.Panels
             ButtonClearFind.Visibility = string.IsNullOrWhiteSpace(TextBoxFind.Text) ? Visibility.Hidden : Visibility.Visible;
 
             ListFiles.FindText = TextBoxFind.Text;
-            ApplyWordFilter();
-        }
-
-        private void ApplyWordFilter()
-        {
-            if (ButtonFilterFolder.CurrentState == 1)
-            {
-                ListDirectories.FindText = TextBoxFind.Text;
-                ListFiles.FindText = string.Empty;
-            }
-            else
-            {
-                ListDirectories.FindText = string.Empty;
-                ListFiles.FindText = TextBoxFind.Text;
-            }
         }
 
         private void ButtonAddSubFolder_Clicked(object sender)
@@ -260,9 +243,14 @@ namespace Imp.Panels
                 return;
             }
             
-            options.FindText = TextBoxFind.Text;
-            options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
-            //options.FilterOptions = FilterOptions.Files;
+            options.FindFilesText = TextBoxFind.Text;
+            options.FindDirectoriesText = TextBoxFindFolder.Text;
+            //options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
+            options.FilterOptions = FilterOptions.Files;
+            if (!string.IsNullOrWhiteSpace( options.FindDirectoriesText))
+            {
+                options.FilterOptions |= FilterOptions.ChildFolders;
+            }
 
             ButtonAddSubFolder.IsEnabled = false;
             ButtonAddFolder.IsEnabled = false;
@@ -390,7 +378,7 @@ namespace Imp.Panels
             {
                 foreach (var folderinfo in folderinfos)
                 {
-                    if (StringHandler.FindFound(folderinfo.FullName, options.FindWords))
+                    if (StringHandler.FindFound(folderinfo.FullName, options.FindDirectoriesWords))
                     {
                         // Add only when going through filter
                         AddFolderToPlayList(options, folderinfo.FullName);
@@ -447,6 +435,28 @@ namespace Imp.Panels
         private void ButtonClearFind_Clicked(object sender)
         {
             TextBoxFind.Clear();
+        }
+
+        private void ButtonClearFindFolder_Clicked(object sender)
+        {
+            TextBoxFindFolder.Clear();
+        }
+
+        private void TextBoxFindFolder_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ButtonClearFind.Visibility = string.IsNullOrWhiteSpace(TextBoxFind.Text) ? Visibility.Hidden : Visibility.Visible;
+
+            ListDirectories.FindText = TextBoxFindFolder.Text;
+        }
+
+        private void ButtonClearPath_Clicked(object sender)
+        {
+            mainC.Exec(ImpCommand.RemoveSelectedPath);
+        }
+
+        private void ButtonAddPath_Clicked(object sender)
+        {
+            mainC.Exec(ImpCommand.AddSelectedFolderToPaths);
         }
     }
 }
