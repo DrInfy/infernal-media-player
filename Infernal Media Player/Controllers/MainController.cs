@@ -48,20 +48,13 @@ namespace Imp.Controllers
 
         #region Properties
 
-        public override bool Focused
-        {
-            get { return !window.PanelOpen.TextBoxFind.IsFocused && !window.PanelPlaylist.TextBoxFind.IsFocused; }
-        }
+        public override bool Focused => !window.PanelOpen.TextBoxFindFolder.IsFocused 
+                                        && !window.PanelOpen.TextBoxFind.IsFocused 
+                                        && !window.PanelPlaylist.TextBoxFind.IsFocused;
 
-        public override bool Selected
-        {
-            get { return window.IsActive && window.ExtWindowState != ExtWindowState.Minimized; }
-        }
+        public override bool Selected => window.IsActive && window.ExtWindowState != ExtWindowState.Minimized;
 
-        public override bool IsMostRecentInstance
-        {
-            get { return ImpMessaging.LastActive; }
-        }
+        public override bool IsMostRecentInstance => ImpMessaging.LastActive;
 
         #endregion
 

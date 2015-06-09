@@ -394,6 +394,7 @@ namespace Imp
         private bool IsMouseOverTextbox()
         {
             return PanelOpen.TextBoxFind.IsMouseOver ||
+                PanelOpen.TextBoxFindFolder.IsMouseOver ||
                    PanelPlaylist.TextBoxFind.IsMouseOver;
         }
 

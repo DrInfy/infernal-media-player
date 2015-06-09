@@ -83,6 +83,7 @@ namespace Imp.Panels
             Background = styleLib.GetGridBrush(false);
             styleLib.SetStyle(TextBoxFind);
             styleLib.SetStyle(TextBoxFindFolder);
+            ButtonClearFindFolder.GeometryMargin = 4;
             styleLib.SetStyle(LabelTopic);
         }
 
@@ -444,8 +445,7 @@ namespace Imp.Panels
 
         private void TextBoxFindFolder_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ButtonClearFind.Visibility = string.IsNullOrWhiteSpace(TextBoxFind.Text) ? Visibility.Hidden : Visibility.Visible;
-
+            ButtonClearFindFolder.Visibility = string.IsNullOrWhiteSpace(TextBoxFindFolder.Text) ? Visibility.Hidden : Visibility.Visible;
             ListDirectories.FindText = TextBoxFindFolder.Text;
         }
 
