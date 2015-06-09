@@ -440,7 +440,7 @@ namespace MediaPlayer.Player
                 MediaControl.GetState(0, out filterState);
                 if (filterState == FilterState.Running)
                     MediaControl.Pause();
-                
+
                 MediaControl.GetState(0, out filterState);
 
                 while (filterState == FilterState.Running)

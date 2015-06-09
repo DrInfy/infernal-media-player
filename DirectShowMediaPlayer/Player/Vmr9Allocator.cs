@@ -25,6 +25,8 @@ namespace MediaPlayer.Player
     /// </summary>
     public interface ICustomAllocator : IDisposable
     {
+        #region Events
+
         /// <summary>
         /// Invokes when a new frame has been allocated
         /// to a surface
@@ -35,6 +37,8 @@ namespace MediaPlayer.Player
         /// Invokes when a new surface has been allocated
         /// </summary>
         event NewAllocatorSurfaceDelegate NewAllocatorSurface;
+
+        #endregion
     }
 
     /// <summary>
@@ -137,6 +141,20 @@ namespace MediaPlayer.Player
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// Fires each time a frame needs to be presented
+        /// </summary>
+        public event Action NewAllocatorFrame;
+
+        /// <summary>
+        /// Fires when new D3D surfaces are allocated
+        /// </summary>
+        public event NewAllocatorSurfaceDelegate NewAllocatorSurface;
+
+        #endregion
+
         static Vmr9Allocator()
         {
             m_hWnd = GetDesktopWindow();
@@ -154,16 +172,6 @@ namespace MediaPlayer.Player
         /// Creates a new VMR9 custom allocator to use with Direct3D
         /// </summary>
         public Vmr9Allocator() {}
-
-        /// <summary>
-        /// Fires each time a frame needs to be presented
-        /// </summary>
-        public event Action NewAllocatorFrame;
-
-        /// <summary>
-        /// Fires when new D3D surfaces are allocated
-        /// </summary>
-        public event NewAllocatorSurfaceDelegate NewAllocatorSurface;
 
         /// <summary>
         /// Frees any remaining unmanaged memory

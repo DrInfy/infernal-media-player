@@ -11,6 +11,12 @@ namespace Base.ListLogic
 {
     public class PlayListController : ListController<PlaylistItem>
     {
+        #region Helpers
+
+        public delegate void LoadPlaylistItemEvent(PlaylistItem item);
+
+        #endregion
+
         #region Fields
 
         private PlaylistThreadedUpdater updater;
@@ -20,6 +26,12 @@ namespace Base.ListLogic
         #region Properties
 
         public string PlayingFullPath { get; set; }
+
+        #endregion
+
+        #region Events
+
+        public event LoadPlaylistItemEvent LoadPlaylistItem;
 
         #endregion
 
@@ -326,13 +338,5 @@ namespace Base.ListLogic
                 RaiseLoadEvent(items[playIndex].Content);
             }
         }
-
-        #region Delegates and Events
-
-        public delegate void LoadPlaylistItemEvent(PlaylistItem item);
-
-        public event LoadPlaylistItemEvent LoadPlaylistItem;
-
-        #endregion
     }
 }

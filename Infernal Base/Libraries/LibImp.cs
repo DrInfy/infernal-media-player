@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Threading;
 using Base.FileData;
 
@@ -84,10 +81,5 @@ namespace Base.Libraries
         {
             return Math.Max(Math.Min(value, max), min);
         }
-
-        #region Complicated Monitor screen size stuff
-
-
-        #endregion
     }
 }

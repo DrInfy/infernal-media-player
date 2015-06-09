@@ -58,7 +58,6 @@ namespace ImpControls
             set { controller.FindText = value; }
         }
 
-        
         public bool ItemsDragable { get; set; }
         public bool AcceptsNullSelection { get; set; }
 
@@ -155,6 +154,15 @@ namespace ImpControls
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        ///     This event is called when selectedindex changes
+        /// </summary>
+        public event ListSelectionChangedEventHandler SelectionChanged;
+
+        #endregion
+
         public ImpListBox(bool searchable, bool multiSelectable)
         {
             CreateController(searchable, multiSelectable);
@@ -177,15 +185,6 @@ namespace ImpControls
             ToolTip = toolTip;
             //toolTip.StaysOpen = true;
         }
-
-        #region Delegates & Events
-
-        /// <summary>
-        ///     This event is called when selectedindex changes
-        /// </summary>
-        public event ListSelectionChangedEventHandler SelectionChanged;
-
-        #endregion
 
         protected virtual void CreateController(bool searchable, bool multiSelectable)
         {

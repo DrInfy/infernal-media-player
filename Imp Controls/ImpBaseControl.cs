@@ -68,12 +68,7 @@ namespace ImpControls
 
         #endregion
 
-        protected ImpBaseControl()
-        {
-            IsEnabledChanged += OnEnabledChange;
-            IsVisibleChanged += OnVisibilityChanged;
-            IsTabStop = false;
-        }
+        #region Events
 
         /// <summary>
         /// Proper event for clicking a button
@@ -84,6 +79,15 @@ namespace ImpControls
         /// Call out for opening menu for right clicking if available.
         /// </summary>
         public event OpenRightClickMenuEventHandler OpenRightClick_Menu;
+
+        #endregion
+
+        protected ImpBaseControl()
+        {
+            IsEnabledChanged += OnEnabledChange;
+            IsVisibleChanged += OnVisibilityChanged;
+            IsTabStop = false;
+        }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
