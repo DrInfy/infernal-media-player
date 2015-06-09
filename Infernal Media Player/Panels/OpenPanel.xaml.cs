@@ -19,6 +19,7 @@ using Imp.Controllers;
 using ImpControls;
 using ImpControls.Gui;
 using ImpControls.SpecialFolder;
+
 //using Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 #endregion
@@ -243,12 +244,12 @@ namespace Imp.Panels
                 mainC.EventC.SetEvent(new EventText("Folder load already active", 1, EventType.Delayed));
                 return;
             }
-            
+
             options.FindFilesText = TextBoxFind.Text;
             options.FindDirectoriesText = TextBoxFindFolder.Text;
             //options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
             options.FilterOptions = FilterOptions.Files;
-            if (!string.IsNullOrWhiteSpace( options.FindDirectoriesText))
+            if (!string.IsNullOrWhiteSpace(options.FindDirectoriesText))
             {
                 options.FilterOptions |= FilterOptions.ChildFolders;
             }
