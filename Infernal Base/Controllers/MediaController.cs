@@ -72,6 +72,7 @@ namespace Base.Controllers
                 player.Play();
                 playButton.CurrentState = 1;
                 eventC.SetEvent(new EventText("Playing", 1, EventType.Delayed));
+                ImpNativeMethods.PreventSleep();
             }
         }
 
@@ -80,6 +81,7 @@ namespace Base.Controllers
             player.Pause();
             playButton.CurrentState = 0;
             eventC.SetEvent(new EventText("Paused", 1, EventType.Delayed));
+            ImpNativeMethods.AllowSleep();
         }
 
         public void PlayPause()
@@ -94,6 +96,7 @@ namespace Base.Controllers
         {
             playButton.CurrentState = 0;
             playButton.IsEnabled = false;
+            ImpNativeMethods.AllowSleep();
         }
 
         public void MediaOpened()
@@ -109,6 +112,7 @@ namespace Base.Controllers
         {
             player.Stop();
             playButton.CurrentState = 0;
+            ImpNativeMethods.AllowSleep();
         }
 
         public void Rewind()
@@ -164,6 +168,7 @@ namespace Base.Controllers
         public void FreePlayer()
         {
             player.Clear();
+            ImpNativeMethods.AllowSleep();
         }
 
         public void ToggleLoop()

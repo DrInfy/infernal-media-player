@@ -10,7 +10,7 @@ using System.Windows.Interop;
 
 namespace Base.Libraries
 {
-    public class ImpNativeMethods
+    public static class ImpNativeMethods
     {
 
         [DllImport("user32")]
@@ -20,6 +20,34 @@ namespace Base.Libraries
         {
             [DllImport("user32")]
             public static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
+        }
+
+        [FlagsAttribute]
+        public enum EXECUTION_STATE : uint
+        {
+            ES_SYSTEM_REQUIRED = 0x00000001,
+            ES_DISPLAY_REQUIRED = 0x00000002,
+            // Legacy flag, should not be used.
+            // ES_USER_PRESENT   = 0x00000004,
+            ES_AWAYMODE_REQUIRED = 0x00000040,
+            ES_CONTINUOUS = 0x80000000,
+        }
+
+        
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
+
+
+        public static void PreventSleep()
+        { 
+            SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS
+                | EXECUTION_STATE.ES_DISPLAY_REQUIRED
+                | EXECUTION_STATE.ES_SYSTEM_REQUIRED); //Windows < Vista, forget away mode
+        }
+
+        public static void AllowSleep()
+        {
+            SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED);
         }
 
         ///// <summary>
