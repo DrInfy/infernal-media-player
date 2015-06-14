@@ -51,14 +51,37 @@ namespace Imp.Controllers
 
         #region Properties
 
-        private bool IsLeftOpen
+        private bool IsLeftOpen => Left.Value > 0;
+        private bool IsRightOpen => Right.Value > 0;
+
+        private GridLength Left
         {
-            get { return window.grid.ColumnDefinitions[0].ActualWidth > 1; }
+            get { return window.grid.ColumnDefinitions[0].Width; }
+            set { window.grid.ColumnDefinitions[0].Width = value; }
         }
 
-        private bool IsRightOpen
+        private GridLength LeftResize
         {
-            get { return window.grid.ColumnDefinitions[4].ActualWidth > 1; }
+            get { return window.grid.ColumnDefinitions[1].Width; }
+            set { window.grid.ColumnDefinitions[1].Width = value; }
+        }
+
+        private GridLength Middle
+        {
+            get { return window.grid.ColumnDefinitions[2].Width; }
+            set { window.grid.ColumnDefinitions[2].Width = value; }
+        }
+
+        private GridLength RightResize
+        {
+            get { return window.grid.ColumnDefinitions[3].Width; }
+            set { window.grid.ColumnDefinitions[3].Width = value; }
+        }
+
+        private GridLength Right
+        {
+            get { return window.grid.ColumnDefinitions[4].Width; }
+            set { window.grid.ColumnDefinitions[4].Width = value; }
         }
 
         #endregion
@@ -573,6 +596,214 @@ namespace Imp.Controllers
             }
         }
 
+        private void NormalizePanelButtons()
+        {
+            window.PanelOpen.ButtonMaximizePanel.CurrentState = 0;
+            window.PanelPlaylist.ButtonMaximizePanel.CurrentState = 0;
+        }
+
+        private void MaximizePanelButtons()
+        {
+            if (IsLeftOpen) window.PanelOpen.ButtonMaximizePanel.CurrentState = 1;
+            if (IsRightOpen) window.PanelPlaylist.ButtonMaximizePanel.CurrentState = 1;
+        }
+
+        private bool NormalizeLeft()
+        {
+            if (IsRightOpen)
+            {
+                if (window.ActualWidth <= desiredLeftWidth + resizerWidth * 2 + desiredRightWidth)
+                {
+                    return false;
+                }
+                else if (window.ActualWidth <= desiredLeftWidth * 1.5 + resizerWidth * 2 + desiredRightWidth * 1.5)
+                {
+                    window.grid.ColumnDefinitions[0].Width = new GridLength(desiredLeftWidth, GridUnitType.Star);
+                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
+                    window.grid.ColumnDefinitions[2].Width =
+                        new GridLength(window.ActualWidth - desiredLeftWidth - desiredRightWidth - resizerWidth * 2,
+                            GridUnitType.Star);
+                    window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth);
+                    window.grid.ColumnDefinitions[4].Width = new GridLength(desiredRightWidth, GridUnitType.Star);
+                }
+                else
+                {
+                    SetNormalLayoutPanelsVisible();
+                }
+            }
+            else
+            {
+                if (window.ActualWidth <= desiredLeftWidth + resizerWidth)
+                {
+                    return false;
+                }
+                else if (window.ActualWidth <= minLeftPanelWidth + desiredLeftWidth + resizerWidth)
+                {
+                    window.grid.ColumnDefinitions[0].Width = new GridLength(minLeftPanelWidth + (window.ActualWidth - minLeftPanelWidth - resizerWidth) * 0.3, GridUnitType.Star);
+                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
+                    window.grid.ColumnDefinitions[2].Width = new GridLength((window.ActualWidth - minLeftPanelWidth - resizerWidth) * 0.7, GridUnitType.Star);
+                }
+                else if (window.ActualWidth <= desiredLeftWidth * 5 / 2 + resizerWidth)
+                {
+                    window.grid.ColumnDefinitions[0].Width = new GridLength(2, GridUnitType.Star);
+                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
+                    window.grid.ColumnDefinitions[2].Width = new GridLength(2, GridUnitType.Star);
+                }
+                else if (window.ActualWidth <= MaxDesiredLeftWidth * 5 / 2 + resizerWidth)
+                {
+                    window.grid.ColumnDefinitions[0].Width = new GridLength(2, GridUnitType.Star);
+                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
+                    window.grid.ColumnDefinitions[2].Width = new GridLength(3, GridUnitType.Star);
+                }
+                else
+                {
+                    window.grid.ColumnDefinitions[0].Width = new GridLength(MaxDesiredLeftWidth, GridUnitType.Star);
+                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
+                    window.grid.ColumnDefinitions[2].Width = new GridLength(window.ActualWidth - MaxDesiredLeftWidth - resizerWidth, GridUnitType.Star);
+                }
+            }
+            return true;
+        }
+
+        private void SetNormalLayoutPanelsVisible()
+        {
+            window.grid.ColumnDefinitions[0].Width = new GridLength(2, GridUnitType.Star);
+            window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
+            window.grid.ColumnDefinitions[2].Width = new GridLength(3, GridUnitType.Star);
+            window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth);
+            window.grid.ColumnDefinitions[4].Width = new GridLength(2, GridUnitType.Star);
+        }
+
+        private void MaximizeLeft()
+        {
+            if (IsRightOpen)
+            {
+                double rightPercentage;
+
+                rightPercentage = GetRightPercentage();
+
+                window.grid.ColumnDefinitions[0].Width = new GridLength((1 - rightPercentage) * window.ActualWidth - resizerWidth, GridUnitType.Star);
+                window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
+                window.grid.ColumnDefinitions[2].Width = new GridLength(0);
+                window.grid.ColumnDefinitions[3].Width = new GridLength(0);
+                window.grid.ColumnDefinitions[4].Width = new GridLength(rightPercentage * window.ActualWidth, GridUnitType.Star);
+            }
+            else
+            {
+                ShowOnlyLeft();
+            }
+        }
+
+        private static double GetPercentage(ColumnDefinition current, double actualWidth, ColumnDefinitionCollection columnDefinitions)
+        {
+            double percentage;
+            if (current.Width.IsAbsolute)
+                percentage = current.Width.Value / actualWidth;
+            else
+            {
+                var totalPercentage = current.Width.Value;
+                var percentageWidthPixels = actualWidth;
+
+                foreach (var column in columnDefinitions)
+                {
+                    if (column == current) continue;
+
+                    if (column.Width.IsAbsolute)
+                        percentageWidthPixels -= column.Width.Value;
+                    else
+                        totalPercentage += column.Width.Value;
+                }
+
+                percentage = percentageWidthPixels / actualWidth *
+                             current.Width.Value / totalPercentage;
+            }
+            return percentage;
+        }
+
+        private double GetRightPercentage()
+        {
+            return GetPercentage(window.grid.ColumnDefinitions[4], window.ActualWidth, window.grid.ColumnDefinitions);
+        }
+
+        private double GetLeftPercentage()
+        {
+            return GetPercentage(window.grid.ColumnDefinitions[0], window.ActualWidth, window.grid.ColumnDefinitions);
+        }
+
+        private double GetMiddlePercentage()
+        {
+            return GetPercentage(window.grid.ColumnDefinitions[2], window.ActualWidth, window.grid.ColumnDefinitions);
+        }
+
+        private void CheckPanelsOnResize()
+        {
+            if (window.ActualWidth <= minLeftPanelWidth + minRightPanelWidth + resizerWidth)
+            {
+                if (IsRightOpen && IsLeftOpen)
+                {
+                    ShowOnlyRight();
+                }
+                else if (IsLeftOpen)
+                {
+                    ShowOnlyLeft();
+                }
+                else if (IsRightOpen && window.grid.ColumnDefinitions[4].ActualWidth < minRightPanelWidth)
+                {
+                    ShowOnlyRight();
+                }
+            }
+            else if (window.ActualWidth <= desiredLeftWidth + desiredRightWidth + resizerWidth && IsRightOpen &&
+                     IsLeftOpen)
+            {
+                ShowOnlyBothPanelsMaxed();
+            }
+            else if (IsLeftOpen && GetLeftPercentage() * window.ActualWidth < minLeftPanelWidth)
+            {
+                NormalizeLeft();
+            }
+            else if (IsRightOpen && GetRightPercentage() * window.ActualWidth < minLeftPanelWidth)
+            {
+                NormalizeRight();
+            }
+        }
+
+        private void ResizeTitleBar()
+        {
+            if (window.ActualWidth < 640)
+            {
+                window.LabelTopic.Margin = new Thickness(0, 15, 0, -5);
+                window.LabelTopic.FontSize = 14;
+                window.ButtonExit.Margin = new Thickness(0, 0, 0, 20);
+                window.ButtonMax.Margin = new Thickness(0, 0, 40, 20);
+                window.ButtonMin.Margin = new Thickness(0, 0, 80, 20);
+
+                window.ButtonPlayList.Margin = new Thickness(0, 0, 120, 20);
+                window.ButtonOpen.Margin = new Thickness(0, 0, 160, 20);
+
+                window.BarTop.Margin = new Thickness(0, 0, 200, 20);
+                window.BarTop2.Margin = new Thickness(0, 20, 0, 0);
+                window.BarTop2.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                window.LabelTopic.Margin = new Thickness(0, 0, 240, 5);
+                window.LabelTopic.FontSize = 18;
+
+                window.ButtonExit.Margin = new Thickness(0, 0, 0, 0);
+                window.ButtonMax.Margin = new Thickness(0, 0, 40, 0);
+                window.ButtonMin.Margin = new Thickness(0, 0, 80, 0);
+
+                window.ButtonPlayList.Margin = new Thickness(0, 0, 120, 0);
+                window.ButtonOpen.Margin = new Thickness(0, 0, 160, 0);
+
+                window.BarTop.Margin = new Thickness(0, 0, 200, 0);
+
+                window.BarTop2.Visibility = Visibility.Hidden;
+            }
+        }
+
+        #region Show Panel
+
         private void ShowLeftPanel()
         {
             if (IsRightOpen)
@@ -752,6 +983,7 @@ namespace Imp.Controllers
 
             window.grid.ColumnDefinitions[3].Width = new GridLength(0);
             window.grid.ColumnDefinitions[4].Width = new GridLength(1, GridUnitType.Star);
+            MaximizePanelButtons();
         }
 
         private void ShowOnlyMiddle()
@@ -766,214 +998,15 @@ namespace Imp.Controllers
 
         private void ShowOnlyLeft()
         {
-            window.grid.ColumnDefinitions[2].Width = new GridLength(0);
-            window.grid.ColumnDefinitions[3].Width = new GridLength(0);
-            window.grid.ColumnDefinitions[4].Width = new GridLength(0);
+            Middle = new GridLength(0);
+            RightResize = new GridLength(0);
+            Right = new GridLength(0);
 
-            window.grid.ColumnDefinitions[1].Width = new GridLength(0);
-            window.grid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
+            LeftResize = new GridLength(0);
+            Left = new GridLength(1, GridUnitType.Star);
+            MaximizePanelButtons();
         }
 
-        private void NormalizePanelButtons()
-        {
-            window.PanelOpen.ButtonMaximizePanel.CurrentState = 0;
-            window.PanelPlaylist.ButtonMaximizePanel.CurrentState = 0;
-        }
-
-        private void MaximizePanelButtons()
-        {
-            window.PanelOpen.ButtonMaximizePanel.CurrentState = 1;
-            window.PanelPlaylist.ButtonMaximizePanel.CurrentState = 1;
-        }
-
-        private bool NormalizeLeft()
-        {
-            if (IsRightOpen)
-            {
-                if (window.ActualWidth <= desiredLeftWidth + resizerWidth * 2 + desiredRightWidth)
-                {
-                    return false;
-                }
-                else if (window.ActualWidth <= desiredLeftWidth * 1.5 + resizerWidth * 2 + desiredRightWidth * 1.5)
-                {
-                    window.grid.ColumnDefinitions[0].Width = new GridLength(desiredLeftWidth, GridUnitType.Star);
-                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
-                    window.grid.ColumnDefinitions[2].Width =
-                        new GridLength(window.ActualWidth - desiredLeftWidth - desiredRightWidth - resizerWidth * 2,
-                            GridUnitType.Star);
-                    window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth);
-                    window.grid.ColumnDefinitions[4].Width = new GridLength(desiredRightWidth, GridUnitType.Star);
-                }
-                else
-                {
-                    SetNormalLayoutPanelsVisible();
-                }
-            }
-            else
-            {
-                if (window.ActualWidth <= desiredLeftWidth + resizerWidth)
-                {
-                    return false;
-                }
-                else if (window.ActualWidth <= minLeftPanelWidth + desiredLeftWidth + resizerWidth)
-                {
-                    window.grid.ColumnDefinitions[0].Width = new GridLength(minLeftPanelWidth + (window.ActualWidth - minLeftPanelWidth - resizerWidth) * 0.3, GridUnitType.Star);
-                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
-                    window.grid.ColumnDefinitions[2].Width = new GridLength((window.ActualWidth - minLeftPanelWidth - resizerWidth) * 0.7, GridUnitType.Star);
-                }
-                else if (window.ActualWidth <= desiredLeftWidth * 5 / 2 + resizerWidth)
-                {
-                    window.grid.ColumnDefinitions[0].Width = new GridLength(2, GridUnitType.Star);
-                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
-                    window.grid.ColumnDefinitions[2].Width = new GridLength(2, GridUnitType.Star);
-                }
-                else if (window.ActualWidth <= MaxDesiredLeftWidth * 5 / 2 + resizerWidth)
-                {
-                    window.grid.ColumnDefinitions[0].Width = new GridLength(2, GridUnitType.Star);
-                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
-                    window.grid.ColumnDefinitions[2].Width = new GridLength(3, GridUnitType.Star);
-                }
-                else
-                {
-                    window.grid.ColumnDefinitions[0].Width = new GridLength(MaxDesiredLeftWidth, GridUnitType.Star);
-                    window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
-                    window.grid.ColumnDefinitions[2].Width = new GridLength(window.ActualWidth - MaxDesiredLeftWidth - resizerWidth, GridUnitType.Star);
-                }
-            }
-            return true;
-        }
-
-        private void SetNormalLayoutPanelsVisible()
-        {
-            window.grid.ColumnDefinitions[0].Width = new GridLength(2, GridUnitType.Star);
-            window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
-            window.grid.ColumnDefinitions[2].Width = new GridLength(3, GridUnitType.Star);
-            window.grid.ColumnDefinitions[3].Width = new GridLength(resizerWidth);
-            window.grid.ColumnDefinitions[4].Width = new GridLength(2, GridUnitType.Star);
-        }
-
-        private void MaximizeLeft()
-        {
-            if (IsRightOpen)
-            {
-                double rightPercentage;
-
-                rightPercentage = GetRightPercentage();
-
-                window.grid.ColumnDefinitions[0].Width = new GridLength((1 - rightPercentage) * window.ActualWidth - resizerWidth, GridUnitType.Star);
-                window.grid.ColumnDefinitions[1].Width = new GridLength(resizerWidth);
-                window.grid.ColumnDefinitions[2].Width = new GridLength(0);
-                window.grid.ColumnDefinitions[3].Width = new GridLength(0);
-                window.grid.ColumnDefinitions[4].Width = new GridLength(rightPercentage * window.ActualWidth, GridUnitType.Star);
-            }
-            else
-            {
-                ShowOnlyLeft();
-            }
-        }
-
-        private static double GetPercentage(ColumnDefinition current, double actualWidth, ColumnDefinitionCollection columnDefinitions)
-        {
-            double percentage;
-            if (current.Width.IsAbsolute)
-                percentage = current.Width.Value / actualWidth;
-            else
-            {
-                var totalPercentage = current.Width.Value;
-                var percentageWidthPixels = actualWidth;
-
-                foreach (var column in columnDefinitions)
-                {
-                    if (column == current) continue;
-
-                    if (column.Width.IsAbsolute)
-                        percentageWidthPixels -= column.Width.Value;
-                    else
-                        totalPercentage += column.Width.Value;
-                }
-
-                percentage = percentageWidthPixels / actualWidth *
-                             current.Width.Value / totalPercentage;
-            }
-            return percentage;
-        }
-
-        private double GetRightPercentage()
-        {
-            return GetPercentage(window.grid.ColumnDefinitions[4], window.ActualWidth, window.grid.ColumnDefinitions);
-        }
-
-        private double GetLeftPercentage()
-        {
-            return GetPercentage(window.grid.ColumnDefinitions[0], window.ActualWidth, window.grid.ColumnDefinitions);
-        }
-
-        private double GetMiddlePercentage()
-        {
-            return GetPercentage(window.grid.ColumnDefinitions[2], window.ActualWidth, window.grid.ColumnDefinitions);
-        }
-
-        private void CheckPanelsOnResize()
-        {
-            if (window.ActualWidth <= minLeftPanelWidth + minRightPanelWidth + resizerWidth)
-            {
-                if (IsRightOpen && IsLeftOpen)
-                {
-                    ShowOnlyRight();
-                }
-                else if (IsLeftOpen)
-                {
-                    ShowOnlyLeft();
-                }
-            }
-            else if (window.ActualWidth <= desiredLeftWidth + desiredRightWidth + resizerWidth && IsRightOpen &&
-                     IsLeftOpen)
-            {
-                ShowOnlyBothPanelsMaxed();
-            }
-            else if (IsLeftOpen && GetLeftPercentage() * window.ActualWidth < minLeftPanelWidth)
-            {
-                NormalizeLeft();
-            }
-            else if (IsRightOpen && GetRightPercentage() * window.ActualWidth < minLeftPanelWidth)
-            {
-                NormalizeRight();
-            }
-        }
-
-        private void ResizeTitleBar()
-        {
-            if (window.ActualWidth < 640)
-            {
-                window.LabelTopic.Margin = new Thickness(0, 15, 0, -5);
-                window.LabelTopic.FontSize = 14;
-                window.ButtonExit.Margin = new Thickness(0, 0, 0, 20);
-                window.ButtonMax.Margin = new Thickness(0, 0, 40, 20);
-                window.ButtonMin.Margin = new Thickness(0, 0, 80, 20);
-
-                window.ButtonPlayList.Margin = new Thickness(0, 0, 120, 20);
-                window.ButtonOpen.Margin = new Thickness(0, 0, 160, 20);
-
-                window.BarTop.Margin = new Thickness(0, 0, 200, 20);
-                window.BarTop2.Margin = new Thickness(0, 20, 0, 0);
-                window.BarTop2.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                window.LabelTopic.Margin = new Thickness(0, 0, 240, 5);
-                window.LabelTopic.FontSize = 18;
-
-                window.ButtonExit.Margin = new Thickness(0, 0, 0, 0);
-                window.ButtonMax.Margin = new Thickness(0, 0, 40, 0);
-                window.ButtonMin.Margin = new Thickness(0, 0, 80, 0);
-
-                window.ButtonPlayList.Margin = new Thickness(0, 0, 120, 0);
-                window.ButtonOpen.Margin = new Thickness(0, 0, 160, 0);
-
-                window.BarTop.Margin = new Thickness(0, 0, 200, 0);
-
-                window.BarTop2.Visibility = Visibility.Hidden;
-            }
-        }
+        #endregion
     }
 }

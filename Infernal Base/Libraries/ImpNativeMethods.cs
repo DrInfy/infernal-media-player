@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿#region Usings
+
+using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
+
+#endregion
+
 // ReSharper disable InconsistentNaming
 
 namespace Base.Libraries
 {
     public static class ImpNativeMethods
     {
-
-        [DllImport("user32")]
-        private static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
+        #region Helpers
 
         public static class DllImporter
         {
@@ -132,7 +131,7 @@ namespace Base.Libraries
             public override bool Equals(object obj)
             {
                 if (!(obj is RECT)) { return false; }
-                return (this == (RECT)obj);
+                return (this == (RECT) obj);
             }
 
             /// <summary>Return the HashCode for this struct (not garanteed to be unique)</summary>
@@ -163,7 +162,7 @@ namespace Base.Libraries
         {
             /// <summary>
             /// </summary>            
-            public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+            public int cbSize = Marshal.SizeOf(typeof (MONITORINFO));
 
             /// <summary>
             /// </summary>            
@@ -178,7 +177,16 @@ namespace Base.Libraries
             public int dwFlags = 0;
         }
 
+        #endregion
+
+        #region Static Fields and Constants
+
         public const int MONITOR_DEFAULTTONEAREST = 0x2;
+
+        #endregion
+
+        [DllImport("user32")]
+        private static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
 
         public static Rect GetWorkArea(Window imp)
         {

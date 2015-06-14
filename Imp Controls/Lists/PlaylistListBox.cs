@@ -29,7 +29,7 @@ namespace ImpControls.Lists
 
         #endregion
 
-        #region  Events
+        #region Events
 
         public event LoadPlaylistItemEvent LoadPlaylistItem;
 

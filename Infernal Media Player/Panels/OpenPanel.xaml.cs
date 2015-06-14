@@ -19,6 +19,7 @@ using Imp.Controllers;
 using ImpControls;
 using ImpControls.Gui;
 using ImpControls.SpecialFolder;
+
 //using Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 #endregion
@@ -83,6 +84,7 @@ namespace Imp.Panels
             Background = styleLib.GetGridBrush(false);
             styleLib.SetStyle(TextBoxFind);
             styleLib.SetStyle(TextBoxFindFolder);
+            ButtonClearFindFolder.GeometryMargin = 4;
             styleLib.SetStyle(LabelTopic);
         }
 
@@ -242,12 +244,12 @@ namespace Imp.Panels
                 mainC.EventC.SetEvent(new EventText("Folder load already active", 1, EventType.Delayed));
                 return;
             }
-            
+
             options.FindFilesText = TextBoxFind.Text;
             options.FindDirectoriesText = TextBoxFindFolder.Text;
             //options.FilterOptions = ButtonFilterFolder.CurrentState == 0 ? FilterOptions.Files : FilterOptions.ChildFolders;
             options.FilterOptions = FilterOptions.Files;
-            if (!string.IsNullOrWhiteSpace( options.FindDirectoriesText))
+            if (!string.IsNullOrWhiteSpace(options.FindDirectoriesText))
             {
                 options.FilterOptions |= FilterOptions.ChildFolders;
             }
@@ -444,8 +446,7 @@ namespace Imp.Panels
 
         private void TextBoxFindFolder_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ButtonClearFind.Visibility = string.IsNullOrWhiteSpace(TextBoxFind.Text) ? Visibility.Hidden : Visibility.Visible;
-
+            ButtonClearFindFolder.Visibility = string.IsNullOrWhiteSpace(TextBoxFindFolder.Text) ? Visibility.Hidden : Visibility.Visible;
             ListDirectories.FindText = TextBoxFindFolder.Text;
         }
 

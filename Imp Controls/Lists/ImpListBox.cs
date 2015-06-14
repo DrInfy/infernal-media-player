@@ -51,7 +51,7 @@ namespace ImpControls
         private int lowIndex;
         //Mouse over index, the list box item that the mouse currently is over.
         private int mouseOverIndex = -1;
-        
+
 
         #endregion
 
@@ -63,7 +63,6 @@ namespace ImpControls
             set { controller.FindText = value; }
         }
 
-        
         public bool ItemsDragable { get; set; }
         public bool AcceptsNullSelection { get; set; }
 
@@ -160,6 +159,15 @@ namespace ImpControls
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        ///     This event is called when selectedindex changes
+        /// </summary>
+        public event ListSelectionChangedEventHandler SelectionChanged;
+
+        #endregion
+
         public ImpListBox(bool searchable, bool multiSelectable)
         {
             this.IsManipulationEnabled = true;
@@ -189,15 +197,6 @@ namespace ImpControls
         {
             InputSelect(true, e.GetTouchPoint(this).Position.X, e.GetTouchPoint(this).Position.Y);
         }
-
-        #region Delegates & Events
-
-        /// <summary>
-        ///     This event is called when selectedindex changes
-        /// </summary>
-        public event ListSelectionChangedEventHandler SelectionChanged;
-
-        #endregion
 
         protected virtual void CreateController(bool searchable, bool multiSelectable)
         {
@@ -678,37 +677,37 @@ namespace ImpControls
         {
 
             if (!touch && x >= ActualWidth - SCROLLBARWIDTH && ScrollBarVisible)
-            {
+                {
                 ScrollBarMove(y);
-                pressedState = MouseStates.PanRightPressed;
-            }
-            else
-            {
-                pressedState = MouseStates.WindowPressed;
-                if (MouseoverIndex > HighIndex)
-                    return;
+                    pressedState = MouseStates.PanRightPressed;
+                }
+                else
+                {
+                    pressedState = MouseStates.WindowPressed;
+                    if (MouseoverIndex > HighIndex)
+                        return;
 
                 if (!touch && ItemsDragable && GlobalKeyboard.ModKeys == ModifierKeys.None)
-                {
-                    if (controller.IsSelected(MouseoverIndex))
                     {
-                        // makes it selected index
-                        controller.Select(SelectionMode.Add, MouseoverIndex);
-                        DragShow(MouseoverIndex);
-                    }
+                        if (controller.IsSelected(MouseoverIndex))
+                        {
+                            // makes it selected index
+                            controller.Select(SelectionMode.Add, MouseoverIndex);
+                            DragShow(MouseoverIndex);
+                        }
 
-                    else
+                        else
+                            controller.Select(SelectionMode.One, MouseoverIndex);
+                    }
+                    else if (GlobalKeyboard.ModKeys == ModifierKeys.None)
                         controller.Select(SelectionMode.One, MouseoverIndex);
+                    else if (GlobalKeyboard.ModKeys == ModifierKeys.Shift)
+                        controller.Select(SelectionMode.GroupOnly, MouseoverIndex);
+                    else if (GlobalKeyboard.ModKeys == ModifierKeys.Control)
+                        controller.Select(SelectionMode.Inverse, MouseoverIndex);
+                    else if (GlobalKeyboard.ModKeys == (ModifierKeys.Control | ModifierKeys.Shift))
+                        controller.Select(SelectionMode.Add, MouseoverIndex);
                 }
-                else if (GlobalKeyboard.ModKeys == ModifierKeys.None)
-                    controller.Select(SelectionMode.One, MouseoverIndex);
-                else if (GlobalKeyboard.ModKeys == ModifierKeys.Shift)
-                    controller.Select(SelectionMode.GroupOnly, MouseoverIndex);
-                else if (GlobalKeyboard.ModKeys == ModifierKeys.Control)
-                    controller.Select(SelectionMode.Inverse, MouseoverIndex);
-                else if (GlobalKeyboard.ModKeys == (ModifierKeys.Control | ModifierKeys.Shift))
-                    controller.Select(SelectionMode.Add, MouseoverIndex);
-            }
 
         }
 

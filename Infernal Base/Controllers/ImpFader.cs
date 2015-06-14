@@ -71,7 +71,7 @@ namespace Base.Controllers
 
         public void Pause()
         {
-            if (fade != FadeType.MoveFalling) { posTarget = -1;}
+            if (fade != FadeType.MoveFalling) { posTarget = -1; }
             fade = FadeType.Pausing;
             StartFade();
         }

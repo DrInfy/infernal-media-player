@@ -41,16 +41,12 @@ namespace MediaPlayer.Element
         }
 
         public bool IsPlaying => controller != null;
-
         public double Duration => controller != null ? LibImp.TicksToSeconds(controller.Duration) : 0;
 
         public double Position
         {
             get { return controller != null ? LibImp.TicksToSeconds(controller.Position) : 0; }
-            set
-            {
-                controller?.MoveTo(LibImp.SecondsToTicks(value));
-            }
+            set { controller?.MoveTo(LibImp.SecondsToTicks(value)); }
         }
 
         public double Volume
@@ -65,6 +61,12 @@ namespace MediaPlayer.Element
         }
 
         public bool HasVideo => controller != null && controller.HasVideo;
+
+        #endregion
+
+        #region Events
+
+        public event Action MediaPlayerEnded;
 
         #endregion
 
@@ -88,8 +90,6 @@ namespace MediaPlayer.Element
             controller?.Command(MediaCommand.Close);
             controller = null;
         }
-
-        public event Action MediaPlayerEnded;
 
         protected virtual void InitializeMediaPlayer()
         {

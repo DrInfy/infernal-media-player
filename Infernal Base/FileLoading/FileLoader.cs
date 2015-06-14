@@ -39,15 +39,19 @@ namespace Base.FileLoading
 
         #endregion
 
+        #region Events
+
+        public event LoadedEventHandler Loaded;
+        public event LoadFailedEventHandler LoadFailed;
+
+        #endregion
+
         protected FileLoader(Dispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
             LoadedMainEvent = RaiseLoadedMainThread;
             loadFailedMainEvent = RaiseLoadFailedMainThread;
         }
-
-        public event LoadedEventHandler Loaded;
-        public event LoadFailedEventHandler LoadFailed;
 
         /// <summary>
         /// Call dispatcher to switch to main thread so we can call load success event

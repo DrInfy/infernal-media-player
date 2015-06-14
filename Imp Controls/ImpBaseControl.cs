@@ -77,12 +77,7 @@ namespace ImpControls
 
         #endregion
 
-        protected ImpBaseControl()
-        {
-            IsEnabledChanged += OnEnabledChange;
-            IsVisibleChanged += OnVisibilityChanged;
-            IsTabStop = false;
-        }
+        #region Events
 
         /// <summary>
         /// Proper event for clicking a button
@@ -141,6 +136,15 @@ namespace ImpControls
             }
             base.OnTouchUp(e);
             ReleaseMouseCapture();
+        }
+
+        #endregion
+
+        protected ImpBaseControl()
+        {
+            IsEnabledChanged += OnEnabledChange;
+            IsVisibleChanged += OnVisibilityChanged;
+            IsTabStop = false;
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)

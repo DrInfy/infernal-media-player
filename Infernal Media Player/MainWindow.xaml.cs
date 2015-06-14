@@ -234,7 +234,6 @@ namespace Imp
                 if (Updating) continue;
                 Updating = true;
                 Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Update(mainC.Update));
-
             } while (!WindowClosed);
         }
 
@@ -383,6 +382,7 @@ namespace Imp
         private bool IsMouseOverTextbox()
         {
             return PanelOpen.TextBoxFind.IsMouseOver ||
+                   PanelOpen.TextBoxFindFolder.IsMouseOver ||
                    PanelPlaylist.TextBoxFind.IsMouseOver;
         }
 

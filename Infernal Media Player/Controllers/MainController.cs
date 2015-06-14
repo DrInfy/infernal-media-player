@@ -49,20 +49,12 @@ namespace Imp.Controllers
 
         #region Properties
 
-        public override bool Focused
-        {
-            get { return !window.PanelOpen.TextBoxFind.IsFocused && !window.PanelPlaylist.TextBoxFind.IsFocused; }
-        }
+        public override bool Focused => !window.PanelOpen.TextBoxFindFolder.IsFocused
+                                        && !window.PanelOpen.TextBoxFind.IsFocused
+                                        && !window.PanelPlaylist.TextBoxFind.IsFocused;
 
-        public override bool Selected
-        {
-            get { return window.IsActive && window.ExtWindowState != ExtWindowState.Minimized; }
-        }
-
-        public override bool IsMostRecentInstance
-        {
-            get { return ImpMessaging.LastActive; }
-        }
+        public override bool Selected => window.IsActive && window.ExtWindowState != ExtWindowState.Minimized;
+        public override bool IsMostRecentInstance => ImpMessaging.LastActive;
 
         #endregion
 
@@ -540,15 +532,14 @@ namespace Imp.Controllers
                 if (window.Width > 400)
                 {
                     window.PlayerBottom.LabelPosition.Content =
-                    string.Format("{0} / {1}",
-                        StringHandler.SecondsToTimeText((int)Math.Round(position)),
-                        StringHandler.SecondsToTimeText((int)Math.Round(duration)));
-
+                        string.Format("{0} / {1}",
+                            StringHandler.SecondsToTimeText((int) Math.Round(position)),
+                            StringHandler.SecondsToTimeText((int) Math.Round(duration)));
                 }
                 else
                 {
                     window.PlayerBottom.LabelPosition.Content =
-                        StringHandler.SecondsToTimeText((int)Math.Round(position));
+                        StringHandler.SecondsToTimeText((int) Math.Round(position));
                 }
 
 
