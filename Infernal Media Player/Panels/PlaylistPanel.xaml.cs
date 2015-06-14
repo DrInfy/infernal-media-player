@@ -62,6 +62,13 @@ namespace Imp.Panels
                 mainC.Exec(ImpCommand.Open, playlistItem);
         }
 
+        private void ListPlaylist_OnDoubleTouchDown(object sender, TouchEventArgs e)
+        {
+            var playlistItem = ListPlaylist.GetSelected();
+            if (playlistItem != null)
+                mainC.Exec(ImpCommand.Open, playlistItem);
+        }
+
         private void LoadPlayListItem(PlaylistItem item)
         {
             if (item != null)
@@ -98,6 +105,11 @@ namespace Imp.Panels
         private void ButtonClearFind_OnClicked(object sender)
         {
             TextBoxFind.Clear();
+        }
+
+        private void ListPlaylist_OnOpenRightClick_Menu(object sender, MouseButtonEventArgs e)
+        {
+            mainC.ContextMenu(mainC.CursorPositionInDesktop(e), ContextMenuEnum.Playlist);
         }
     }
 }

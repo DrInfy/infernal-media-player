@@ -35,6 +35,14 @@ namespace ImpControls
         public DirectoryListBox() : base(true, false)
         {
             MouseDoubleClick += OnDoubleClick;
+            DoubleTouchDown += DirectoryListBox_DoubleTouchDown;
+        }
+
+        private void DirectoryListBox_DoubleTouchDown(object sender, TouchEventArgs e)
+        {
+            var selected = controller.GetSelected();
+            if (selected != null)
+                SetPath(selected.Value);
         }
 
         protected override void UpdateItems()

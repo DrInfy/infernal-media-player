@@ -47,7 +47,7 @@ namespace Base.Libraries
 
         public static void AllowSleep()
         {
-            SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+            SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
         }
 
         ///// <summary>

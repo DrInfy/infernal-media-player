@@ -63,7 +63,7 @@
 
 
         <Popup Name="ContentMenu" Placement="Absolute" MouseLeave="ContentMenu_MouseLeave">
-            <lists:ContextMenuList Name="MenuList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" MouseDown="MenuList_MouseDown" />
+            <lists:ContextMenuList Name="MenuList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" MouseDown="MenuList_MouseDown" TouchTap="MenuList_OnTouchTap" />
             
         </Popup>
     </Grid>

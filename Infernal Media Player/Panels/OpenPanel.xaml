@@ -26,8 +26,8 @@
         <impControls:ImpButton x:Name="ButtonMaximizePanel" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Stretch" Width="30" Clicked="ButtonMaximizePanel_Clicked" CheckStates="2"/>
         <impControls:ImpButton x:Name="ButtonClosePanel"   Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="30" Clicked="ButtonClosePanel_Clicked" />
 
-        <impControls:PlacesListBox x:Name="ListPlaces" Grid.ColumnSpan="1" Grid.Column="0" HorizontalAlignment="Stretch"  Margin="0,0,0,20" Grid.Row="1" VerticalAlignment="Stretch" SelectionChanged="ListPlaces_SelectionChanged" />
-        <impControls:DirectoryListBox x:Name="ListDirectories" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,20" Grid.Row="1"  VerticalAlignment="Stretch" SelectionChanged="ListDirectories_SelectionChanged" />
+        <impControls:PlacesListBox x:Name="ListPlaces" Grid.Column="0" HorizontalAlignment="Stretch"  Margin="0,0,0,20" Grid.Row="1" VerticalAlignment="Stretch" SelectionChanged="ListPlaces_SelectionChanged" OpenRightClick_Menu="ListPlaces_OnOpenRightClick_Menu" />
+        <impControls:DirectoryListBox x:Name="ListDirectories" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,20" Grid.Row="1"  VerticalAlignment="Stretch" SelectionChanged="ListDirectories_SelectionChanged" OpenRightClick_Menu="ListDirectories_OnOpenRightClick_Menu" />
 
         <impControls:ImpButton x:Name="ButtonAddPath" HorizontalAlignment="Right" Width="50" Height="18" Grid.Column="0" Grid.Row="1" Margin="1,1,1,1" VerticalAlignment="Bottom" CheckStates="2" Clicked="ButtonAddPath_Clicked"/>
         <impControls:ImpButton x:Name="ButtonClearPath" HorizontalAlignment="Left" Width="50" Height="18" Grid.Column="0" Grid.Row="1" Margin="1,1,1,1" VerticalAlignment="Bottom" CheckStates="2" Clicked="ButtonClearPath_Clicked"/>
@@ -89,7 +89,7 @@
         </Grid>
 
         <impControls:FileListBox x:Name="ListFiles" Margin="0,0,0,0" Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0"
-                                 MouseDoubleClick="ListFiles_MouseDoubleClick"/>
+                                 MouseDoubleClick="ListFiles_MouseDoubleClick" DoubleTouchDown="ListFiles_OnDoubleTouchDown" OpenRightClick_Menu="ListFiles_OpenRightClick_Menu" />
 
     </Grid>
 </UserControl>

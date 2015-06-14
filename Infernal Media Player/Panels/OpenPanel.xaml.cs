@@ -458,5 +458,27 @@ namespace Imp.Panels
         {
             mainC.Exec(ImpCommand.AddSelectedFolderToPaths);
         }
+
+        private void ListFiles_OnDoubleTouchDown(object sender, TouchEventArgs e)
+        {
+            var file = ListFiles.GetSelected();
+            if (file != null)
+                mainC.Exec(ImpCommand.OpenFile, file);
+        }
+
+        private void ListPlaces_OnOpenRightClick_Menu(object sender, MouseButtonEventArgs e)
+        {
+            mainC.ContextMenu(mainC.CursorPositionInDesktop(e), ContextMenuEnum.PlacesList);
+        }
+
+        private void ListDirectories_OnOpenRightClick_Menu(object sender, MouseButtonEventArgs e)
+        {
+            mainC.ContextMenu(mainC.CursorPositionInDesktop(e), ContextMenuEnum.FolderList);
+        }
+
+        private void ListFiles_OpenRightClick_Menu(object sender, MouseButtonEventArgs e)
+        {
+            mainC.ContextMenu(mainC.CursorPositionInDesktop(e), ContextMenuEnum.FileList);
+        }
     }
 }

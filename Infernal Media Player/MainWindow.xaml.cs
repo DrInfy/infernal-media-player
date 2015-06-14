@@ -299,35 +299,24 @@ namespace Imp
             mouseState = MouseStates.None;
             if (e.ChangedButton == MouseButton.Right)
             {
-                if (PanelPlaylist.ListPlaylist.IsMouseDirectlyOver)
-                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.Playlist);
-                else if (PanelOpen.ListFiles.IsMouseDirectlyOver)
-                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.FileList);
-                else if (PanelOpen.ListDirectories.IsMouseDirectlyOver)
-                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.FolderList);
-                else if (PanelOpen.ListPlaces.IsMouseDirectlyOver)
-                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.PlacesList);
-                else
-                    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.None);
+                if (this.MouseOverGrid)
+                {
+                    mainC.ContextMenu(mainC.CursorPositionInDesktop(e), ContextMenuEnum.None);
+                }
+                //if (PanelPlaylist.ListPlaylist.IsMouseDirectlyOver)
+                //    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.Playlist);
+                //else if (PanelOpen.ListFiles.IsMouseDirectlyOver)
+                //    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.FileList);
+                //else if (PanelOpen.ListDirectories.IsMouseDirectlyOver)
+                //    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.FolderList);
+                //else if (PanelOpen.ListPlaces.IsMouseDirectlyOver)
+                //    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.PlacesList);
+                //else
+                //    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.None);
             }
         }
 
-        private Point CursorPositionInDesktop(MouseButtonEventArgs e)
-        {
-            var location = PointToScreen(e.GetPosition(this));
-            var source = PresentationSource.FromVisual(Application.Current.MainWindow);
-            if (source != null)
-            {
-                var dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
-                var dpiY = 96.0 * source.CompositionTarget.TransformToDevice.M22;
-                return new Point(location.X * 96.0 / dpiX, location.Y * 96.0 / dpiY);
-            }
-            return location;
-            //if (extWindowState != ExtWindowState.Fullscreen )
-            //    return e.GetPosition(null) + new Vector(Left, Top);
-            //else
-            //    return e.GetPosition(null);
-        }
+        
 
         /// <summary>
         /// Overridden to ensure that ExtWindowState keeps up to date.
@@ -506,6 +495,14 @@ namespace Imp
 
         private void ContentMenu_MouseLeave(object sender, MouseEventArgs e)
         {
+            ContentMenu.IsOpen = false;
+        }
+
+        private void MenuList_OnTouchTap(object sender, TouchEventArgs e)
+        {
+            var textAndCommand = MenuList.GetSelected();
+            if (textAndCommand != null)
+                mainC.Exec(textAndCommand.Command, textAndCommand.Argument);
             ContentMenu.IsOpen = false;
         }
     }

@@ -1,6 +1,7 @@
 ﻿#region Usings
 
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,6 +19,8 @@ namespace ImpControls
 
         public delegate void SClickedEventHandler(object sender);
 
+        public delegate void TouchEventHandler(object sender, TouchEventArgs e);
+
         #endregion
 
         #region Fields
@@ -28,6 +31,12 @@ namespace ImpControls
         protected bool sSolid = false;
         protected bool sGluedFocus;
         protected StyleClass sStyle = new StyleClass();
+
+        protected readonly Stopwatch touchDownStopwatch = new Stopwatch();
+        private Point lastTapLocation;
+
+        public event TouchEventHandler DoubleTouchDown;
+        public event TouchEventHandler TouchTap;
 
         #endregion
 
@@ -84,6 +93,55 @@ namespace ImpControls
         /// Call out for opening menu for right clicking if available.
         /// </summary>
         public event OpenRightClickMenuEventHandler OpenRightClick_Menu;
+
+        protected virtual void OnDoubleTouchDown(TouchEventArgs e)
+        {
+            DoubleTouchDown?.Invoke(this, e);
+        }
+
+        private bool IsDoubleTap(TouchEventArgs e)
+        {
+            Point currentTapPosition = e.GetTouchPoint(this).Position;
+            var difference = currentTapPosition - lastTapLocation;
+            bool tapsAreCloseInDistance = Math.Abs(difference.X) < 20 && Math.Abs(difference.Y) < 20;
+            lastTapLocation = currentTapPosition;
+
+            TimeSpan elapsed = touchDownStopwatch.Elapsed;
+            touchDownStopwatch.Restart();
+            bool tapsAreCloseInTime = (elapsed != TimeSpan.Zero && elapsed < TimeSpan.FromSeconds(0.7));
+
+            return tapsAreCloseInDistance && tapsAreCloseInTime;
+        }
+
+        protected override void OnPreviewTouchDown(TouchEventArgs e)
+        {
+            base.OnPreviewTouchDown(e);
+            if (IsDoubleTap(e))
+                OnDoubleTouchDown(e);
+        }
+
+        protected override void OnTouchUp(TouchEventArgs e)
+        {
+            if (!this.IsManipulationEnabled) return;
+
+            Point currentTapPosition = e.GetTouchPoint(this).Position;
+            var difference = currentTapPosition - lastTapLocation;
+            bool tapsAreCloseInDistance = Math.Abs(difference.X) < 20 && Math.Abs(difference.Y) < 20;
+            TimeSpan elapsed = touchDownStopwatch.Elapsed;
+            bool tapsAreCloseInTime = (elapsed != TimeSpan.Zero && elapsed < TimeSpan.FromSeconds(0.7));
+
+            if (tapsAreCloseInDistance)
+            {
+                if (tapsAreCloseInTime) { TouchTap?.Invoke(this, e); }
+                else { OpenRightClick_Menu?.Invoke(this, new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left)); }
+            }
+            else
+            {
+                currentTapPosition.X = -9999999999; // Ensures that no double taps get registered.
+            }
+            base.OnTouchUp(e);
+            ReleaseMouseCapture();
+        }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {

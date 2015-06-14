@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Base;
@@ -286,6 +287,7 @@ namespace Imp.Controllers
             ContentMenu.VerticalOffset = Math.Max(Math.Min(cursorPositionInDesktop.Y - 5, area.Bottom - size.Height),
                 area.Top);
             ContentMenu.IsOpen = true;
+            window.MenuList.CaptureMouse();
         }
 
         protected override void Shuffle()
@@ -616,6 +618,21 @@ namespace Imp.Controllers
             }
             EventC.SetEvent(new EventText(fileDeleteCount + " files permanently deleted", 3, EventType.Delayed));
             window.PanelPlaylist.ListPlaylist.RemoveSelected();
+        }
+
+        public Point CursorPositionInDesktop(MouseButtonEventArgs e)
+        {
+            var location = window.PointToScreen(e.GetPosition(this.window));
+            var source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            if (source == null) return location;
+
+            var dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
+            var dpiY = 96.0 * source.CompositionTarget.TransformToDevice.M22;
+            return new Point(location.X * 96.0 / dpiX, location.Y * 96.0 / dpiY);
+            //if (extWindowState != ExtWindowState.Fullscreen )
+            //    return e.GetPosition(null) + new Vector(Left, Top);
+            //else
+            //    return e.GetPosition(null);
         }
     }
 }

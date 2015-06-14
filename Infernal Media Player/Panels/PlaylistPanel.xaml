@@ -22,6 +22,6 @@
         <ImpControls:ImpButton x:Name="ButtonClearFind" Grid.Row="1" Visibility="Hidden" Margin="1,1,61,1" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="15" Clicked="ButtonClearFind_OnClicked"/>
         <ImpControls:ImpButton x:Name="ButtonSort" Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="30" Clicked="ButtonSort_Clicked"/>
         <ImpControls:ImpButton x:Name="ButtonRemoveFile" Grid.Row="1" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="30" Clicked="ButtonRemoveFile_Clicked"/>
-        <Lists:PlaylistListBox Name="ListPlaylist" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Row="2" VerticalAlignment="Stretch" MouseDoubleClick="ListPlaylist_MouseDoubleClick" />
+        <Lists:PlaylistListBox Name="ListPlaylist" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Row="2" VerticalAlignment="Stretch" MouseDoubleClick="ListPlaylist_MouseDoubleClick" DoubleTouchDown="ListPlaylist_OnDoubleTouchDown" OpenRightClick_Menu="ListPlaylist_OnOpenRightClick_Menu" />
     </Grid>
 </UserControl>

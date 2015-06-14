@@ -29,6 +29,10 @@ namespace ImpControls
 
         #region Fields
 
+        private bool touchMovementStarted;
+        protected bool touchManipulating;
+        private double touchMovement;
+        private int touchStartIndex;
         protected ListController<T> controller;
 
         /// <summary>
@@ -47,6 +51,7 @@ namespace ImpControls
         private int lowIndex;
         //Mouse over index, the list box item that the mouse currently is over.
         private int mouseOverIndex = -1;
+        
 
         #endregion
 
@@ -157,6 +162,7 @@ namespace ImpControls
 
         public ImpListBox(bool searchable, bool multiSelectable)
         {
+            this.IsManipulationEnabled = true;
             CreateController(searchable, multiSelectable);
 
             SizeChanged += ImpListBoxBase_SizeChanged;
@@ -166,6 +172,7 @@ namespace ImpControls
             MouseEnter += ImpListBoxBase_MouseEnter;
             MouseDown += ImpListBoxBase_MouseDown;
             MouseDoubleClick += ImpListBoxBase_MouseDoubleClick;
+            TouchTap += OnTouchTap;
 
             controller.ListSizeChanged += ListSizeChanged;
             controller.ListSelectionChanged += OnSelectionChanged; // need redrawing when list changes
@@ -176,6 +183,11 @@ namespace ImpControls
 
             ToolTip = toolTip;
             //toolTip.StaysOpen = true;
+        }
+
+        private void OnTouchTap(object sender, TouchEventArgs e)
+        {
+            InputSelect(true, e.GetTouchPoint(this).Position.X, e.GetTouchPoint(this).Position.Y);
         }
 
         #region Delegates & Events
@@ -194,10 +206,7 @@ namespace ImpControls
 
         private void OnSelectionChanged()
         {
-            if (SelectionChanged != null)
-            {
-                SelectionChanged();
-            }
+            SelectionChanged?.Invoke();
             InvalidateVisual();
         }
 
@@ -225,6 +234,8 @@ namespace ImpControls
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (touchManipulating) return;
+
             base.OnMouseMove(e);
 
             if (MouseoverIndex > -1 && MouseoverIndex < controller.VisibleCount)
@@ -264,6 +275,83 @@ namespace ImpControls
             //toolTip.StaysOpen = false;
             toolTip.IsOpen = false;
         }
+
+        protected override void OnTouchDown(TouchEventArgs e)
+        {
+            Pressed = true;
+            //InputSelect(true, e.GetTouchPoint(this).Position.X, e.GetTouchPoint(this).Position.Y);
+            base.OnTouchDown(e);
+        }
+
+        protected override void OnPreviewTouchDown(TouchEventArgs e)
+        {
+            touchManipulating = true;
+            base.OnPreviewTouchDown(e);
+        }
+
+        protected override void OnManipulationStarted(ManipulationStartedEventArgs e)
+        {
+            touchMovement = 0;
+            
+            //InputSelect(true, e.ManipulationOrigin.X, e.ManipulationOrigin.Y);
+            
+            touchStartIndex = this.LowIndex;
+            base.OnManipulationStarted(e);
+        }
+
+        protected override void OnManipulationDelta(ManipulationDeltaEventArgs e)
+        {
+            if (this.ItemsDragable && !touchMovementStarted && touchDownStopwatch.Elapsed > TimeSpan.FromSeconds(0.7))
+            {
+                touchMovement -= e.DeltaManipulation.Translation.Y;
+                var pos = e.ManipulationOrigin;// + e.CumulativeManipulation.Translation;
+                if (HitTest(pos))
+                {
+                    var tempIndex = lowIndex + (int) Math.Floor(pos.Y/RowHeight);
+                    DragShow(tempIndex);
+                    MouseoverIndex = tempIndex;
+                }
+            }
+            else
+            {
+                touchMovement -= e.DeltaManipulation.Translation.Y;
+                LowIndex = (int)Math.Round(touchStartIndex + touchMovement / RowHeight);
+                if (LowIndex != touchStartIndex || Math.Abs(touchMovement) > 10)
+                {
+                    touchMovementStarted = true;
+                }
+            }
+            
+            base.OnManipulationDelta(e);
+        }
+
+        protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
+        {
+            if (GlobalKeyboard.ModKeys == ModifierKeys.None && ItemsDragable && pressedState == MouseStates.WindowPressed)
+            {
+                if (dragTo > -1)
+                    controller.DoDrag(dragTo);
+                else if (controller.IsSelectedIndex(MouseoverIndex))
+                    controller.Select(SelectionMode.One, MouseoverIndex);
+            }
+
+            dragTo = -1;
+
+            touchMovementStarted = false;
+            Pressed = false;
+            touchManipulating = false;
+            base.OnManipulationCompleted(e);
+        }
+
+        protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
+        {
+            // 10 inches per second every second.
+            // (10 inches * 96 pixels per inch / 1000ms^2)
+            e.TranslationBehavior.DesiredDeceleration = 10.0 * 96.0 / (1000.0 * 1000.0);
+            base.OnManipulationInertiaStarting(e);
+        }
+
+        #region Draw
 
         protected override void DrawContent(DrawingContext drawingContext)
         {
@@ -525,6 +613,8 @@ namespace ImpControls
             return fText;
         }
 
+        #endregion Draw
+
         public void SetList(ref T[] contentList)
         {
             controller.Clear();
@@ -580,39 +670,46 @@ namespace ImpControls
             OnMouseDown(e);
             if (Pressed)
             {
-                if (e.GetPosition(this).X >= ActualWidth - SCROLLBARWIDTH && ScrollBarVisible)
-                {
-                    ScrollBarMove(e.GetPosition(this).Y);
-                    pressedState = MouseStates.PanRightPressed;
-                }
-                else
-                {
-                    pressedState = MouseStates.WindowPressed;
-                    if (MouseoverIndex > HighIndex)
-                        return;
-
-                    if (ItemsDragable && GlobalKeyboard.ModKeys == ModifierKeys.None)
-                    {
-                        if (controller.IsSelected(MouseoverIndex))
-                        {
-                            // makes it selected index
-                            controller.Select(SelectionMode.Add, MouseoverIndex);
-                            DragShow(MouseoverIndex);
-                        }
-
-                        else
-                            controller.Select(SelectionMode.One, MouseoverIndex);
-                    }
-                    else if (GlobalKeyboard.ModKeys == ModifierKeys.None)
-                        controller.Select(SelectionMode.One, MouseoverIndex);
-                    else if (GlobalKeyboard.ModKeys == ModifierKeys.Shift)
-                        controller.Select(SelectionMode.GroupOnly, MouseoverIndex);
-                    else if (GlobalKeyboard.ModKeys == ModifierKeys.Control)
-                        controller.Select(SelectionMode.Inverse, MouseoverIndex);
-                    else if (GlobalKeyboard.ModKeys == (ModifierKeys.Control | ModifierKeys.Shift))
-                        controller.Select(SelectionMode.Add, MouseoverIndex);
-                }
+                InputSelect(false, e.GetPosition(this).X, e.GetPosition(this).Y);
             }
+        }
+
+        private void InputSelect(bool touch, double x, double y)
+        {
+
+            if (!touch && x >= ActualWidth - SCROLLBARWIDTH && ScrollBarVisible)
+            {
+                ScrollBarMove(y);
+                pressedState = MouseStates.PanRightPressed;
+            }
+            else
+            {
+                pressedState = MouseStates.WindowPressed;
+                if (MouseoverIndex > HighIndex)
+                    return;
+
+                if (!touch && ItemsDragable && GlobalKeyboard.ModKeys == ModifierKeys.None)
+                {
+                    if (controller.IsSelected(MouseoverIndex))
+                    {
+                        // makes it selected index
+                        controller.Select(SelectionMode.Add, MouseoverIndex);
+                        DragShow(MouseoverIndex);
+                    }
+
+                    else
+                        controller.Select(SelectionMode.One, MouseoverIndex);
+                }
+                else if (GlobalKeyboard.ModKeys == ModifierKeys.None)
+                    controller.Select(SelectionMode.One, MouseoverIndex);
+                else if (GlobalKeyboard.ModKeys == ModifierKeys.Shift)
+                    controller.Select(SelectionMode.GroupOnly, MouseoverIndex);
+                else if (GlobalKeyboard.ModKeys == ModifierKeys.Control)
+                    controller.Select(SelectionMode.Inverse, MouseoverIndex);
+                else if (GlobalKeyboard.ModKeys == (ModifierKeys.Control | ModifierKeys.Shift))
+                    controller.Select(SelectionMode.Add, MouseoverIndex);
+            }
+
         }
 
         private void ImpListBoxBase_MouseEnter(object sender, MouseEventArgs e)
@@ -627,6 +724,8 @@ namespace ImpControls
 
         protected virtual void ImpListBoxBase_MouseMove(object sender, MouseEventArgs e)
         {
+            if (touchManipulating) return;
+            
             if (pressedState == MouseStates.PanRightPressed)
             {
                 ScrollBarMove(e.GetPosition(this).Y);
@@ -649,7 +748,7 @@ namespace ImpControls
                 }
 
 
-                if (pressedState == MouseStates.WindowPressed)
+                if (e.LeftButton.HasFlag(MouseButtonState.Pressed) && pressedState == MouseStates.WindowPressed)
                 {
                     if (GlobalKeyboard.ModKeys == ModifierKeys.None && ItemsDragable == false)
                         controller.Select(SelectionMode.One, MouseoverIndex);
