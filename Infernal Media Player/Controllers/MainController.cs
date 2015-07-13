@@ -342,11 +342,17 @@ namespace Imp.Controllers
 
         protected override void PlaySelectedFolderFiles()
         {
-            Exec(ImpCommand.ClearPlaylist);
-            window.PanelOpen.PrepareFolderLoader(
-                new DirectoryLoadOptions(window.PanelOpen.ListDirectories.GetSelected().Value,
-                    SearchOption.AllDirectories,
-                    window.PanelOpen.GetFileTypes()) {PlayFirstFile = true});
+            var selected = window.PanelOpen.ListDirectories.GetSelected();
+
+            if (selected != null)
+            {
+                Exec(ImpCommand.ClearPlaylist);
+                window.PanelOpen.PrepareFolderLoader(
+                    new DirectoryLoadOptions(selected.Value,
+                        SearchOption.AllDirectories,
+                        window.PanelOpen.GetFileTypes())
+                    { PlayFirstFile = true });
+            }
         }
 
         protected override void RequestDeleteOpenFiles()

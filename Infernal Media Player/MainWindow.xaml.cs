@@ -487,6 +487,7 @@ namespace Imp
 
         private void MenuList_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.LeftButton != MouseButtonState.Pressed) return;
             var textAndCommand = MenuList.GetSelected();
             if (textAndCommand != null)
                 mainC.Exec(textAndCommand.Command, textAndCommand.Argument);
