@@ -46,7 +46,7 @@
         <ImpControls:ImpButton x:Name="ButtonOpen" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,160,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
 
         <Rectangle Name="SplitterLeft" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
-        <Element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" MouseDown="UriPlayer_MouseDown" MouseDoubleClick="UriPlayer_MouseDoubleClick" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" IsTabStop="False"/>
+        <Element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" IsTabStop="False"/>
         <Image x:Name="LogoViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Source="/Infernal Media Player;component/Images/imp-logo.png" Stretch="None" />
         <Image x:Name="ImageViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Stretch="None" Visibility="Hidden" />
 

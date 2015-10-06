@@ -102,22 +102,17 @@ namespace Imp
             }
         }
 
-        private bool MouseOverGrid
-        {
-            get
-            {
-                return grid.IsMouseDirectlyOver ||
-                       LabelTopic.IsMouseOver ||
-                       BarBottom.IsMouseDirectlyOver ||
-                       BarTop.IsMouseDirectlyOver ||
-                       BarTop2.IsMouseDirectlyOver ||
-                       ImageViewer.IsMouseDirectlyOver ||
-                       LogoViewer.IsMouseDirectlyOver ||
-                       PanelOpen.LabelTopic.IsMouseOver ||
-                       PanelPlaylist.LabelTopic.IsMouseOver ||
-                       PlayerBottom.LabelPosition.IsMouseOver;
-            }
-        }
+        private bool MouseOverGrid => grid.IsMouseDirectlyOver ||
+                                      LabelTopic.IsMouseOver ||
+                                      BarBottom.IsMouseDirectlyOver ||
+                                      BarTop.IsMouseDirectlyOver ||
+                                      BarTop2.IsMouseDirectlyOver ||
+                                      ImageViewer.IsMouseDirectlyOver ||
+                                      UriPlayer.IsMouseOver ||
+                                      LogoViewer.IsMouseDirectlyOver ||
+                                      PanelOpen.LabelTopic.IsMouseOver ||
+                                      PanelPlaylist.LabelTopic.IsMouseOver ||
+                                      PlayerBottom.LabelPosition.IsMouseOver;
 
         #endregion
 
@@ -359,11 +354,6 @@ namespace Imp
                 mainC.Exec(ImpCommand.Playpause);
         }
 
-        private void UriPlayer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            mainC.Exec(ImpCommand.ToggleFullscreen);
-        }
-
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (IsMouseOverList()) return;
@@ -466,7 +456,8 @@ namespace Imp
                 LabelTopic.IsMouseOver ||
                 LabelEvent.IsMouseOver ||
                 grid.IsMouseDirectlyOver ||
-                LogoViewer.IsMouseDirectlyOver)
+                LogoViewer.IsMouseDirectlyOver ||
+                UriPlayer.IsMouseOver)
             {
                 mainC.Exec(ImpCommand.ToggleFullscreen);
             }
