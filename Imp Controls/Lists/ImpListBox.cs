@@ -21,12 +21,6 @@ namespace ImpControls
 
     public class ImpListBox<T> : ImpBaseControl
     {
-        #region Static Fields and Constants
-
-        protected const int SCROLLBARWIDTH = 10;
-
-        #endregion
-
         #region Fields
 
         private bool touchMovementStarted;
@@ -46,7 +40,6 @@ namespace ImpControls
         protected MouseStates mouseoverState = MouseStates.None;
         protected MouseStates pressedState = MouseStates.None;
         protected ToolTip toolTip = new ToolTip();
-        internal int RowHeight = 15;
         private int highIndex;
         private int lowIndex;
         //Mouse over index, the list box item that the mouse currently is over.
@@ -88,11 +81,11 @@ namespace ImpControls
                 lowIndex = value;
                 if (lowIndex < 0)
                     lowIndex = 0;
-                highIndex = lowIndex + (int) Math.Floor(ActualHeight / RowHeight) - 1;
+                highIndex = lowIndex + (int) Math.Floor(ActualHeight / sStyle.RowHeight) - 1;
                 if (highIndex > controller.VisibleCount - 1)
                 {
                     highIndex = controller.VisibleCount - 1;
-                    lowIndex = highIndex - (int) Math.Floor(ActualHeight / RowHeight) + 1;
+                    lowIndex = highIndex - (int) Math.Floor(ActualHeight / sStyle.RowHeight) + 1;
                 }
                 if (lowIndex < 0)
                     lowIndex = 0;
@@ -123,7 +116,7 @@ namespace ImpControls
                 {
                     highIndex = controller.VisibleCount - 1;
                 }
-                lowIndex = highIndex - (int) Math.Floor(ActualHeight / RowHeight);
+                lowIndex = highIndex - (int) Math.Floor(ActualHeight / sStyle.RowHeight);
                 if (lowIndex < 0)
                     lowIndex = 0;
                 if (TIndex != highIndex)
@@ -306,7 +299,7 @@ namespace ImpControls
                 var pos = e.ManipulationOrigin;// + e.CumulativeManipulation.Translation;
                 if (HitTest(pos))
                 {
-                    var tempIndex = lowIndex + (int) Math.Floor(pos.Y/RowHeight);
+                    var tempIndex = lowIndex + (int) Math.Floor(pos.Y/sStyle.RowHeight);
                     DragShow(tempIndex);
                     MouseoverIndex = tempIndex;
                 }
@@ -314,7 +307,7 @@ namespace ImpControls
             else
             {
                 touchMovement -= e.DeltaManipulation.Translation.Y;
-                LowIndex = (int)Math.Round(touchStartIndex + touchMovement / RowHeight);
+                LowIndex = (int)Math.Round(touchStartIndex + touchMovement / sStyle.RowHeight);
                 if (LowIndex != touchStartIndex || Math.Abs(touchMovement) > 10)
                 {
                     touchMovementStarted = true;
@@ -411,12 +404,12 @@ namespace ImpControls
             {
                 if (dragTo < controller.GetSelectedIndex())
                     drawingContext.DrawLine(new Pen(sStyle.PressedBrush, 1),
-                        new Point(0, (dragTo - LowIndex) * RowHeight + 3),
-                        new Point(GetSW(), (dragTo - LowIndex) * RowHeight + 3));
+                        new Point(0, (dragTo - LowIndex) * sStyle.RowHeight + 3),
+                        new Point(GetSW(), (dragTo - LowIndex) * sStyle.RowHeight + 3));
                 else
                     drawingContext.DrawLine(new Pen(sStyle.PressedBrush, 1),
-                        new Point(0, (dragTo - LowIndex + 1) * RowHeight + 3),
-                        new Point(GetSW(), (dragTo - LowIndex + 1) * RowHeight + 3));
+                        new Point(0, (dragTo - LowIndex + 1) * sStyle.RowHeight + 3),
+                        new Point(GetSW(), (dragTo - LowIndex + 1) * sStyle.RowHeight + 3));
             }
         }
 
@@ -452,7 +445,7 @@ namespace ImpControls
             }
 
 
-            drawingContext.DrawRectangle(brush, null, SafeRect(GetSW() + 0.5, 1, SCROLLBARWIDTH - 1, GetSH(true, false) - 1.5));
+            drawingContext.DrawRectangle(brush, null, SafeRect(GetSW() + 0.5, 1, sStyle.ScrollbarWidth - 1, GetSH(true, false) - 1.5));
 
             drawingContext.DrawLine(new Pen(borderbrush, sStyle.BaseBorderThickness.Left), new Point(GetSW(), GetSH()),
                 new Point(GetSW(), GetSH(true, false)));
@@ -473,7 +466,7 @@ namespace ImpControls
 
             if (GetSH(false) - GetSH(false, false) + 1 < 0)
                 drawingContext.DrawRectangle(scrollerbrush, null,
-                    new Rect(GetSW() + 1, GetSH(false) + 0.5, SCROLLBARWIDTH - 2,
+                    new Rect(GetSW() + 1, GetSH(false) + 0.5, sStyle.ScrollbarWidth - 2,
                         GetSH(false, false) - GetSH(false) - 1));
         }
 
@@ -520,7 +513,7 @@ namespace ImpControls
         {
             double value = 0;
             if (left)
-                value = ActualWidth - 0.5 - SCROLLBARWIDTH;
+                value = ActualWidth - 0.5 - sStyle.ScrollbarWidth;
             else
                 value = ActualWidth - 0.5;
 
@@ -534,15 +527,15 @@ namespace ImpControls
                 //' Draws box if the item is selected
                 if (HighIndex - LowIndex < controller.VisibleCount - 1)
                 {
-                    if (ActualWidth > SCROLLBARWIDTH)
+                    if (ActualWidth > sStyle.ScrollbarWidth)
                         drawingContext.DrawRectangle(sStyle.BackPressedBrush, null,
-                            new Rect(0, (i - LowIndex) * RowHeight + 3,
-                                ActualWidth - SCROLLBARWIDTH, RowHeight));
+                            new Rect(0, (i - LowIndex) * sStyle.RowHeight + 3,
+                                ActualWidth - sStyle.ScrollbarWidth, sStyle.RowHeight));
                 }
                 else
                 {
                     drawingContext.DrawRectangle(sStyle.BackPressedBrush, null,
-                        new Rect(0, (i - LowIndex) * RowHeight + 3, ActualWidth, RowHeight));
+                        new Rect(0, (i - LowIndex) * sStyle.RowHeight + 3, ActualWidth, sStyle.RowHeight));
                 }
             }
 
@@ -558,18 +551,18 @@ namespace ImpControls
                 //' Draws lines for selectedindex
                 if (HighIndex - LowIndex < controller.VisibleCount - 1)
                 {
-                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * RowHeight + 3),
-                        new Point(ActualWidth - SCROLLBARWIDTH, (i - LowIndex) * RowHeight + 3));
-                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * RowHeight + 3 - 1f),
-                        new Point(ActualWidth - SCROLLBARWIDTH,
-                            (i - LowIndex + 1) * RowHeight + 3 - 1f));
+                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * sStyle.RowHeight + 3),
+                        new Point(ActualWidth - sStyle.ScrollbarWidth, (i - LowIndex) * sStyle.RowHeight + 3));
+                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * sStyle.RowHeight + 3 - 1f),
+                        new Point(ActualWidth - sStyle.ScrollbarWidth,
+                            (i - LowIndex + 1) * sStyle.RowHeight + 3 - 1f));
                 }
                 else
                 {
-                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * RowHeight + 3),
-                        new Point(ActualWidth, (i - LowIndex) * RowHeight + 3));
-                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * RowHeight + 3 - 1f),
-                        new Point(ActualWidth, (i - LowIndex + 1) * RowHeight + 3 - 1f));
+                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex) * sStyle.RowHeight + 3),
+                        new Point(ActualWidth, (i - LowIndex) * sStyle.RowHeight + 3));
+                    drawingContext.DrawLine(penl, new Point(0, (i - LowIndex + 1) * sStyle.RowHeight + 3 - 1f),
+                        new Point(ActualWidth, (i - LowIndex + 1) * sStyle.RowHeight + 3 - 1f));
                 }
 
                 brush = sStyle.PressedBrush;
@@ -587,27 +580,27 @@ namespace ImpControls
 
         protected virtual void DrawText(int index, DrawingContext drawingContext, Brush brush)
         {
-            if (ActualWidth - SCROLLBARWIDTH < 0)
+            if (ActualWidth - sStyle.ScrollbarWidth < 0)
                 return;
 
             var text = FormatText(controller.GetText(index), ref brush);
             if (text.MaxTextWidth > 0)
-                drawingContext.DrawText(text, new Point(3, (index - LowIndex) * RowHeight + 3));
+                drawingContext.DrawText(text, new Point(3, (index - LowIndex) * sStyle.RowHeight + 2));
         }
 
         protected virtual FormattedText FormatText(string text, ref Brush brush)
         {
             var fText = new FormattedText(text, CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight, new Typeface("Arial"), 12, brush);
+                FlowDirection.LeftToRight, sStyle.FontFace, sStyle.DefaultFontSize, brush);
 
 
             var width = ActualWidth - 6;
             if (ScrollBarVisible)
             {
-                width -= SCROLLBARWIDTH;
+                width -= sStyle.ScrollbarWidth;
             }
             fText.MaxTextWidth = Math.Max(width, 0);
-            fText.MaxTextHeight = RowHeight;
+            fText.MaxTextHeight = sStyle.RowHeight;
             fText.Trimming = TextTrimming.CharacterEllipsis;
             return fText;
         }
@@ -676,7 +669,7 @@ namespace ImpControls
         private void InputSelect(bool touch, double x, double y)
         {
 
-            if (!touch && x >= ActualWidth - SCROLLBARWIDTH && ScrollBarVisible)
+            if (!touch && x >= ActualWidth - sStyle.ScrollbarWidth && ScrollBarVisible)
                 {
                 ScrollBarMove(y);
                     pressedState = MouseStates.PanRightPressed;
@@ -733,13 +726,13 @@ namespace ImpControls
 
             if (HitTest(e.GetPosition(this)))
             {
-                var tempIndex = lowIndex + (int) Math.Floor(e.GetPosition(this).Y / RowHeight);
+                var tempIndex = lowIndex + (int) Math.Floor(e.GetPosition(this).Y / sStyle.RowHeight);
                 if (tempIndex == MouseoverIndex)
                     return; // nothing to do here
 
                 MouseoverIndex = tempIndex;
 
-                if (ScrollBarVisible && e.GetPosition(this).X >= ActualWidth - SCROLLBARWIDTH ||
+                if (ScrollBarVisible && e.GetPosition(this).X >= ActualWidth - sStyle.ScrollbarWidth ||
                     MouseoverIndex > HighIndex)
                 {
                     MouseoverIndex = -1;

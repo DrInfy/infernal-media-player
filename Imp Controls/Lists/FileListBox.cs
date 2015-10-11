@@ -162,14 +162,14 @@ namespace ImpControls
 
         protected override void DrawText(int index, DrawingContext drawingContext, Brush brush)
         {
-            if (ActualWidth - SCROLLBARWIDTH < 0)
+            if (ActualWidth - sStyle.ScrollbarWidth< 0)
                 return;
 
 
             var text = FormatText(controller.GetText(index), ref brush);
 
             if (text.MaxTextWidth > 0)
-                drawingContext.DrawText(text, new Point(3, (index - LowIndex) * RowHeight + 3));
+                drawingContext.DrawText(text, new Point(3, (index - LowIndex) * sStyle.RowHeight + 3));
         }
 
         public override FileImpInfo GetSelected()

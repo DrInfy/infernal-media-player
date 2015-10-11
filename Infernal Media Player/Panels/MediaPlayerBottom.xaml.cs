@@ -34,8 +34,7 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonLoop, BtnNumber.Loop);
             styleLib.SetStyle(ButtonNext, BtnNumber.Next);
             styleLib.SetStyle(ButtonMute, BtnNumber.Mute);
-
-            LabelPosition.Foreground = styleLib.GetForeground();
+            styleLib.SetStyle(LabelPosition, false);
         }
 
         private void ButtonPlay_Clicked(object sender)

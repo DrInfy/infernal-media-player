@@ -17,14 +17,14 @@ namespace ImpControls
         #region Static Fields and Constants
 
         /// <summary> The scrollbar width</summary>
-        public const int ScrollbarWidth = 10;
+        public int ScrollbarWidth = 10;
 
         #endregion
 
         #region Fields
 
         /// <summary> height of one single row in listboxes in pixels</summary>
-        public int RowHeight = 15;
+        public int RowHeight = 18;
 
         public Brush BorderBrush;
         public Brush BorderMouseoverBrush;
@@ -42,6 +42,10 @@ namespace ImpControls
         public Brush PanelLowerBrush;
         public Thickness BaseBorderThickness;
         public Point PressedTranslation = new Point(0, 0);
+        public Typeface FontFace = new Typeface("Segoe UI");
+        public FontFamily DefaultFont = new FontFamily("Segoe UI");
+
+        public int DefaultFontSize = 12;
 
         #endregion
 

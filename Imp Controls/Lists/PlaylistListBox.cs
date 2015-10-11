@@ -81,7 +81,7 @@ namespace ImpControls.Lists
 
         protected override void DrawText(int index, DrawingContext drawingContext, Brush brush)
         {
-            if (ActualWidth - SCROLLBARWIDTH < 0)
+            if (ActualWidth - sStyle.ScrollbarWidth < 0)
                 return;
             FormattedText formatText;
 
@@ -95,7 +95,7 @@ namespace ImpControls.Lists
                 formatText = FormatText((index + 1) + ". " + controller.GetText(index), ref brush);
             }
 
-            drawingContext.DrawText(formatText, new Point(3, (index - LowIndex) * RowHeight + 3));
+            drawingContext.DrawText(formatText, new Point(3, (index - LowIndex) * sStyle.RowHeight + 3));
         }
 
         public void OpenNext(LoopMode loopMode)

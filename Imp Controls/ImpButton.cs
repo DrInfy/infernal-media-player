@@ -150,7 +150,7 @@ namespace ImpControls
             else if (content is string)
             {
                 var text = new FormattedText((string) content, System.Globalization.CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, new Typeface("Arial"), 12, renderData.FrontBrush);
+                    FlowDirection.LeftToRight, sStyle.FontFace, sStyle.DefaultFontSize, renderData.FrontBrush);
 
                 text.MaxTextWidth = Math.Max(0, ActualWidth - 6);
                 //text.MaxTextHeight = Me.ActualHeight

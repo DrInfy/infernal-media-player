@@ -75,8 +75,8 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
             styleLib.SetStyle(ButtonClearFindFolder, BtnNumber.Close);
 
-            styleLib.SetStyle(ButtonAddPath, "+++");
-            styleLib.SetStyle(ButtonClearPath, "---");
+            styleLib.SetStyle(ButtonAddPath, "+ + +");
+            styleLib.SetStyle(ButtonClearPath, "- - -");
 
             styleLib.SetStyle(ButtonSort, "Name");
             ButtonSort.SetContent("Date", 1);

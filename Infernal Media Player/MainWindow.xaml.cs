@@ -158,7 +158,9 @@ namespace Imp
             Styling.SetStyle(ButtonExit, BtnNumber.Close);
 
             Styling.SetStyle(MenuList);
-            LabelTopic.Foreground = Styling.GetForeground();
+            Styling.SetStyle(LabelTopic, false);
+            Styling.SetStyle(LabelEvent, false);
+
 
             BarBottom.Fill = Styling.GetGridBrush(true);
             BarTop.Fill = Styling.GetGridBrush(true);

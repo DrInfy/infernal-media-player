@@ -122,10 +122,24 @@ namespace ImpControls.Gui
 
         private static Geometry Next(PathFigureCollection pFc, PathGeometry pG)
         {
-            AddLine(new Point(0, 10), new Point(80, 50), pFc);
-            AddLine(new Point(0, 10), new Point(0, 90), pFc);
-            AddLine(new Point(0, 90), new Point(80, 50), pFc);
-            AddLine(new Point(100, 10), new Point(100, 90), pFc);
+            //AddLine(new Point(0, 0), new Point(70, 35), pFc);
+            //AddLine(new Point(0, 0), new Point(0, 100), pFc);
+            //AddLine(new Point(0, 100), new Point(70, 65), pFc);
+
+            AddLine(new Point(80, 0), new Point(80, 100), pFc);
+            AddLine(new Point(80, 0), new Point(100, 0), pFc);
+            AddLine(new Point(80, 100), new Point(100, 100), pFc);
+            AddLine(new Point(100, 0), new Point(100, 100), pFc);
+
+            AddLine(new Point(0, 0), new Point(80, 40), pFc);
+            AddLine(new Point(0, 0), new Point(0, 100), pFc);
+            AddLine(new Point(0, 100), new Point(80, 60), pFc);
+
+            //AddLine(new Point(70, 0), new Point(70, 50 - 11.111111f), pFc);
+            //AddLine(new Point(70, 100), new Point(70, 50+ 11.111111f), pFc);
+            //AddLine(new Point(70, 0), new Point(100, 0), pFc);
+            //AddLine(new Point(70, 100), new Point(100, 100), pFc);
+            //AddLine(new Point(100, 0), new Point(100, 100), pFc);
 
             pG.Figures = pFc;
             return pG;

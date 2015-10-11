@@ -82,6 +82,7 @@ namespace ImpControls.Gui
             textBox.Background = BaseStyle.PanelUpperBrush;
             textBox.BorderBrush = BaseStyle.BorderBrush;
             textBox.Foreground = BaseStyle.NormalBrush;
+            textBox.FontFamily = BaseStyle.DefaultFont;
         }
 
         private void SetDefaultButtonStyle()
@@ -171,10 +172,11 @@ namespace ImpControls.Gui
             button.SetStyle(ButtonStyle);
         }
 
-        public void SetStyle(Label label)
+        public void SetStyle(Label label, bool background = true)
         {
-            label.Background = GetGridBrush(true);
+            if (background) label.Background = GetGridBrush(true);
             label.Foreground = GetForeground();
+            label.FontFamily = BaseStyle.DefaultFont;
         }
     }
 }
