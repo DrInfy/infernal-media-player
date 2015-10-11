@@ -157,7 +157,7 @@ namespace ImpControls
                 text.MaxLineCount = 1;
                 text.TextAlignment = TextAlignment.Center;
                 text.Trimming = TextTrimming.CharacterEllipsis;
-                drawingContext.DrawText(text, new Point(3 + x, ActualHeight / 2 - 6 + y));
+                drawingContext.DrawText(text, new Point(3 + x, ActualHeight / 2 - 8 + y));
             }
         }
 
