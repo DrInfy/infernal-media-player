@@ -186,10 +186,10 @@ namespace ImpControls.Gui
             AddLine(pFc,
                 new Point(0, 90),
                 new Point(20, 30),
-                new Point(30, 50),
-                new Point(60, 60),
-                new Point(70, 80),
-                new Point(90, 90));
+                new Point(35, 60),
+                new Point(60, 65),
+                new Point(70, 85),
+                new Point(100, 90));
             
 
             pG.Figures = pFc;
@@ -689,21 +689,45 @@ namespace ImpControls.Gui
 
         private static Geometry Refresh(PathFigureCollection pFc, PathGeometry pG)
         {
-            AddLine(new Point(0, 60), new Point(45, 60), pFc);
-            AddLine(new Point(0, 60), new Point(0, 15), pFc);
-            AddLine(new Point(45, 60), new Point(0, 15), pFc);
 
-            AddLine(new Point(22.5f, 37.5f), new Point(40, 20), pFc);
-            AddLine(new Point(40, 20), new Point(70, 15), pFc);
+            //AddLine(new Point(0, 60), new Point(45, 60), pFc);
+            //AddLine(new Point(0, 60), new Point(0, 15), pFc);
+            //AddLine(new Point(45, 60), new Point(0, 15), pFc);
 
-            AddLine(new Point(100, 40), new Point(55, 40), pFc);
-            AddLine(new Point(100, 40), new Point(100, 85), pFc);
-            AddLine(new Point(55, 40), new Point(100, 85), pFc);
+            //AddLine(new Point(22.5f, 37.5f), new Point(40, 20), pFc);
+            //AddLine(new Point(40, 20), new Point(70, 15), pFc);
 
-            AddLine(new Point(77.5f, 62.5f), new Point(60, 80), pFc);
-            AddLine(new Point(60, 75), new Point(30, 85), pFc);
+            //AddLine(new Point(100, 40), new Point(55, 40), pFc);
+            //AddLine(new Point(100, 40), new Point(100, 85), pFc);
+            //AddLine(new Point(55, 40), new Point(100, 85), pFc);
+
+            //AddLine(new Point(77.5f, 62.5f), new Point(60, 80), pFc);
+            //AddLine(new Point(60, 75), new Point(30, 85), pFc);
+            AddLine(pFc, 
+                new Point(50, 15),
+                new Point(50, -5),
+                new Point(75, 20),
+                new Point(50, 45),
+                new Point(50, 25));
+            AddLine(new Point(90, 50), new Point(70, 50), pFc);
             pG.Figures = pFc;
-            return pG;
+            var figure1 = new PathFigure();
+            figure1.StartPoint = new Point(50,15);
+            figure1.Segments.Add(new ArcSegment(new Point(85,50), new Size(35, 35), 45, true, SweepDirection.Counterclockwise, true) );
+            pG.Figures.Add(figure1);
+
+            var figure2 = new PathFigure();
+            figure2.StartPoint = new Point(50, 25);
+            figure2.Segments.Add(new ArcSegment(new Point(75, 50), new Size(25, 25), 45, true, SweepDirection.Counterclockwise, true));
+            pG.Figures.Add(figure2);
+            var transformGroup = new TransformGroup();
+            transformGroup.Children.Add(new TranslateTransform(-50,-50));
+            transformGroup.Children.Add(new RotateTransform(45));
+            transformGroup.Children.Add(new TranslateTransform(50, 50));
+            pG.Transform = transformGroup;
+            //Geometry.Combine(pG, pG, GeometryCombineMode.Intersect, transform);
+            return pG.GetFlattenedPathGeometry();
+            //return Geometry.Combine(Geometry.Empty, pG, GeometryCombineMode.Union, transform);
         }
 
         private static Geometry Remove(PathFigureCollection pFc, PathGeometry pG)
