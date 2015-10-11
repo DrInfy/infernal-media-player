@@ -59,9 +59,9 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonAddSubFolder, BtnNumber.AddSubFolder);
             styleLib.SetStyle(ButtonAddSelected, BtnNumber.AddFile);
 
-            styleLib.SetStyle(ButtonFilterVideo, "video");
-            styleLib.SetStyle(ButtonFilterMusic, "audio");
-            styleLib.SetStyle(ButtonFilterPictures, "image");
+            styleLib.SetStyle(ButtonFilterVideo, BtnNumber.Movie);
+            styleLib.SetStyle(ButtonFilterMusic, BtnNumber.Music);
+            styleLib.SetStyle(ButtonFilterPictures, BtnNumber.Picture);
 
             styleLib.SetStyle(ButtonEnlargeDownwards, BtnNumber.EnlargeDown);
             styleLib.SetStyle(ButtonEnlargeUpwards, BtnNumber.EnlargeUp);
@@ -78,8 +78,8 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonAddPath, "+ + +");
             styleLib.SetStyle(ButtonClearPath, "- - -");
 
-            styleLib.SetStyle(ButtonSort, "Name");
-            ButtonSort.SetContent("Date", 1);
+            styleLib.SetStyle(ButtonSort, BtnNumber.Sort);
+            //ButtonSort.SetContent("Date", 1);
 
             Background = styleLib.GetGridBrush(false);
             styleLib.SetStyle(TextBoxFind);

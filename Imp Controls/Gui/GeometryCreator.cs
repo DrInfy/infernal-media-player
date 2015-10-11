@@ -34,6 +34,12 @@ namespace ImpControls.Gui
         EnlargeUp,
         EnlargeDown,
         Next,
+        
+        SortByName,
+        Sort,
+        Movie,
+        Music,
+        Picture
     }
 
 
@@ -113,11 +119,124 @@ namespace ImpControls.Gui
                     return EnlargeDown(pFc, pG);
                 case BtnNumber.Next:
                     return Next(pFc, pG);
+                case BtnNumber.SortByName:
+                    return SortByName(pFc, pG);
+                case BtnNumber.Sort:
+                    if (state == 0)
+                    {
+                        return SortByName(pFc, pG);
+                    }
+                    return SortByTime(pFc, pG);
+                case BtnNumber.Movie:
+                    return Movie(pFc, pG);
+                case BtnNumber.Music:
+                    return Music(pFc, pG);
+                case BtnNumber.Picture:
+                    return Pictures(pFc, pG);
                 default:
 
                     throw new Exception("Unidentified button");
             }
             return null;
+        }
+
+        private static Geometry SortByTime(PathFigureCollection pFc, PathGeometry pG)
+        {
+            AddLine(new Point(10, 100), new Point(20, 100), pFc);
+            AddLine(new Point(10, 100), new Point(10, 30), pFc);
+            AddLine(new Point(20, 100), new Point(20, 30), pFc);
+            AddLine(new Point(10, 30), new Point(0, 30), pFc);
+            AddLine(new Point(20, 30), new Point(30, 30), pFc);
+            AddLine(new Point(0, 30), new Point(15, 0), pFc);
+            AddLine(new Point(30, 30), new Point(15, 0), pFc);
+
+            var center = new Point(70, 60);
+            AddLine(center, new Point(65, 40), pFc);
+            AddLine(center, new Point(100, 70), pFc);
+
+            pG.Figures = pFc;
+            pG.AddGeometry(new EllipseGeometry(center, 30, 30));
+
+            return pG;
+        }
+
+        private static Geometry SortByName(PathFigureCollection pFc, PathGeometry pG)
+        {
+            AddLine(new Point(10, 0), new Point(20, 0), pFc);
+            AddLine(new Point(10, 0), new Point(10, 70), pFc);
+            AddLine(new Point(20, 0), new Point(20, 70), pFc);
+            AddLine(new Point(10, 70), new Point(0, 70), pFc);
+            AddLine(new Point(20, 70), new Point(30, 70), pFc);
+            AddLine(new Point(0, 70), new Point(15, 100), pFc);
+            AddLine(new Point(30, 70), new Point(15, 100), pFc);
+
+            AddLine(new Point(40, 10), new Point(60, 10), pFc);
+            AddLine(new Point(40, 30), new Point(70, 30), pFc);
+            AddLine(new Point(40, 50), new Point(80, 50), pFc);
+            AddLine(new Point(40, 70), new Point(90, 70), pFc);
+            AddLine(new Point(40, 90), new Point(100, 90), pFc);
+
+            pG.Figures = pFc;
+            return pG;
+        }
+
+        private static Geometry Pictures(PathFigureCollection pFc, PathGeometry pG)
+        {
+
+            AddLine(pFc,
+                new Point(0, 90),
+                new Point(20, 30),
+                new Point(30, 50),
+                new Point(60, 60),
+                new Point(70, 80),
+                new Point(90, 90));
+            
+
+            pG.Figures = pFc;
+            AddRect(new Rect(0, 10, 100, 80), pG);
+            pG.AddGeometry(new EllipseGeometry(new Point(80, 30), 10, 10));
+
+            return pG;
+        }
+
+        private static Geometry Music(PathFigureCollection pFc, PathGeometry pG)
+        {
+            
+            AddVLine(new Point(30, 65), 65, pFc );
+            AddVLine(new Point(100, 85), 65, pFc);
+            AddLine(new Point(30, 0), new Point(100, 20),pFc  );
+            AddLine(new Point(30, 20), new Point(100, 40),pFc  );
+
+            pG.Figures = pFc;
+            const int r = 15;
+            pG.AddGeometry(new EllipseGeometry(new Point(15, 65), r, r));
+            pG.AddGeometry(new EllipseGeometry(new Point(85, 85), r, r));
+
+            return pG;
+        }
+
+        private static Geometry Movie(PathFigureCollection pFc, PathGeometry pG)
+        {
+            var d = 20d;
+            AddLine(new Point(0, 0), new Point(0, 100), pFc);
+            AddLine(new Point(d, 0), new Point(d, 100), pFc);
+
+            AddLine(new Point(100, 0), new Point(100, 100), pFc);
+            AddLine(new Point(100 - d, 0), new Point(100-d, 100), pFc);
+
+            for (int i = 0; i < 6; i++)
+            {
+                AddHLine(new Point(0, i * d), d, pFc);
+                AddHLine(new Point(100, i * d), -d, pFc);
+            }
+
+            AddHLine(new Point(d, 0), 100-d*2, pFc);
+            AddHLine(new Point(d, 50), 100 - d * 2, pFc);
+            AddHLine(new Point(d, 100), 100 - d * 2, pFc);
+
+
+            pG.Figures = pFc;
+            return pG;
         }
 
         private static Geometry Next(PathFigureCollection pFc, PathGeometry pG)
@@ -194,6 +313,24 @@ namespace ImpControls.Gui
             AddLine(new Point(55, 65 + y), new Point(55, 50 + y), pFc);
             pG.Figures = pFc;
             return pG;
+        }
+
+        private static void AddHLine(Point p1, double d, PathFigureCollection pathF)
+        {
+            AddLine(p1, new Point(p1.X + d, p1.Y), pathF);
+        }
+
+        private static void AddVLine(Point p1, double d, PathFigureCollection pathF)
+        {
+            AddLine(p1, new Point(p1.X, p1.Y - d), pathF);
+        }
+
+        private static void AddLine(PathFigureCollection pathF, params Point[] points)
+        {
+            for (int i = 0; i < points.Length-1; i++)
+            {
+                AddLine(points[i], points[i+1], pathF);
+            }
         }
 
         private static void AddLine(Point p1, Point p2, PathFigureCollection pathF)

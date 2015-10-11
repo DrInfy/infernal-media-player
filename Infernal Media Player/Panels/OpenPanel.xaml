@@ -72,7 +72,7 @@
 	        <Grid.Width>auto</Grid.Width>
 	        <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="30"/>
                 <ColumnDefinition Width="30"/>
                 <ColumnDefinition Width="30"/>
                 <ColumnDefinition Width="15"/>

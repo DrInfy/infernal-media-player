@@ -69,7 +69,7 @@ namespace ImpControls
 
         public void SetContent(object content, int index = 0)
         {
-            if (index >= 0 & index < CheckStates)
+            if (index >= 0 & index < CheckStates && sContent.Length > index)
             {
                 sContent[index] = content;
             }

@@ -41,7 +41,7 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonMaximizePanel, BtnNumber.Maximize);
 
             styleLib.SetStyle(ButtonRemoveFile, BtnNumber.Remove);
-            styleLib.SetStyle(ButtonSort, "Sort");
+            styleLib.SetStyle(ButtonSort, BtnNumber.SortByName);
 
             styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
 
