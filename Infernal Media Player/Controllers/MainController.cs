@@ -317,9 +317,17 @@ namespace Imp.Controllers
 
         protected override void AddSelectedFolderToPaths()
         {
-            var path = window.PanelOpen.ListDirectories.GetSelected().Value;
-            if (StringHandler.IsSpecialFolder(path)) return;
-            if (Settings.CustomPaths.Contains(path)) return;
+            var item = window.PanelOpen.ListDirectories.GetSelected();
+
+            var path = window.PanelOpen.ListDirectories.GetSelected()?.Value;
+
+            if (path == null || StringHandler.IsSpecialFolder(path) || Settings.CustomPaths.Contains(path) ||
+                path.Length < 4)
+            {
+                EventC.SetEvent(new EventText("Path cannot be added", 1d, EventType.Delayed));
+                return;
+            }
+
             Settings.CustomPaths.Add(path);
             window.PanelOpen.Refresh(this);
         }
