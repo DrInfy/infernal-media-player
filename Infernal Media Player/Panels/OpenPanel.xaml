@@ -62,10 +62,10 @@
 
             <TextBox x:Name="TextBoxFindFolder" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="0"
                      VerticalAlignment="Stretch" Grid.Column="{impControls:GridDefinition ColumnFind}"
-                     TextChanged="TextBoxFindFolder_TextChanged" FontSize="13.333" />
+                     TextChanged="TextBoxFindFolder_TextChanged" FontSize="15" VerticalContentAlignment="Center" />
             <impControls:ImpButton x:Name="ButtonClearFindFolder" Visibility="Hidden" HorizontalAlignment="Right"
                                    Width="15" Grid.Column="{impControls:GridDefinition ColumnFind}" Grid.Row="0"
-                                   Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="2"
+                                   Margin="1,1,1,1" VerticalAlignment="Stretch" CheckStates="2"
                                    Clicked="ButtonClearFindFolder_Clicked" />
 
             <impControls:ImpButton x:Name="ButtonAddSubFolder" HorizontalAlignment="Stretch" Margin="0,0,0,0"
@@ -116,7 +116,7 @@
 
             <TextBox x:Name="TextBoxFind" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="0"
                      VerticalAlignment="Stretch" Grid.Column="3" TextChanged="TextBoxFind_TextChanged"
-                     FontSize="14.667" />
+                     FontSize="15" VerticalContentAlignment="Center" />
             <impControls:ImpButton x:Name="ButtonClearFind" Visibility="Hidden" HorizontalAlignment="Right" Width="15"
                                    Grid.Column="3" Grid.Row="0" Margin="1,1,1,1" VerticalAlignment="Stretch"
                                    CheckStates="2" Clicked="ButtonClearFind_Clicked" />

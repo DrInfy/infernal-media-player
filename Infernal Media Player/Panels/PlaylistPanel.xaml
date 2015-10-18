@@ -26,8 +26,8 @@
             <impControls:ImpButton x:Name="ButtonClearPlaylist" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="{impControls:GridDefinition ColumnClear}"  Clicked="ButtonClearPlaylist_Clicked"/>
             <!--<Label x:Name="LabelTopic" Background="#FFF4F4F5" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" Margin="90,0,0,0" VerticalAlignment="Stretch"  Grid.ColumnSpan="2" Content="Playlist" FontSize="16"/>-->
 
-            <TextBox x:Name="TextBoxFind" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="0" Grid.Column="{impControls:GridDefinition ColumnFind}" TextWrapping="NoWrap" VerticalAlignment="Stretch" TextChanged="TextBoxFind_TextChanged"/>
-            <impControls:ImpButton x:Name="ButtonClearFind" Grid.Row="0" Visibility="Hidden" Margin="1,1,61,1"  Grid.Column="{impControls:GridDefinition ColumnFind}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="15" Clicked="ButtonClearFind_OnClicked"/>
+            <TextBox x:Name="TextBoxFind" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="0" Grid.Column="{impControls:GridDefinition ColumnFind}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontSize="15" TextChanged="TextBoxFind_TextChanged"/>
+            <impControls:ImpButton x:Name="ButtonClearFind" Grid.Row="0" Visibility="Hidden" Margin="1,1,1,1"  Grid.Column="{impControls:GridDefinition ColumnFind}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="15" Clicked="ButtonClearFind_OnClicked"/>
             <impControls:ImpButton x:Name="ButtonRemoveFile" Grid.Row="0" Margin="0,0,0,0" HorizontalAlignment="Stretch" Grid.Column="{impControls:GridDefinition ColumnRemove}" VerticalAlignment="Stretch" Clicked="ButtonRemoveFile_Clicked"/>
             <impControls:ImpButton x:Name="ButtonSort" Grid.Row="0" Margin="0,0,0,0" HorizontalAlignment="Stretch" Grid.Column="{impControls:GridDefinition ColumnSort}" VerticalAlignment="Stretch" Clicked="ButtonSort_Clicked"/>
         </Grid>
