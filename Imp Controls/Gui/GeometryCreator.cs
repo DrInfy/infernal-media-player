@@ -39,7 +39,10 @@ namespace ImpControls.Gui
         Sort,
         Movie,
         Music,
-        Picture
+        Picture,
+
+        RememberPath,
+        ForgetPath
     }
 
 
@@ -133,11 +136,55 @@ namespace ImpControls.Gui
                     return Music(pFc, pG);
                 case BtnNumber.Picture:
                     return Pictures(pFc, pG);
+                case BtnNumber.RememberPath:
+                    return RememberPath(pFc, pG);
+                case BtnNumber.ForgetPath:
+                    return ForgetPath(pFc, pG);
                 default:
 
                     throw new Exception("Unidentified button");
             }
             return null;
+        }
+
+        private static Geometry ForgetPath(PathFigureCollection pFc, PathGeometry pG)
+        {
+            //AddLine(new Point(0, 0), new Point(40, 40), pFc);
+            //AddLine(new Point(0, 40), new Point(40, 0), pFc);
+            AddLine(new Point(0, 10), new Point(40, 10), pFc);
+
+            AddLine(new Point(35, 35), new Point(35, 85), pFc);
+            AddLine(new Point(35, 85), new Point(70, 100), pFc);
+
+            AddLine(new Point(35, 35), new Point(100, 35), pFc);
+            AddLine(new Point(100, 30), new Point(100, 85), pFc);
+
+            AddLine(new Point(70, 45), new Point(70, 100), pFc);
+            AddLine(new Point(35, 35), new Point(70, 45), pFc);
+
+            AddLine(new Point(100, 85), new Point(70, 85), pFc);
+            pG.Figures = pFc;
+            return pG;
+
+        }
+
+        private static Geometry RememberPath(PathFigureCollection pFc, PathGeometry pG)
+        {
+            AddLine(new Point(20, 0), new Point(20, 40), pFc);
+            AddLine(new Point(0, 20), new Point(40, 20), pFc);
+
+            AddLine(new Point(35, 35), new Point(35, 85), pFc);
+            AddLine(new Point(35, 85), new Point(70, 100), pFc);
+
+            AddLine(new Point(35, 35), new Point(100, 35), pFc);
+            AddLine(new Point(100, 30), new Point(100, 85), pFc);
+
+            AddLine(new Point(70, 45), new Point(70, 100), pFc);
+            AddLine(new Point(35, 35), new Point(70, 45), pFc);
+
+            AddLine(new Point(100, 85), new Point(70, 85), pFc);
+            pG.Figures = pFc;
+            return pG;
         }
 
         private static Geometry SortByTime(PathFigureCollection pFc, PathGeometry pG)

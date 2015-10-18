@@ -75,8 +75,8 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
             styleLib.SetStyle(ButtonClearFindFolder, BtnNumber.Close);
 
-            styleLib.SetStyle(ButtonAddPath, "+ + +");
-            styleLib.SetStyle(ButtonClearPath, "- - -");
+            styleLib.SetStyle(ButtonAddPath, BtnNumber.RememberPath);
+            styleLib.SetStyle(ButtonClearPath, BtnNumber.ForgetPath);
 
             styleLib.SetStyle(ButtonSort, BtnNumber.Sort);
             //ButtonSort.SetContent("Date", 1);
@@ -413,6 +413,7 @@ namespace Imp.Panels
             if (MainGrid.RowDefinitions[1].ActualHeight < 1)
             {
                 MainGrid.RowDefinitions[1].Height = new GridLength(2, GridUnitType.Star);
+                MainGrid.RowDefinitions[2].Height = new GridLength(30, GridUnitType.Pixel);
             }
             else if (MainGrid.RowDefinitions[4].ActualHeight < 1) { }
             else
@@ -431,6 +432,7 @@ namespace Imp.Panels
             else
             {
                 MainGrid.RowDefinitions[1].Height = new GridLength(0);
+                MainGrid.RowDefinitions[2].Height = new GridLength(0);
             }
         }
 

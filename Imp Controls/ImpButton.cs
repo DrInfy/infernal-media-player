@@ -173,6 +173,10 @@ namespace ImpControls
 
         protected virtual object GetCurrentContent()
         {
+            if (Pressed && MouseOver)
+            {
+                return sContent[(CurrentState + 1) % CheckStates];
+            }
             return sContent[CurrentState];
         }
     }

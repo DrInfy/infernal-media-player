@@ -42,7 +42,7 @@ namespace Imp.Controllers
 
         #region Fields
 
-        private readonly int minLeftPanelWidth = 200;
+        private readonly int minLeftPanelWidth = 250;
         private readonly int minRightPanelWidth = 200;
         private readonly MainWindow window;
         private PanelPositions oldPositions = new PanelPositions();
