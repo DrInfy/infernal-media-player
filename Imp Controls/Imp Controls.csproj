@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="ControlRenderData.cs" />
+    <Compile Include="GridDefinitionExtension.cs" />
     <Compile Include="Gui\enums.cs" />
     <Compile Include="Gui\GeometryCreator.cs" />
     <Compile Include="Gui\IStyleLib.cs" />

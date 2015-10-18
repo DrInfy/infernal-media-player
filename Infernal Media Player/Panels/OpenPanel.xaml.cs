@@ -71,6 +71,7 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonClosePanel, BtnNumber.Close);
             styleLib.SetStyle(ButtonMaximizePanel, BtnNumber.Maximize);
             styleLib.SetStyle(ButtonRefresh, BtnNumber.Refresh);
+            styleLib.SetStyle(ButtonRefresh2, BtnNumber.Refresh);
 
             styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
             styleLib.SetStyle(ButtonClearFindFolder, BtnNumber.Close);
@@ -131,7 +132,7 @@ namespace Imp.Panels
             if (!refreshing)
             {
                 var path = ListPlaces.GetSelected();
-                if (path != null && !string.IsNullOrEmpty(path.Value))
+                if (!string.IsNullOrEmpty(path?.Value))
                 {
                     // valid path, update lists
                     ListDirectories.SetPath(path.Value);

@@ -736,20 +736,6 @@ namespace ImpControls.Gui
 
         private static Geometry Refresh(PathFigureCollection pFc, PathGeometry pG)
         {
-
-            //AddLine(new Point(0, 60), new Point(45, 60), pFc);
-            //AddLine(new Point(0, 60), new Point(0, 15), pFc);
-            //AddLine(new Point(45, 60), new Point(0, 15), pFc);
-
-            //AddLine(new Point(22.5f, 37.5f), new Point(40, 20), pFc);
-            //AddLine(new Point(40, 20), new Point(70, 15), pFc);
-
-            //AddLine(new Point(100, 40), new Point(55, 40), pFc);
-            //AddLine(new Point(100, 40), new Point(100, 85), pFc);
-            //AddLine(new Point(55, 40), new Point(100, 85), pFc);
-
-            //AddLine(new Point(77.5f, 62.5f), new Point(60, 80), pFc);
-            //AddLine(new Point(60, 75), new Point(30, 85), pFc);
             AddLine(pFc, 
                 new Point(50, 15),
                 new Point(50, -5),
@@ -772,24 +758,28 @@ namespace ImpControls.Gui
             transformGroup.Children.Add(new RotateTransform(45));
             transformGroup.Children.Add(new TranslateTransform(50, 50));
             pG.Transform = transformGroup;
-            //Geometry.Combine(pG, pG, GeometryCombineMode.Intersect, transform);
             return pG.GetFlattenedPathGeometry();
-            //return Geometry.Combine(Geometry.Empty, pG, GeometryCombineMode.Union, transform);
         }
 
         private static Geometry Remove(PathFigureCollection pFc, PathGeometry pG)
         {
-            AddLine(new Point(0, 0), new Point(60, 0), pFc);
-            AddLine(new Point(0, 0), new Point(0, 100), pFc);
-            AddLine(new Point(80, 20), new Point(80, 100), pFc);
-            AddLine(new Point(0, 100), new Point(80, 100), pFc);
+            AddLine(pFc, new Point(20, 0),
+                 new Point(60, 0),
+                 new Point(60, 70),
+                 new Point(0, 70),
+                 new Point(0, 20),
+                 new Point(20, 0));
 
-            AddLine(new Point(60, 0), new Point(80, 20), pFc);
-            AddLine(new Point(60, 0), new Point(60, 20), pFc);
-            AddLine(new Point(60, 20), new Point(80, 20), pFc);
+            AddLine(pFc, new Point(20, 0),
+                new Point(20, 20),
+                new Point(0, 20));
+
+            // a couple text lines representing content
+            AddHLine(new Point(10, 20), 40, pFc);
+            AddHLine(new Point(10, 35), 40, pFc);
+            AddHLine(new Point(10, 50), 40, pFc);
 
             AddLine(new Point(35, 35), new Point(100, 100), pFc);
-
             AddLine(new Point(100, 35), new Point(35, 100), pFc);
 
             pG.Figures = pFc;

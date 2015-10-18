@@ -111,7 +111,7 @@ namespace Imp
                                       UriPlayer.IsMouseOver ||
                                       LogoViewer.IsMouseDirectlyOver ||
                                       PanelOpen.LabelTopic.IsMouseOver ||
-                                      PanelPlaylist.LabelTopic.IsMouseOver ||
+                                      //PanelPlaylist.LabelTopic.IsMouseOver ||
                                       PlayerBottom.LabelPosition.IsMouseOver;
 
         #endregion

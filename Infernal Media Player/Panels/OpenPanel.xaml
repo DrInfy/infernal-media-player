@@ -15,14 +15,15 @@
             <RowDefinition Height="3*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="120" />
 
             <ColumnDefinition Width="9*" />
         </Grid.ColumnDefinitions>
 
 
         <Label x:Name="LabelTopic" Background="#FFF4F4F5" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,90,0" VerticalAlignment="Stretch"  Grid.ColumnSpan="2" Content="Open" FontSize="16"/>
-        <impControls:ImpButton x:Name="ButtonRefresh" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,60,0" VerticalAlignment="Stretch" Width="30" Clicked="Refresh"/>
+
+        <impControls:ImpButton x:Name="ButtonRefresh2" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,60,0" VerticalAlignment="Stretch" Width="30" Clicked="Refresh"/>
         <impControls:ImpButton x:Name="ButtonMaximizePanel" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Stretch" Width="30" Clicked="ButtonMaximizePanel_Clicked" CheckStates="2"/>
         <impControls:ImpButton x:Name="ButtonClosePanel"   Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="30" Clicked="ButtonClosePanel_Clicked" />
 
@@ -39,22 +40,24 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="15"/>
             </Grid.ColumnDefinitions>
 
 
             <impControls:ImpButton x:Name="ButtonClearPath" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Grid.Column="0" Grid.Row="0" Margin="0,0,0,0"  CheckStates="2" Clicked="ButtonClearPath_Clicked"/>
             <impControls:ImpButton x:Name="ButtonAddPath" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="2" Clicked="ButtonAddPath_Clicked"/>
-
-            <TextBox x:Name="TextBoxFindFolder" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="0" VerticalAlignment="Stretch" Grid.Column="2" TextChanged="TextBoxFindFolder_TextChanged" FontSize="13.333"/>
-            <impControls:ImpButton x:Name="ButtonClearFindFolder" Visibility="Hidden" HorizontalAlignment="Right" Width="15" Grid.Column="2" Grid.Row="0" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="2" Clicked="ButtonClearFindFolder_Clicked"/>
+            <impControls:ImpButton x:Name="ButtonRefresh" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Clicked="Refresh"/>
             
-            <impControls:ImpButton x:Name="ButtonAddSubFolder" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Column="3" VerticalAlignment="Stretch" Clicked="ButtonAddSubFolder_Clicked"/>
-            <impControls:ImpButton x:Name="ButtonAddFolder"  HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Column="4" VerticalAlignment="Stretch"  Clicked="ButtonAddFolder_Clicked"/>
-            <impControls:ImpButton x:Name="ButtonEnlargeUpwards" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Column="5" VerticalAlignment="Stretch" Clicked="EnlargeUpwards_Clicked" GeometryMargin="0" />
+            <TextBox x:Name="TextBoxFindFolder" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="0" VerticalAlignment="Stretch" Grid.Column="3" TextChanged="TextBoxFindFolder_TextChanged" FontSize="13.333"/>
+            <impControls:ImpButton x:Name="ButtonClearFindFolder" Visibility="Hidden" HorizontalAlignment="Right" Width="15" Grid.Column="3" Grid.Row="0" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="2" Clicked="ButtonClearFindFolder_Clicked"/>
+            
+            <impControls:ImpButton x:Name="ButtonAddSubFolder" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Column="4" VerticalAlignment="Stretch" Clicked="ButtonAddSubFolder_Clicked"/>
+            <impControls:ImpButton x:Name="ButtonAddFolder"  HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Column="5" VerticalAlignment="Stretch"  Clicked="ButtonAddFolder_Clicked"/>
+            <impControls:ImpButton x:Name="ButtonEnlargeUpwards" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Column="6" VerticalAlignment="Stretch" Clicked="EnlargeUpwards_Clicked" GeometryMargin="0" />
 
         </Grid>
         

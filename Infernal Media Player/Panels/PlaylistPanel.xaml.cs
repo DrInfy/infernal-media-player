@@ -45,7 +45,7 @@ namespace Imp.Panels
 
             styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
 
-            styleLib.SetStyle(LabelTopic);
+            //styleLib.SetStyle(LabelTopic);
             styleLib.SetStyle(TextBoxFind);
             styleLib.SetStyle(ListPlaylist);
         }
