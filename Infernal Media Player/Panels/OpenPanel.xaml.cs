@@ -414,7 +414,7 @@ namespace Imp.Panels
             if (RowPaths.ActualHeight < 1)
             {
                 RowPaths.Height = new GridLength(2, GridUnitType.Star);
-                RowFilter.Height = new GridLength(30, GridUnitType.Pixel);
+                //RowFilter.Height = new GridLength(30, GridUnitType.Pixel);
             }
             else if (RowFiles.ActualHeight < 1) { }
             else
@@ -433,7 +433,7 @@ namespace Imp.Panels
             else
             {
                 RowPaths.Height = new GridLength(0);
-                RowFilter.Height = new GridLength(0);
+                //RowFilter.Height = new GridLength(0);
             }
         }
 
