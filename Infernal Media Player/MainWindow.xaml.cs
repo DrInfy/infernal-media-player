@@ -110,7 +110,7 @@ namespace Imp
                                       ImageViewer.IsMouseDirectlyOver ||
                                       UriPlayer.IsMouseOver ||
                                       LogoViewer.IsMouseDirectlyOver ||
-                                      PanelOpen.LabelTopic.IsMouseOver ||
+                                      //PanelOpen.LabelTopic.IsMouseOver ||
                                       //PanelPlaylist.LabelTopic.IsMouseOver ||
                                       PlayerBottom.LabelPosition.IsMouseOver;
 

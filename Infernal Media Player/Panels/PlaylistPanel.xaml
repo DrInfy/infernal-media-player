@@ -16,10 +16,10 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="30" />
-                <ColumnDefinition Width="30" Name="ColumnClear" />
                 <ColumnDefinition Width="2*" Name="ColumnFind" />
                 <ColumnDefinition Width="*" Name="ColumnSort" />
                 <ColumnDefinition Width="*" Name="ColumnRemove" />
+                <ColumnDefinition Width="*" Name="ColumnClear" />
             </Grid.ColumnDefinitions>
             <impControls:ImpButton x:Name="ButtonClosePanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="30" Grid.Column="0" Clicked="ButtonClosePanel_Clicked"/>
             <impControls:ImpButton x:Name="ButtonMaximizePanel" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Width="30" CheckStates="2" Clicked="ButtonMaximizePanel_Clicked"/>

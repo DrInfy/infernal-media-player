@@ -71,7 +71,7 @@ namespace Imp.Panels
             styleLib.SetStyle(ButtonClosePanel, BtnNumber.Close);
             styleLib.SetStyle(ButtonMaximizePanel, BtnNumber.Maximize);
             styleLib.SetStyle(ButtonRefresh, BtnNumber.Refresh);
-            styleLib.SetStyle(ButtonRefresh2, BtnNumber.Refresh);
+            //styleLib.SetStyle(ButtonRefresh2, BtnNumber.Refresh);
 
             styleLib.SetStyle(ButtonClearFind, BtnNumber.Close);
             styleLib.SetStyle(ButtonClearFindFolder, BtnNumber.Close);
@@ -86,7 +86,7 @@ namespace Imp.Panels
             styleLib.SetStyle(TextBoxFind);
             styleLib.SetStyle(TextBoxFindFolder);
             ButtonClearFindFolder.GeometryMargin = 4;
-            styleLib.SetStyle(LabelTopic);
+            //styleLib.SetStyle(LabelTopic);
         }
 
         private void ListFiles_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -411,29 +411,29 @@ namespace Imp.Panels
 
         private void EnlargeDownwards_Clicked(object sender)
         {
-            if (MainGrid.RowDefinitions[1].ActualHeight < 1)
+            if (RowPaths.ActualHeight < 1)
             {
-                MainGrid.RowDefinitions[1].Height = new GridLength(2, GridUnitType.Star);
-                MainGrid.RowDefinitions[2].Height = new GridLength(30, GridUnitType.Pixel);
+                RowPaths.Height = new GridLength(2, GridUnitType.Star);
+                RowFilter.Height = new GridLength(30, GridUnitType.Pixel);
             }
-            else if (MainGrid.RowDefinitions[4].ActualHeight < 1) { }
+            else if (RowFiles.ActualHeight < 1) { }
             else
             {
-                MainGrid.RowDefinitions[4].Height = new GridLength(0);
+                RowFiles.Height = new GridLength(0);
             }
         }
 
         private void EnlargeUpwards_Clicked(object sender)
         {
-            if (MainGrid.RowDefinitions[1].ActualHeight < 1) { }
-            else if (MainGrid.RowDefinitions[4].ActualHeight < 1)
+            if (RowPaths.ActualHeight < 1) { }
+            else if (RowFiles.ActualHeight < 1)
             {
-                MainGrid.RowDefinitions[4].Height = new GridLength(3, GridUnitType.Star);
+                RowFiles.Height = new GridLength(3, GridUnitType.Star);
             }
             else
             {
-                MainGrid.RowDefinitions[1].Height = new GridLength(0);
-                MainGrid.RowDefinitions[2].Height = new GridLength(0);
+                RowPaths.Height = new GridLength(0);
+                RowFilter.Height = new GridLength(0);
             }
         }
 
