@@ -124,15 +124,24 @@ namespace MediaPlayer.Player
                         //graphs.MediaControl.Stop();
                         break;
                     case MediaCommand.Close:
-                        graphPollTimer.Enabled = false;
-                        FreeResources();
-                        return;
+                        fader.Pause();
+                        break;
+                        
                     case MediaCommand.Pause:
                         fader.Pause();
                         //graphs.MediaControl.Pause();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
+                }
+            }
+            else if (currentCommand == MediaCommand.Close)
+            {
+                if (fadingVolume <= 0)
+                {
+                    graphPollTimer.Enabled = false;
+                    FreeResources();
+                    return;
                 }
             }
 
@@ -238,13 +247,18 @@ namespace MediaPlayer.Player
             timerUpdating = true;
 
             HandleCommand();
-            if (currentCommand == MediaCommand.Close) { return; }
 
             UpdateFade();
+            if (currentCommand == MediaCommand.Close)
+            {
+                timerUpdating = false;
+                return;
+            }
             ProcessGraphEvents();
 
             graphs.Seeking.GetCurrentPosition(out graphs.Position);
-            timerUpdating = false;
+                timerUpdating = false;
+
         }
 
         private void ProcessGraphEvents()
