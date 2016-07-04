@@ -221,7 +221,10 @@ namespace MediaPlayer.Player
                 NewAllocatorSurface?.Invoke(this, IntPtr.Zero);
             }
 
-            graphs.Audio.put_Volume(DShowHelper.DSHOW_VOLUME_SILENCE);
+            //graphs.Audio.put_Volume(DShowHelper.DSHOW_VOLUME_SILENCE);
+            graphs.Audio.put_Volume(DShowHelper.VolumePercentageToDirectShowVolume(volume));
+            fadingVolume = volume;
+            //fader.SetVolume(volume);
             queuedCommand = MediaCommand.Play;
             StartGraphPollTimer();
         }
