@@ -92,6 +92,7 @@ namespace Base.FileData
             filters.Add(".div");
             filters.Add(".rm");
             filters.Add(".m4v");
+            filters.Add(".flv");
             return filters;
         }
 
