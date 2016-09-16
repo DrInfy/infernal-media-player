@@ -7,6 +7,8 @@ using System.Windows;
 using Base;
 using DirectShowLib;
 using MediaPlayer.Helpers;
+using WPFMediaKit.DirectShow.MediaPlayers;
+using FilterCategory = DirectShowLib.FilterCategory;
 
 #endregion
 
@@ -83,10 +85,21 @@ namespace MediaPlayer.Player
             get { return currentPositionFormat; }
         }
 
+        public string Splitter { get; set; }
+        public string SplitterSource { get; set; }
+        public string VideoDecoder { get; set; }
+        public string AudioDecoder { get; set; }
+
         #endregion
 
         internal FilterGraphs(PlayerController controller)
         {
+            // Default to LAV.
+            Splitter = "LAV Splitter";
+            SplitterSource = "LAV Splitter Source";
+            VideoDecoder = "LAV Video Decoder";
+            AudioDecoder = "LAV Audio Decoder";
+
             this.controller = controller;
         }
 
@@ -101,9 +114,9 @@ namespace MediaPlayer.Player
 
             try
             {
-                DisableVistaDecoders();
+                //DisableVistaDecoders();
 
-                /* Creates the GraphBuilder COM object */
+                // Creates the GraphBuilder COM object
                 GraphBuilder = new FilterGraphNoThread() as IGraphBuilder;
                 if (GraphBuilder == null)
                     throw new Exception("Could not create a graph");
@@ -114,10 +127,15 @@ namespace MediaPlayer.Player
                 if (FilterGraph == null)
                     throw new Exception("Could not QueryInterface for the IFilterGraph2");
 
-                /* Have DirectShow find the correct source filter for the Uri */
-                var hr = FilterGraph.AddSourceFilter(controller.FilePath, controller.FilePath, out sourceFilter);
-                DsError.ThrowExceptionForHR(hr);
+                ///* Have DirectShow find the correct source filter for the Uri */
+                //var hr = FilterGraph.AddSourceFilter(controller.FilePath, controller.FilePath, out sourceFilter);
+                //DsError.ThrowExceptionForHR(hr);
 
+                sourceFilter = DirectShowUtil.AddFilterToGraph(FilterGraph, SplitterSource, Guid.Empty);
+
+                IFileSourceFilter interfaceFile = (IFileSourceFilter)sourceFilter;
+                var hr = interfaceFile.Load(controller.FilePath, null);
+                DsError.ThrowExceptionForHR(hr);
 
                 MediaEvent = GraphBuilder as IMediaEventEx;
                 MediaControl = GraphBuilder as IMediaControl;
@@ -139,6 +157,7 @@ namespace MediaPlayer.Player
             }
         }
 
+        [Obsolete]
         private static void DisableVistaDecoders()
         {
             var osInfo = Environment.OSVersion;

@@ -4,11 +4,31 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Nikse.SubtitleEdit.Core;
+using Nikse.SubtitleEdit.Core.SubtitleFormats;
 
 namespace Base.Subtitles
 {
     public static class SubtitleFormatReader
     {
+        //public static SubtitleHeader ParseHeaderASS(Subtitle subtitle)
+        //{
+        //    var header = new SubtitleHeader();
+
+        //    Utilities.GetSubtitleFormatByFriendlyName(subtitle..ToString());
+        //    var format = GetCurrentSubtitleFormat();
+        //    bool useExtraForStyle = format.HasStyleSupport;
+        //    var styles = new List<string>();
+        //    if (format.GetType() == typeof(AdvancedSubStationAlpha) || format.GetType() == typeof(SubStationAlpha))
+        //        styles = AdvancedSubStationAlpha.GetStylesFromHeader(_subtitle.Header);
+        //    else if (format.GetType() == typeof(TimedText10) || format.GetType() == typeof(ItunesTimedText))
+        //        styles = TimedText10.GetStylesFromHeader(_subtitle.Header);
+        //    else if (format.GetType() == typeof(Sami) || format.GetType() == typeof(SamiModern))
+        //        styles = Sami.GetStylesFromHeader(_subtitle.Header);
+
+        //    subtitle.Header
+        //}
+
         public static void GetAssTags(string text, EnhancedParagraph enhancedParagraph)
         {
             //var original = text;
@@ -50,7 +70,7 @@ namespace Base.Subtitles
                 {
                     list.Add(new SubtitleTag(key, ParenthesisType.Chevrons, index, null));
                     Debug.WriteLine("Invalid tag found");
-                    Debugger.Break();
+                    //Debugger.Break();
                     return true;
                 }
             }

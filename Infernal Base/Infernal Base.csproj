@@ -135,7 +135,10 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Subtitles\EnhancedParagraph.cs" />
     <Compile Include="Subtitles\ParenthesisType.cs" />
+    <Compile Include="Subtitles\StyleDefinitions.cs" />
     <Compile Include="Subtitles\SubtitleFormatReader.cs" />
+    <Compile Include="Subtitles\SubtitleHeader.cs" />
+    <Compile Include="Subtitles\SubtitleStyle.cs" />
     <Compile Include="Subtitles\SubtitleTag.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

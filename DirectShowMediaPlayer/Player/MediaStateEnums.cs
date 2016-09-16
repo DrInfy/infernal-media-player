@@ -1,4 +1,4 @@
-﻿namespace MediaPlayer
+﻿namespace MediaPlayer.Player
 {
     public enum MediaCommand
     {

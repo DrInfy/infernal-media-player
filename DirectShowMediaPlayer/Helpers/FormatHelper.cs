@@ -2,6 +2,7 @@
 
 using System;
 using DirectShowLib;
+using MediaPlayer.Player;
 
 #endregion
 

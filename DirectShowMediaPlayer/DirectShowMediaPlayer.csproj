@@ -68,14 +68,19 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Codecs\ClassId.cs" />
+    <Compile Include="Codecs\Codecs.cs" />
+    <Compile Include="Codecs\FilterFromFile.cs" />
+    <Compile Include="Codecs\Filters.cs" />
     <Compile Include="DirectX\Direct3D.cs" />
     <Compile Include="Element\D3DRenderer.cs" />
     <Compile Include="Element\MediaUriPlayer.cs" />
+    <Compile Include="Helpers\DirectShowUtil.cs" />
     <Compile Include="Helpers\DShowHelper.cs" />
     <Compile Include="Player\FilterGraphs.cs" />
     <Compile Include="Helpers\FormatHelper.cs" />
     <Compile Include="Player\MediaLoader.cs" />
-    <Compile Include="MediaStateEnums.cs" />
+    <Compile Include="Player\MediaStateEnums.cs" />
     <Compile Include="Player\PlayerController.cs" />
     <Compile Include="Player\Vmr9Allocator.cs" />
   </ItemGroup>
