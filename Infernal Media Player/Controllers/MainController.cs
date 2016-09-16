@@ -44,6 +44,7 @@ namespace Imp.Controllers
         private readonly MediaLoader mediaLoader;
         private readonly MainWindow window;
         private BitmapSource currentImage;
+        private readonly SubtitleController subtitleController;
 
         #endregion
 
@@ -74,6 +75,8 @@ namespace Imp.Controllers
                 window.PlayerBottom.ButtonMute,
                 window.PlayerBottom.ButtonLoop,
                 EventC);
+
+            subtitleController = new SubtitleController(window);
 
             Initialize(EventC, PanelC, mediaController);
 
@@ -219,6 +222,11 @@ namespace Imp.Controllers
 
         private void MediaLoaded(PlayerController playerController)
         {
+            if (loadingItem.FileType.HasFlag(FileTypes.Videos))
+            {
+                subtitleController.LoadSubtitles(loadingItem.FullPath, Path.GetExtension(loadingItem.FullPath));
+            }
+
             playingItem = loadingItem;
             itemOnPlayer = playingItem;
 
@@ -542,6 +550,11 @@ namespace Imp.Controllers
                 var position = window.UriPlayer.Position;
                 window.PlayerBottom.SliderTime.Maximum = duration;
                 window.PlayerBottom.SliderTime.Value = position;
+
+                if (subtitleController.Active)
+                {
+                    this.subtitleController.Update(position);
+                }
 
                 if (window.Width > 400)
                 {

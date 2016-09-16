@@ -93,6 +93,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="libse">
+      <HintPath>..\Lib\libse.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>.\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
@@ -147,6 +150,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controllers\SubtitleController.cs" />
+    <Compile Include="Controls\Subtitles.cs" />
     <Compile Include="DeleteItemsWindow.xaml.cs">
       <DependentUpon>DeleteItemsWindow.xaml</DependentUpon>
     </Compile>

@@ -19,6 +19,13 @@ namespace MediaPlayer.Element
     /// </summary>
     public abstract class D3DRenderer : Control
     {
+        #region public Methods
+
+        public double ImageWidth => m_videoImage.ActualWidth;
+        public double ImageHeight => m_videoImage.ActualHeight;
+
+        #endregion
+
         protected D3DRenderer()
         {
             InitializeD3DVideo();
