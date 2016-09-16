@@ -15,6 +15,7 @@ using Nikse.SubtitleEdit.Core;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Matroska;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4.Boxes;
+using Nikse.SubtitleEdit.Core.SubtitleFormats;
 
 namespace Imp.Controllers
 {
@@ -24,8 +25,8 @@ namespace Imp.Controllers
         private Subtitle selectedSubtitle = new Subtitle();
         private readonly Subtitles subtitleLabel;
         private readonly MainWindow window;
-        private Typeface defaultTypeface = new Typeface("Verdana");
-        private Brush defaultBrush = new SolidColorBrush() {Color = Colors.White};
+        private SubtitleFormat subtitleFormat;
+        private Dictionary<int, EnhancedParagraph> indexToEnhancedParagraphs = new Dictionary<int, EnhancedParagraph>();
 
         public SubtitleController(MainWindow window)
         {
@@ -37,6 +38,7 @@ namespace Imp.Controllers
         {
             selectedSubtitle.Paragraphs.Clear();
             Active = false;
+            indexToEnhancedParagraphs.Clear();
             subtitleLabel.Clear();
             subtitleLabel.Visibility = Visibility.Hidden;
         }
@@ -61,7 +63,7 @@ namespace Imp.Controllers
                             var mkvSubs = matroska.GetSubtitle(selectedSubs.TrackNumber, null);
 
                             selectedSubtitle.Paragraphs.Clear();
-                            var format = Utilities.LoadMatroskaTextSubtitle(selectedSubs, matroska, mkvSubs,
+                            subtitleFormat = Utilities.LoadMatroskaTextSubtitle(selectedSubs, matroska, mkvSubs,
                                 selectedSubtitle);
                             subtitleLabel.Visibility = Visibility.Visible;
 
@@ -89,11 +91,11 @@ namespace Imp.Controllers
         {
             try
             {
-                foreach (var p in selectedSubs.Paragraphs)
+                for (int i = 0; i < selectedSubs.Paragraphs.Count; i++)
                 {
-                    var k = new EnhancedParagraph(p);
+                    var p = selectedSubs.Paragraphs[i];
+                    indexToEnhancedParagraphs.Add(i, new EnhancedParagraph(p));
                 }
-
             }
             catch (Exception ex)
             {
@@ -152,7 +154,7 @@ namespace Imp.Controllers
                     {
                         if (p.StartTime.TotalSeconds <= position)
                         {
-                            subtitleLabel.Add(new EnhancedParagraph(p));
+                            subtitleLabel.Add(indexToEnhancedParagraphs[index]);
                             index++;
                         }
                         else
