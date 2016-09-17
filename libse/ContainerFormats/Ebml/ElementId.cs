@@ -7,6 +7,8 @@
     {
         None = 0,
 
+        #region EBML Header
+
         Ebml = 0x1A45DFA3,
         EBMLVersion = 0x4286,
         EBMLReadVersion = 0x42F7,
@@ -16,16 +18,32 @@
         DocTypeVersion = 0x4287,
         DocTypeReadVersion = 0x4285,
 
+        #endregion
+
+        #region Global elements (used everywhere in the format)
+
         Void = 0xEC,
         CRC_32 = 0xBF,
 
+        #endregion
+
+        #region Segment
+
         Segment = 0x18538067,
+
+        #endregion
+
+        #region Meta Seek Information
 
         /// <summary> Contains the position of other Top-Level Elements. </summary>
         SeekHead = 0x114D9B74,
         Seek = 0x4DBB,
         SeekID = 0x53AB,
         SeekPosition = 0x53AC,
+
+        #endregion
+
+        #region Segment Information
 
         Info = 0x1549A966,
         SegmentUID = 0x73A4,
@@ -46,11 +64,13 @@
         MuxingApp = 0x4D80,
         WritingApp = 0x5741,
 
+        #endregion
+
+        #region Cluster
 
         /// <summary>The Top-Level Element containing the (monolithic) Block structure.</summary>
         /// <remarks>Contains no metadata</remarks>
         Cluster = 0x1F43B675,
-
         Timecode = 0xE7,
         SilentTracks = 0x5854,
         SilentTrackNumber = 0x58D7,
@@ -82,6 +102,9 @@
         ReferenceTimeCode = 0xCA,
         EncryptedBlock = 0xAF,
 
+        #endregion
+
+        #region Track
 
         Tracks = 0x1654AE6B,
         TrackEntry = 0xAE,
@@ -101,12 +124,10 @@
         CodecId = 0x86,
         CodecPrivate = 0x63A2,
         CodecName = 0x258688,
-
         /// <summary> The UID of an attachment that is used by this codec. </summary>
         /// <remarks> Probably not all that useful, no multiple allowed.</remarks>
         AttachmentLink = 0x7446,
         CodecDecodeAll = 0xAA,
-
         /// <summary> Specify that this track is an overlay track for the Track specified (in the u-integer). That means when this track has a gap (see SilentTracks) the overlay track should be used instead. The order of multiple TrackOverlay matters, the first one is the one that should be used. If not found it should be the second, etc.</summary>
         TrackOverlay = 0x6FAB,
         CodecDelay = 0x56AA,
@@ -122,7 +143,6 @@
         AlphaMode = 0x53C0,
         PixelWidth = 0xB0,
         PixelHeight = 0xBA,
-
         PixelCropBottom = 0x54AA,
         PixelCropTop = 0x54BB,
         PixelCropLeft = 0x54CC,
@@ -193,6 +213,10 @@
         ContentSigAlgo = 0x47E5,
         ContentSigHashAlgo = 0x47E6,
 
+        #endregion
+
+        #region Cueing Data
+
         Cues = 0x1C53BB6B,
         CuePoint = 0xBB,
         CueTime = 0xB3,
@@ -206,6 +230,10 @@
         CueReference = 0xDB,
         CueRefTime = 0x96,
 
+        #endregion
+
+        #region Attachment
+
         Attachments = 0x1941A469,
         AttachedFile = 0x61A7,
         FileDescription = 0x467E,
@@ -216,6 +244,10 @@
         FileReferral = 0x4675,
         FileUsedStartTime = 0x4661,
         FileUsedEndTime = 0x4662,
+
+        #endregion
+
+        #region Chapters
 
         Chapters = 0x1043A770,
         EditionEntry = 0x45B9,
@@ -246,6 +278,9 @@
         ChapProcessTime = 0x6922,
         ChapProcessData = 0x6933,
 
+        #endregion
+
+        #region Tagging
 
         Tags = 0x1254C367,
         Tag = 0x7373,
@@ -263,5 +298,6 @@
         TagString = 0x4487,
         TagBinary = 0x4485
 
+        #endregion
     }
 }
