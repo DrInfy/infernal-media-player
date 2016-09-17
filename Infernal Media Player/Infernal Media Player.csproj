@@ -93,9 +93,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libse">
-      <HintPath>..\Lib\libse.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>.\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
@@ -232,6 +229,10 @@
     <ProjectReference Include="..\Infernal Base\Infernal Base.csproj">
       <Project>{432c12b3-4f8c-4bea-91dd-50562a8383d6}</Project>
       <Name>Infernal Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libse\LibSE.csproj">
+      <Project>{3e3cb28f-3a7b-430f-9eb3-0d6c1e53b753}</Project>
+      <Name>LibSE</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
