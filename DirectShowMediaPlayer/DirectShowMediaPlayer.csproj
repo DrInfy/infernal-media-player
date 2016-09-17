@@ -83,6 +83,8 @@
     <Compile Include="Player\MediaStateEnums.cs" />
     <Compile Include="Player\PlayerController.cs" />
     <Compile Include="Player\Vmr9Allocator.cs" />
+    <Compile Include="Subtitles\FontLoader.cs" />
+    <Compile Include="Subtitles\MemoryPackage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infernal Base\Infernal Base.csproj">

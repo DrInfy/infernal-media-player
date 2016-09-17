@@ -30,7 +30,7 @@ namespace Nikse.SubtitleEdit.Core
 
         public SsaStyle()
         {
-            FontName = Configuration.Settings.SubtitleSettings.SsaFontName;
+            FontName = Configuration.Settings.SubtitleSettings.SsaFontName.ToLower();
             FontSize = (int)Configuration.Settings.SubtitleSettings.SsaFontSize;
             Primary = Color.FromArgb(Configuration.Settings.SubtitleSettings.SsaFontColorArgb);
             Secondary = Color.Yellow;

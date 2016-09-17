@@ -36,6 +36,31 @@ namespace Base.Libraries
             return (long) (seconds * SecondToTicks);
         }
 
+        public static string GetBetween(string text, string start, string end)
+        {
+            var index = text.IndexOf(start, StringComparison.Ordinal);
+            var endIndex = text.IndexOf(end, StringComparison.Ordinal);
+
+            if (index > -1 && endIndex > -1 && endIndex > index)
+            {
+                return text.Substring(index + start.Length, endIndex - start.Length - 1);
+            }
+
+            return null;
+        }
+
+        public static string GetAfter(string text, string start)
+        {
+            var index = text.IndexOf(start, StringComparison.Ordinal);
+
+            if (index > -1 && text.Length > start.Length + index)
+            {
+                return text.Substring(index + start.Length, text.Length - index - start.Length);
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Filter files by their extensions and convert them to imp fileinfos
         /// </summary>

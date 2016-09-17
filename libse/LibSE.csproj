@@ -58,6 +58,7 @@
     <Compile Include="ContainerFormats\MaterialExchangeFormat\KlvPacket.cs" />
     <Compile Include="ContainerFormats\MaterialExchangeFormat\MxfParser.cs" />
     <Compile Include="ContainerFormats\MaterialExchangeFormat\PartitionStatus.cs" />
+    <Compile Include="ContainerFormats\Matroska\MatroskaAttachment.cs" />
     <Compile Include="ContainerFormats\Matroska\MatroskaFile.cs" />
     <Compile Include="ContainerFormats\Matroska\MatroskaSubtitle.cs" />
     <Compile Include="ContainerFormats\Matroska\MatroskaTrackInfo.cs" />

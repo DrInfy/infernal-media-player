@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Base.Libraries;
 using Base.Subtitles;
 using Imp.Libraries;
 using Nikse.SubtitleEdit.Core;
 
 namespace Imp.Controls
 {
-    public class Subtitles : Control
+    public class SubtitleElement : Control
     {
         private readonly Brush defaultBrush = new SolidColorBrush {Color = Colors.White};
         private readonly Pen defaultOutlinePen= new Pen(new SolidColorBrush(Colors.Black), 3);
@@ -22,11 +24,13 @@ namespace Imp.Controls
         private List<EnhancedParagraph> paragraphs { get; set; } = new List<EnhancedParagraph>();
         //public double FontSize { get; set; }
 
+        private Dictionary<string, FontFamily> fontTypefaces { get; set; } = new Dictionary<string, FontFamily>();
+
         public double ImageWidth { get; set; }
         public double ImageHeight { get; set; }
         private readonly DrawingVisual drawingVisual;
 
-        public Subtitles()
+        public SubtitleElement()
         {
             drawingVisual = new DrawingVisual();
             RenderOptions.SetBitmapScalingMode(drawingVisual, BitmapScalingMode.HighQuality);
@@ -35,6 +39,12 @@ namespace Imp.Controls
         }
 
         public void Clear()
+        {
+            ClearContent();
+            fontTypefaces.Clear();
+        }
+
+        public void ClearContent()
         {
             this.paragraphs.Clear();
             this.InvalidateVisual();
@@ -46,16 +56,22 @@ namespace Imp.Controls
             this.InvalidateVisual();
         }
 
+        public void AddFont(string fontFaceName, FontFamily fontFamily)
+        {
+            if (!fontTypefaces.ContainsKey(fontFaceName.ToLower()))
+            {
+                //TODO: remove this check
+                fontTypefaces.Add(fontFaceName.ToLower(), fontFamily);
+            }
+        }
+
         protected override void OnRender(DrawingContext drawingContext)
         {
             if (paragraphs != null)
             {
-                var top = (ActualHeight - ImageHeight) /2;
-                var left = (ActualWidth - ImageWidth) / 2;
-                var point = new Point(left, top);
-
-                foreach (var p in paragraphs)
+                for (int i = paragraphs.Count - 1; i >= 0; i--)
                 {
+                    var p = paragraphs[i];
                     FormattedText fText;
                     Pen outlinePen;
                     var scale = new Size(ImageWidth / p.Header.PlayResX ?? 1, ImageHeight / p.Header.PlayResY ?? 1);
@@ -64,27 +80,44 @@ namespace Imp.Controls
 
                     if (p.Header.UseStyles && p.Header.SubtitleStyles.TryGetValue(p.Paragraph.Extra, out style))
                     {
-                        
-                        outlinePen = new Pen(new SolidColorBrush(style.Outline.ColorConvert()), style.OutlineWidth * scale.Width);
+                        Typeface typeface = null;
+                        FontFamily fontFamily;
+
+                        if (fontTypefaces.TryGetValue(style.FontName, out fontFamily))
+                        {
+                            //typeface = fontFamily.GetTypefaces().FirstOrDefault();
+                            typeface = new Typeface(fontFamily, FontStyles.Normal, FontWeights.Normal,
+                                FontStretches.SemiCondensed);
+                        }
+
+                        if (typeface == null)
+                        {
+                            typeface = new Typeface(style.FontName);
+                        }
+
+                        outlinePen = new Pen(new SolidColorBrush(style.Outline.ColorConvert()),
+                            style.OutlineWidth * scale.Width);
                         fText = new FormattedText(p.Text, CultureInfo.InvariantCulture,
-                            FlowDirection.LeftToRight, new Typeface(style.FontName), 
+                            FlowDirection.LeftToRight, typeface,
                             style.FontSize * scale.Width,
-                            new SolidColorBrush() { Color = style.Primary.ColorConvert()});
+                            new SolidColorBrush() {Color = style.Primary.ColorConvert()});
 
-                        fText.MaxTextWidth = ImageWidth - style.MarginLeft * scale.Width - style.MarginRight * scale.Width;
-                        
-                        finalPoint = SetStylePosition(point, style, scale, fText);
 
+                        finalPoint = Process(fText, p.Text, p, style, scale);
                     }
                     else
                     {
                         outlinePen = defaultOutlinePen;
-                        outlinePen.Thickness = FontSize/30;
+                        outlinePen.Thickness = FontSize / 30;
 
                         fText = new FormattedText(p.Text, CultureInfo.InvariantCulture,
                             FlowDirection.LeftToRight, defaultTypeface,
                             FontSize,
                             defaultBrush);
+
+                        var top = (ActualHeight - ImageHeight) / 2;
+                        var left = (ActualWidth - ImageWidth) / 2;
+                        var point = new Point(left, top);
 
                         finalPoint = point + new Vector(0, ImageHeight * 0.75f - fText.Height);
                         fText.TextAlignment = TextAlignment.Center;
@@ -93,13 +126,12 @@ namespace Imp.Controls
 
                     fText.MaxLineCount = 3;
                     //var lines = paragraph.Text.Split('\n').Length;
-                    
-                    
-                    Process(fText, p.Text, p);
 
 
                     drawingContext.DrawText(fText, finalPoint);
                     Geometry textGeometry = fText.BuildGeometry(finalPoint);
+
+                    //var textHighLightGeometry = fText.BuildHighlightGeometry(new System.Windows.Point(0, 0));
                     drawingContext.DrawGeometry(null, outlinePen, textGeometry);
 
                     //using (var draw = drawingVisual.RenderOpen())
@@ -119,62 +151,73 @@ namespace Imp.Controls
             }
         }
 
-        private Point SetStylePosition(Point point, SsaStyle style, Size scale, FormattedText fText)
+        private Point SetStylePosition(Point? point, SsaStyle style, Size scale, FormattedText fText, string alignment)
         {
-            var finalPoint = point + new Vector(style.MarginLeft * scale.Width, style.MarginVertical);
+            var top = (ActualHeight - ImageHeight) / 2;
+            var left = (ActualWidth - ImageWidth) / 2;
+            var leftTopCorner = new Point(left, top);
+            var lMargin = style.MarginLeft * scale.Width;
+            var rMargin = style.MarginRight * scale.Width;
+            var vMargin = style.MarginVertical* scale.Width;
+            var finalPoint = point ??
+                             leftTopCorner +
+                             new Vector(style.MarginLeft * scale.Width, vMargin);
+
+            fText.MaxTextWidth = ImageWidth - lMargin - rMargin;
+
             var h = ImageHeight - fText.Height;
 
-            switch (style.Alignment)
+            switch (alignment ?? style.Alignment)
             {
                 case "9":
                     fText.TextAlignment = TextAlignment.Right;
                     break;
                 case "6":
                     fText.TextAlignment = TextAlignment.Right;
-                    finalPoint.Y += h / 2 - style.MarginVertical;
+                    finalPoint.Y += h / 2 - vMargin;
                     break;
                 case "3":
                     fText.TextAlignment = TextAlignment.Right;
-                    finalPoint.Y += ImageHeight - style.MarginVertical;
+                    finalPoint.Y += ImageHeight - vMargin * 2;
                     break;
                 case "8":
                     fText.TextAlignment = TextAlignment.Center;
-                    finalPoint.Y += h - style.MarginVertical;
+                    finalPoint.Y += h - vMargin;
                     break;
                 case "5":
-                    finalPoint.Y += h / 2 - style.MarginVertical;
+                    finalPoint.Y += h / 2 - vMargin;
                     fText.TextAlignment = TextAlignment.Center;
                     break;
                 case "2":
                     fText.TextAlignment = TextAlignment.Center;
-                    finalPoint.Y += h - style.MarginVertical;
+                    finalPoint.Y += h - vMargin * 2;
                     break;
                 case "7":
                     fText.TextAlignment = TextAlignment.Left;
                     break;
                 case "4":
                     fText.TextAlignment = TextAlignment.Left;
-                    finalPoint.Y += h / 2 - style.MarginVertical;
+                    finalPoint.Y += h / 2 - vMargin;
                     break;
                 case "1":
                     fText.TextAlignment = TextAlignment.Left;
-                    finalPoint.Y += h - style.MarginVertical;
+                    finalPoint.Y += h - vMargin * 2;
                     break;
                 default:
                     fText.TextAlignment = TextAlignment.Left;
-                    finalPoint.Y += h - style.MarginVertical;
+                    finalPoint.Y += h - vMargin * 2;
                     break;
             }
+
 
             return finalPoint;
         }
 
-        public void Process(FormattedText fText, string text, EnhancedParagraph paragraph)
+        public Point Process(FormattedText fText, string text, EnhancedParagraph paragraph, SsaStyle style, Size scale)
         {
-            //var color2 = (Color)ColorConverter.ConvertFromString("#a17c51");
-            //fText.SetForegroundBrush(
-            //                new SolidColorBrush(color2),
-            //                0, 1);
+            Point? pos = null;
+            string alignment = null;
+
             foreach (var tag in paragraph.Tags)
             {
                 var s = tag.StartIndex;
@@ -208,7 +251,28 @@ namespace Imp.Controls
                 }
                 else if (tag.Type == ParenthesisType.Braces)
                 {
-                    if (tag.Tag == "i1")
+                    if (tag.Tag.StartsWith("pos"))
+                    {
+                        var content = LibImp.GetBetween(tag.Tag, "(", ")");
+                        if (content != null)
+                        {
+                            var parts = content.Split(',');
+                            int x, y;
+                            if (parts.Length == 2 && int.TryParse(parts[0], out x) && int.TryParse(parts[0], out y))
+                            {
+                                pos = new Point(x, y);
+                            }
+                        }
+                    }
+                    if (tag.Tag.StartsWith("an"))
+                    {
+                        var content = LibImp.GetAfter(tag.Tag, "an");
+                        if (content != null)
+                        {
+                            alignment = content;
+                        }
+                    }
+                    else if (tag.Tag == "i1")
                     {
                         fText.SetFontStyle(FontStyles.Italic, s, e);
                     }
@@ -237,6 +301,10 @@ namespace Imp.Controls
                     }
                 }
             }
+
+
+            var finalPoint = SetStylePosition(pos, style, scale, fText, alignment);
+            return finalPoint;
         }
     }
 }

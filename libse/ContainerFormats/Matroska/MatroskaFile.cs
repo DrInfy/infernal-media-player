@@ -21,6 +21,7 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
         private int _subtitleRipTrackNumber;
         private List<MatroskaSubtitle> _subtitleRip = new List<MatroskaSubtitle>();
         private List<MatroskaTrackInfo> _tracks;
+        private List<MatroskaAttachment> _attachments;
 
         private readonly Element _segmentElement;
         private long _timecodeScale = 1000000;
@@ -61,6 +62,10 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
             }
         }
 
+        public List<MatroskaTrackInfo> Subtitles => this._tracks?.Where(t => t.IsSubtitle)?.ToList();
+
+        public List<MatroskaAttachment> Attachments => this._attachments;
+
         public List<MatroskaTrackInfo> GetTracks(bool subtitleOnly = false)
         {
             ReadSegmentInfoAndTracks();
@@ -71,6 +76,13 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
             return subtitleOnly
                 ? _tracks.Where(t => t.IsSubtitle).ToList()
                 : _tracks;
+        }
+
+        public bool ReadSubtitlesAndTracks()
+        {
+            ReadSegmentInfoTracksAndAttachments();
+
+            return _tracks != null;
         }
 
         /// <summary>
@@ -491,11 +503,104 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
                         break;
                     case ElementId.Tracks:
                         ReadTracksElement(element);
-                        break; //return;
+                        return;
                     default:
                         _stream.Seek(element.DataSize, SeekOrigin.Current);
                         break;
                 }
+            }
+        }
+
+        private void ReadSegmentInfoTracksAndAttachments()
+        {
+            var read = new List<ElementId>(3);
+            // go to segment
+            _stream.Seek(_segmentElement.DataPosition, SeekOrigin.Begin);
+
+            Element element;
+            while (_stream.Position < _segmentElement.EndPosition && (element = ReadElement()) != null)
+            {
+                switch (element.Id)
+                {
+                    case ElementId.Info:
+                        ReadInfoElement(element);
+                        read.Add(element.Id);
+                        if (read.Count == 3) return;
+                        break;
+                    case ElementId.Tracks:
+                        ReadTracksElement(element);
+                        read.Add(element.Id);
+                        if (read.Count == 3) return;
+                        break;
+                    case ElementId.Attachments:
+                        ReadAttachments(element);
+                        read.Add(element.Id);
+                        if (read.Count == 3) return;
+                        break;
+                    default:
+                        _stream.Seek(element.DataSize, SeekOrigin.Current);
+                        break;
+                }
+            }
+        }
+
+        private void ReadAttachments(Element attachmentsElement)
+        {
+            _attachments = new List<MatroskaAttachment>();
+            Element element;
+
+            while (_stream.Position < attachmentsElement.EndPosition && (element = ReadElement()) != null)
+            {
+                if (element.Id == ElementId.AttachedFile)
+                {
+                    ReadAttachmentFileElement(element);
+                }
+                else
+                {
+                    _stream.Seek(element.DataSize, SeekOrigin.Current);
+                }
+            }
+        }
+
+        private void ReadAttachmentFileElement(Element attachmentFileElement)
+        {
+            var attachment = new MatroskaAttachment();
+            Element element;
+
+            while (_stream.Position < attachmentFileElement.EndPosition && (element = ReadElement()) != null)
+            {
+                switch (element.Id)
+                {
+                    case ElementId.FileDescription:
+                        attachment.Description = ReadString((int)element.DataSize, Encoding.UTF8);
+                        break;
+                    case ElementId.FileName:
+                        attachment.Name = ReadString((int)element.DataSize, Encoding.UTF8);
+                        break;
+                    case ElementId.FileMimeType:
+                        attachment.MimeType = ReadString((int)element.DataSize, Encoding.ASCII);
+                        break;
+                    case ElementId.FileData:
+                        var buffer = new byte[element.DataSize];
+                        _stream.Read(buffer, 0, (int) element.DataSize);
+                        attachment.Data = buffer;
+                        break;
+                    case ElementId.FileUID:
+                        attachment.Uid = ReadString((int)element.DataSize, Encoding.ASCII);
+                        break;
+                    case ElementId.FileReferral:
+                    case ElementId.FileUsedStartTime:
+                    case ElementId.FileUsedEndTime:
+                    default:
+                        // Unknown element
+                        _stream.Seek(element.DataSize, SeekOrigin.Current);
+                        break;
+                }
+            }
+
+            if (attachment.Data != null)
+            {
+                _attachments.Add(attachment);
             }
         }
 

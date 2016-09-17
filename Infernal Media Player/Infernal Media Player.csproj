@@ -108,6 +108,9 @@
     <Reference Include="Pngcs">
       <HintPath>..\Lib\Pngcs.dll</HintPath>
     </Reference>
+    <Reference Include="Polenter.SharpSerializer">
+      <HintPath>..\Lib\Polenter.SharpSerializer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -149,7 +152,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\SubtitleController.cs" />
-    <Compile Include="Controls\Subtitles.cs" />
+    <Compile Include="Controls\SubtitleElement.cs" />
     <Compile Include="DeleteItemsWindow.xaml.cs">
       <DependentUpon>DeleteItemsWindow.xaml</DependentUpon>
     </Compile>
