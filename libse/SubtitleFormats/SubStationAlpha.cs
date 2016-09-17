@@ -154,12 +154,12 @@ Format: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             {
                 bool styleFound = false;
                 var ttStyles = new StringBuilder();
-                foreach (string styleName in AdvancedSubStationAlpha.GetStylesFromHeader(subtitle.Header))
+                foreach (var ssaStyle in AdvancedSubStationAlpha.GetSsaStyle(subtitle.Header))
                 {
                     try
                     {
-                        var ssaStyle = AdvancedSubStationAlpha.GetSsaStyle(styleName, subtitle.Header);
                         if (ssaStyle != null)
+                            if (ssaStyle != null)
                         {
                             string bold = "0";
                             if (ssaStyle.Bold)

@@ -152,6 +152,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\SubtitleController.cs" />
+    <Compile Include="Controls\SubtitleChildElement.cs" />
     <Compile Include="Controls\SubtitleElement.cs" />
     <Compile Include="DeleteItemsWindow.xaml.cs">
       <DependentUpon>DeleteItemsWindow.xaml</DependentUpon>

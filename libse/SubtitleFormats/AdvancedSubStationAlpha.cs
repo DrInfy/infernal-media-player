@@ -207,11 +207,10 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
                 var ttStyles = new StringBuilder();
                 // Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
                 const string styleFormat = "Style: {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},0,100,100,0,0,{10},{11},{12},{13},{14},{15},{16},1";
-                foreach (string styleName in GetStylesFromHeader(subtitle.Header))
+                foreach (var ssaStyle in GetSsaStyle(subtitle.Header)) 
                 {
                     try
                     {
-                        var ssaStyle = GetSsaStyle(styleName, subtitle.Header);
                         if (ssaStyle != null)
                         {
                             string bold = "0";
@@ -1427,9 +1426,9 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
             return sb.ToString();
         }
 
-        public static SsaStyle GetSsaStyle(string styleName, string header)
+        public static List<SsaStyle> GetSsaStyle(string header)
         {
-            var style = new SsaStyle { Name = styleName };
+            var list = new List<SsaStyle>();
 
             int nameIndex = -1;
             int fontNameIndex = -1;
@@ -1507,7 +1506,9 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
                 {
                     if (line.Length > 10)
                     {
-                        style.RawLine = line;
+                        var style = new SsaStyle {RawLine = line};
+                        list.Add(style);
+
                         var format = line.Substring(6).Split(',');
                         for (int i = 0; i < format.Length; i++)
                         {
@@ -1560,8 +1561,8 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
                             }
                             else if (i == outlineIndex)
                             {
-                                int number;
-                                if (int.TryParse(f, out number))
+                                double number;
+                                if (double.TryParse(f, out number))
                                     style.OutlineWidth = number;
                             }
                             else if (i == shadowIndex)
@@ -1598,15 +1599,17 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
                             }
                         }
                     }
-                    if (styleName != null && style.Name != null && (styleName.Equals(style.Name, StringComparison.OrdinalIgnoreCase) ||
-                        (styleName.Equals("*Default", StringComparison.OrdinalIgnoreCase) && style.Name.Equals("Default", StringComparison.OrdinalIgnoreCase))))
-                    {
-                        style.LoadedFromHeader = true;
-                        return style;
-                    }
+
+                    //if (styleName != null && style.Name != null && (styleName.Equals(style.Name, StringComparison.OrdinalIgnoreCase) ||
+                    //    (styleName.Equals("*Default", StringComparison.OrdinalIgnoreCase) && style.Name.Equals("Default", StringComparison.OrdinalIgnoreCase))))
+                    //{
+                    //    style.LoadedFromHeader = true;
+                    //    return style;
+                    //}
                 }
             }
-            return new SsaStyle { Name = styleName };
+
+            return list;
         }
 
         public override bool HasStyleSupport

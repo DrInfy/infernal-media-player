@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Threading;
 using Base.FileData;
 
@@ -36,6 +38,37 @@ namespace Base.Libraries
             return (long) (seconds * SecondToTicks);
         }
 
+        public static List<int> ConvertToIntegers(string[] array)
+        {
+            var list = new List<int>();
+            foreach (var text in array)
+            {
+                int val;
+                if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out val ))
+                {
+                    list.Add(val);   
+                }
+                else
+                {
+                    list.Add(0);
+                }
+            }
+
+            return list;
+        }
+
+        public static Point ToPoint(string textX, string textY, Size scale, Vector adjust)
+        {
+            int valX, valY;
+            if (int.TryParse(textX, NumberStyles.Integer, CultureInfo.InvariantCulture, out valX)
+                && int.TryParse(textY, NumberStyles.Integer, CultureInfo.InvariantCulture, out valY))
+            {
+                return new Point(valX * scale.Width, valY * scale.Height) + adjust;
+            }
+
+            return new Point() + adjust;
+        }
+
         public static string GetBetween(string text, string start, string end)
         {
             var index = text.IndexOf(start, StringComparison.Ordinal);
@@ -43,7 +76,7 @@ namespace Base.Libraries
 
             if (index > -1 && endIndex > -1 && endIndex > index)
             {
-                return text.Substring(index + start.Length, endIndex - start.Length - 1);
+                return text.Substring(index + start.Length, endIndex - start.Length - index);
             }
 
             return null;

@@ -33,19 +33,9 @@ namespace Base.Subtitles
 
         private static void ReadAss(Subtitle subtitle, SubtitleFormat format, SubtitleHeader header)
         {
-            List<string> styles;
             header.IsAss = true;
-            var assHeader = (AdvancedSubStationAlpha) format;
 
-            styles = AdvancedSubStationAlpha.GetStylesFromHeader(subtitle.Header);
-            if (styles.Count > 0)
-            {
-                header.UseStyles = assHeader.HasStyleSupport;
-            }
-            foreach (var style in styles)
-            {
-                header.SubtitleStyles.Add(style, AdvancedSubStationAlpha.GetSsaStyle(style, subtitle.Header));
-            }
+            header.SubtitleStyles = AdvancedSubStationAlpha.GetSsaStyle(subtitle.Header).ToDictionary(x => x.Name);
 
             header.PlayResX = ReadDefinitionInt(subtitle.Header, "PlayResX");
             header.PlayResY = ReadDefinitionInt(subtitle.Header, "PlayResY");

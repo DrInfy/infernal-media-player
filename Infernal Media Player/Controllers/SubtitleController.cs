@@ -33,15 +33,19 @@ namespace Imp.Controllers
         private readonly MainWindow window;
         private SubtitleFormat subtitleFormat;
         private Dictionary<int, EnhancedParagraph> indexToEnhancedParagraphs = new Dictionary<int, EnhancedParagraph>();
-
+        private List<int> lastIndices = new List<int>();
+        private List<int> nextIndices = new List<int>();
         public SubtitleController(MainWindow window)
         {
             this.subtitleElement = window.Subtitles;
             this.window = window;
+            subtitleElement.ImageWidthFunc = () => window.UriPlayer.ActualWidth;
+            subtitleElement.ImageHeightFunc = () => window.UriPlayer.ActualHeight;
         }
 
         public void Clear()
         {
+            lastIndices.Clear();
             selectedSubtitle.Paragraphs.Clear();
             Active = false;
             indexToEnhancedParagraphs.Clear();
@@ -120,24 +124,24 @@ namespace Imp.Controllers
                 }
                 //return;
 
-                foreach (var attachment in attachments)
-                {
-                    if (attachment.MimeType == FontLoader.TrueTypeFont
-                        || attachment.MimeType == FontLoader.FontTtf)
-                    {
-                        var familyName = FontLoader.LoadFontFamilyName(attachment.Data);
+                //foreach (var attachment in attachments)
+                //{
+                //    if (attachment.MimeType == FontLoader.TrueTypeFont
+                //        || attachment.MimeType == FontLoader.FontTtf)
+                //    {
+                //        var familyName = FontLoader.LoadFontFamilyName(attachment.Data);
 
-                        if (fontPackageDictionary.ContainsKey(familyName))
-                        {
-                            fontPackageDictionary[familyName].Add(attachment);
+                //        if (fontPackageDictionary.ContainsKey(familyName))
+                //        {
+                //            fontPackageDictionary[familyName].Add(attachment);
 
-                        }
-                        else
-                        {
-                            fontPackageDictionary.Add(familyName, new List<MatroskaAttachment>() { attachment });
-                        }
-                    }
-                }
+                //        }
+                //        else
+                //        {
+                //            fontPackageDictionary.Add(familyName, new List<MatroskaAttachment>() { attachment });
+                //        }
+                //    }
+                //}
 
                 //foreach (var valuePair in fontPackageDictionary)
                 //{
@@ -238,7 +242,8 @@ namespace Imp.Controllers
             var index = selectedSubtitle.GetIndex(position);
             if (index >= 0)
             {
-                subtitleElement.ClearContent();
+                
+                nextIndices.Clear();
 
                 while (true)
                 {
@@ -248,7 +253,7 @@ namespace Imp.Controllers
                     {
                         if (p.StartTime.TotalSeconds <= position)
                         {
-                            subtitleElement.Add(indexToEnhancedParagraphs[index]);
+                            nextIndices.Add(index);
                             index++;
                         }
                         else
@@ -262,12 +267,19 @@ namespace Imp.Controllers
                     }
                 }
 
-                var w = window.UriPlayer.ActualWidth;
-                subtitleElement.Margin = new Thickness(w * 0.02f);
-                subtitleElement.FontSize = w / 30;
-                subtitleElement.Visibility = Visibility.Visible;
-                subtitleElement.ImageWidth = window.UriPlayer.ImageWidth;
-                subtitleElement.ImageHeight = window.UriPlayer.ImageHeight;
+                if (nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastIndices.Contains(x)))
+                {
+                    subtitleElement.ClearContent();
+                    lastIndices.Clear();
+                    foreach (var nextIndex in nextIndices)
+                    {
+                        lastIndices.Add(nextIndex);
+                        subtitleElement.Add(indexToEnhancedParagraphs[nextIndex]);
+                    }
+                }
+                
+                subtitleElement.Visibility = nextIndices.Count > 0 ? Visibility.Visible : Visibility.Hidden;
+                
             }
             else
             {

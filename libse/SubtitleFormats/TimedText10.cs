@@ -325,11 +325,10 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             xnsmgr.AddNamespace("ttml", "http://www.w3.org/ns/ttml");
             var styleHead = x.DocumentElement.SelectSingleNode("ttml:head", xnsmgr);
             styleHead.SelectSingleNode("ttml:styling", xnsmgr).RemoveAll();
-            foreach (string styleName in AdvancedSubStationAlpha.GetStylesFromHeader(subtitle.Header))
+            foreach (var ssaStyle in AdvancedSubStationAlpha.GetSsaStyle(subtitle.Header))
             {
                 try
                 {
-                    var ssaStyle = AdvancedSubStationAlpha.GetSsaStyle(styleName, subtitle.Header);
                     if (ssaStyle != null)
                     {
                         string fontStyle = "normal";
