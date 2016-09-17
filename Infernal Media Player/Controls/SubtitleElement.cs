@@ -72,7 +72,7 @@ namespace Imp.Controls
             //RenderOptions.SetEdgeMode(drawingVisual, EdgeMode.Aliased);
             //TextOptions.SetTextRenderingMode(drawingVisual, TextRenderingMode.Aliased);
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 60; i++)
             {
                 var child = new SubtitleChildElement
                 {
@@ -181,7 +181,9 @@ namespace Imp.Controls
                     if (fontTypefaces.TryGetValue(style.FontName, out fontFamily))
                     {
                         //typeface = fontFamily.GetTypefaces().FirstOrDefault();
-                        typeface = new Typeface(fontFamily, FontStyles.Normal, FontWeights.Normal,
+                        typeface = new Typeface(fontFamily,
+                            style.Italic ? FontStyles.Italic : FontStyles.Normal, 
+                            style.Bold ? FontWeights.Bold : FontWeights.Normal,
                             FontStretches.SemiCondensed);
                     }
 
@@ -472,14 +474,24 @@ namespace Imp.Controls
                             if (parts.Length == 4)
                             {
                                 // Rectangle clip
-                                var vals = LibImp.ConvertToIntegers(parts);
+                                var pathFigure = new PathFigure() { IsClosed = true };
+                                var pG = new PathGeometry();
+                                var point = LibImp.ToPoint(parts[0], parts[1], scale, lt);
+                                var point2 = LibImp.ToPoint(parts[2], parts[3], scale, lt);
+                                pathFigure.StartPoint = point;
+
+                                pathFigure.Segments.Add(new LineSegment() { Point = new Point(point.X, point2.Y) });
+                                pathFigure.Segments.Add(new LineSegment() { Point = new Point(point2.X, point2.Y) });
+                                pathFigure.Segments.Add(new LineSegment() { Point = new Point(point2.X, point.Y) });
+                                pathFigure.Segments.Add(new LineSegment() { Point = new Point(point.X, point.Y) });
+
+                                pG.Figures.Add(pathFigure);
+                                mainControl.Clip = pG;
+
                                 mainControl.Clip = new RectangleGeometry()
                                 {
-                                    Rect =
-                                        new Rect(LibImp.ToPoint(parts[1], parts[2], scale, lt),
-                                            LibImp.ToPoint(parts[3], parts[4], scale, lt))
+                                    Rect = new Rect(point, point2)
                                 };
-                                
                             }
                             else if (parts.FirstOrDefault() == "m" && parts.Length > 3)
                             {
@@ -556,7 +568,7 @@ namespace Imp.Controls
                     {
                         fText.SetFontStyle(FontStyles.Normal, s, e);
                     }
-                    else if (tag.Tag.StartsWith("c&H"))
+                    else if (tag.Tag.StartsWith("c&H") || tag.Tag.StartsWith("1c&H"))
                     {
                         var color = ReadAssColor(tag);
 

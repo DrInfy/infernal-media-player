@@ -267,7 +267,7 @@ namespace Imp.Controllers
                     }
                 }
 
-                if (nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastIndices.Contains(x)))
+                //if (nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastIndices.Contains(x)))
                 {
                     subtitleElement.ClearContent();
                     lastIndices.Clear();
