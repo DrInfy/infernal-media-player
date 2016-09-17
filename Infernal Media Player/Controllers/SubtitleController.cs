@@ -41,9 +41,10 @@ namespace Imp.Controllers
             indexToEnhancedParagraphs.Clear();
             subtitleLabel.Clear();
             subtitleLabel.Visibility = Visibility.Hidden;
+            indexToEnhancedParagraphs.Clear();
         }
 
-        public void LoadSubtitles(string fileName, string extension)
+        public void LoadSubtitles(string fileName, string extension, Size playerControllerVideoSize)
         {
             if (extension == ".mkv" || extension == ".mks")
             {
@@ -67,7 +68,8 @@ namespace Imp.Controllers
                                 selectedSubtitle);
                             subtitleLabel.Visibility = Visibility.Visible;
 
-                            CreateEnhancedSubTitles(selectedSubtitle);
+                            
+                            CreateEnhancedSubTitles(selectedSubtitle, subtitleFormat, playerControllerVideoSize);
                         }
                     }
                 }
@@ -87,14 +89,29 @@ namespace Imp.Controllers
             }
         }
 
-        private void CreateEnhancedSubTitles(Subtitle selectedSubs)
+        private void CreateEnhancedSubTitles(Subtitle selectedSubs, SubtitleFormat format, Size playerControllerVideoSize)
         {
             try
             {
+                var header = SubtitleFormatReader.ParseHeader(selectedSubs, format);
+                if (header.PlayResX == null && header.PlayResY == null)
+                {
+                    header.PlayResX = (int)playerControllerVideoSize.Width;
+                    header.PlayResY = (int)playerControllerVideoSize.Height;
+                }
+                else if (header.PlayResY == null)
+                {
+                    header.PlayResY = (int) (header.PlayResX * playerControllerVideoSize.Height / playerControllerVideoSize.Width);
+                }
+                else if (header.PlayResX == null)
+                {
+                    header.PlayResY = (int)(header.PlayResY * playerControllerVideoSize.Width / playerControllerVideoSize.Height);
+                }
+                
                 for (int i = 0; i < selectedSubs.Paragraphs.Count; i++)
                 {
                     var p = selectedSubs.Paragraphs[i];
-                    indexToEnhancedParagraphs.Add(i, new EnhancedParagraph(p));
+                    indexToEnhancedParagraphs.Add(i, new EnhancedParagraph(header, p));
                 }
             }
             catch (Exception ex)
@@ -172,8 +189,8 @@ namespace Imp.Controllers
                 subtitleLabel.Margin = new Thickness(w * 0.02f);
                 subtitleLabel.FontSize = w / 30;
                 subtitleLabel.Visibility = Visibility.Visible;
-                subtitleLabel.ImageWidth = window.UriPlayer.ImageHeight;
-                subtitleLabel.ImageHeight = window.UriPlayer.ImageWidth;
+                subtitleLabel.ImageWidth = window.UriPlayer.ImageWidth;
+                subtitleLabel.ImageHeight = window.UriPlayer.ImageHeight;
             }
             else
             {

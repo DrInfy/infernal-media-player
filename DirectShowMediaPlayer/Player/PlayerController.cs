@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Timers;
+using System.Windows;
 using System.Windows.Threading;
 using Base;
 using Base.Controllers;
@@ -74,6 +75,8 @@ namespace MediaPlayer.Player
         {
             get { return graphs.HasVideo; }
         }
+
+        public Size VideoSize => new Size(graphs.NaturalVideoWidth, graphs.NaturalVideoHeight);
 
         #endregion
 

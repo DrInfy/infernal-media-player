@@ -224,7 +224,7 @@ namespace Imp.Controllers
         {
             if (loadingItem.FileType.HasFlag(FileTypes.Videos))
             {
-                subtitleController.LoadSubtitles(loadingItem.FullPath, Path.GetExtension(loadingItem.FullPath));
+                subtitleController.LoadSubtitles(loadingItem.FullPath, Path.GetExtension(loadingItem.FullPath), playerController.VideoSize);
             }
 
             playingItem = loadingItem;

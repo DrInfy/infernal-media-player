@@ -11,23 +11,66 @@ namespace Base.Subtitles
 {
     public static class SubtitleFormatReader
     {
-        //public static SubtitleHeader ParseHeaderASS(Subtitle subtitle)
-        //{
-        //    var header = new SubtitleHeader();
+        public static SubtitleHeader ParseHeader(Subtitle subtitle, SubtitleFormat format)
+        {
+            var header = new SubtitleHeader();
+            header.UseStyles = format.HasStyleSupport;
 
-        //    Utilities.GetSubtitleFormatByFriendlyName(subtitle..ToString());
-        //    var format = GetCurrentSubtitleFormat();
-        //    bool useExtraForStyle = format.HasStyleSupport;
-        //    var styles = new List<string>();
-        //    if (format.GetType() == typeof(AdvancedSubStationAlpha) || format.GetType() == typeof(SubStationAlpha))
-        //        styles = AdvancedSubStationAlpha.GetStylesFromHeader(_subtitle.Header);
-        //    else if (format.GetType() == typeof(TimedText10) || format.GetType() == typeof(ItunesTimedText))
-        //        styles = TimedText10.GetStylesFromHeader(_subtitle.Header);
-        //    else if (format.GetType() == typeof(Sami) || format.GetType() == typeof(SamiModern))
-        //        styles = Sami.GetStylesFromHeader(_subtitle.Header);
+            var styles = new List<string>();
+            if (format.GetType() == typeof(AdvancedSubStationAlpha) || format.GetType() == typeof(SubStationAlpha))
+            {
+                ReadAss(subtitle, format, header);
+            }
+            else if (format.GetType() == typeof(TimedText10) || format.GetType() == typeof(ItunesTimedText))
+                styles = TimedText10.GetStylesFromHeader(subtitle.Header);
+            else if (format.GetType() == typeof(Sami) || format.GetType() == typeof(SamiModern))
+                styles = Sami.GetStylesFromHeader(subtitle.Header);
 
-        //    subtitle.Header
-        //}
+            //subtitle.Header
+            //header.
+            return header;
+        }
+
+        private static void ReadAss(Subtitle subtitle, SubtitleFormat format, SubtitleHeader header)
+        {
+            List<string> styles;
+            header.IsAss = true;
+            var assHeader = (AdvancedSubStationAlpha) format;
+
+            styles = AdvancedSubStationAlpha.GetStylesFromHeader(subtitle.Header);
+            if (styles.Count > 0)
+            {
+                header.UseStyles = assHeader.HasStyleSupport;
+            }
+            foreach (var style in styles)
+            {
+                header.SubtitleStyles.Add(style, AdvancedSubStationAlpha.GetSsaStyle(style, subtitle.Header));
+            }
+
+            header.PlayResX = ReadDefinitionInt(subtitle.Header, "PlayResX");
+            header.PlayResY = ReadDefinitionInt(subtitle.Header, "PlayResY");
+        }
+
+        private static int? ReadDefinitionInt(string subtitleHeader, string text)
+        {
+            var index = subtitleHeader.IndexOf(text, StringComparison.Ordinal);
+            if (index > 0)
+            {
+                var end = subtitleHeader.IndexOf("\n", index, StringComparison.Ordinal);
+                if (end > index)
+                {
+                    var result = subtitleHeader.Substring(index + text.Length+1, end - index - 2- text.Length);
+                    int val;
+
+                    if (int.TryParse(result, out val))
+                    {
+                        return val;
+                    }
+                }
+            }
+
+            return null;
+        }
 
         public static void GetAssTags(string text, EnhancedParagraph enhancedParagraph)
         {

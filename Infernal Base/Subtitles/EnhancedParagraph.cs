@@ -13,12 +13,15 @@ namespace Base.Subtitles
         public Paragraph Paragraph { get; private set; }
 
         public string Text { get; set; }
-        
-        public EnhancedParagraph(Paragraph p)
+        public SubtitleHeader Header { get; set; }
+        public EnhancedParagraph(SubtitleHeader header, Paragraph p)
         {
             this.Paragraph = p;
-
-            SubtitleFormatReader.GetAssTags(p.Text, this);
+            Header = header;
+            if (header.IsAss)
+            {
+                SubtitleFormatReader.GetAssTags(p.Text, this);
+            }
         }
     }
 }
