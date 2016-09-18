@@ -21,6 +21,12 @@ namespace MediaPlayer.Subtitles
         {
             //Writing bytes to a temporary file.
             string tempFontFileLocation = AppFolder + "temp\\" + fileName; // "testFont.ttf";
+            var folder = AppFolder + "temp\\";
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(AppFolder + "temp\\");
+            }
+
             if (!File.Exists(tempFontFileLocation))
             {
                 File.WriteAllBytes(tempFontFileLocation, bytes);
@@ -49,13 +55,17 @@ namespace MediaPlayer.Subtitles
             foreach (FontFamily fontFamily2 in fonts)
             {
                 // Perform action.
-                var family = fontFamily2.FamilyNames.Values.First();
-
-                var typeface = new Typeface(fontFamily2, FontStyles.Normal, FontWeights.Normal, FontStretches.SemiCondensed);
+                //var family = fontFamily2.FamilyNames.Values.First();
+                var typeface = new Typeface(fontFamily2, FontStyles.Normal, FontWeights.Normal,
+                    FontStretches.SemiCondensed);
                 GlyphTypeface glyphs;
                 typeface.TryGetGlyphTypeface(out glyphs);
-                family = glyphs.FamilyNames[CultureInfo.GetCultureInfo("en-US")];
-                fontFamilies.Add(family, fontFamily2);
+                var family = glyphs.FamilyNames[CultureInfo.GetCultureInfo("en-US")];
+
+                if (!fontFamilies.ContainsKey(family))
+                {
+                    fontFamilies.Add(family, fontFamily2);
+                }
                 //return fontFamily2;
             }
 

@@ -35,6 +35,8 @@ namespace Imp.Controls
             visual = new DrawingVisual();
             visuals.Add(visual);
             GeometryPen = new Pen(Brushes.Black, 1);
+            this.SnapsToDevicePixels = false;
+            this.VisualTextRenderingMode = TextRenderingMode.Aliased;
             //Draw();
         }
 
@@ -42,27 +44,24 @@ namespace Imp.Controls
         {
             this.FormattedText = null;
             this.Geometry = null;
-        }
 
-        public void Draw()
-        {
-            using (DrawingContext drawingContext = visual.RenderOpen())
-            {
-                if (FormattedText != null)
-                {
-                    drawingContext.DrawText(FormattedText, FormattedTextPos);
-                }
-
-                if (Geometry != null)
-                {
-                    drawingContext.DrawGeometry(null, GeometryPen, Geometry);
-                }
-            }
-                //dc.DrawRectangle(Brushes.Red, null, new Rect(0, 0, 100, 100));
+            Visibility = Visibility.Hidden;
+            Clip = null;
+            FormattedText = null;
+            Geometry = null;
+            Effect = null;
+            Opacity = 1;
+            DropShadowEffect.Opacity = 1;
+            RenderTransform = null;
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
+            GeometryPen.LineJoin = PenLineJoin.Miter;
+            GeometryPen.DashCap = PenLineCap.Round;
+            GeometryPen.EndLineCap = PenLineCap.Round;
+            GeometryPen.LineJoin = PenLineJoin.Round;
+            GeometryPen.StartLineCap = PenLineCap.Round;
             if (FormattedText != null)
             {
                 drawingContext.DrawText(FormattedText, FormattedTextPos);

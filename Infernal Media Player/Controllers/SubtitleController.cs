@@ -239,52 +239,30 @@ namespace Imp.Controllers
 
         public void Update(double position)
         {
-            var index = selectedSubtitle.GetIndex(position);
-            if (index >= 0)
+            nextIndices.Clear();
+            for (int i = 0; i < selectedSubtitle.Paragraphs.Count; i++)
             {
-                
-                nextIndices.Clear();
+                var p = selectedSubtitle.Paragraphs[i];
 
-                while (true)
+                if (p.StartTime.TotalSeconds <= position
+                    && p.EndTime.TotalSeconds >= position)
                 {
-                    var p = selectedSubtitle.GetParagraphOrDefault(index);
-                    
-                    if (p != null)
-                    {
-                        if (p.StartTime.TotalSeconds <= position)
-                        {
-                            nextIndices.Add(index);
-                            index++;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    nextIndices.Add(i);
                 }
-
-                //if (nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastIndices.Contains(x)))
-                {
-                    subtitleElement.ClearContent();
-                    lastIndices.Clear();
-                    foreach (var nextIndex in nextIndices)
-                    {
-                        lastIndices.Add(nextIndex);
-                        subtitleElement.Add(indexToEnhancedParagraphs[nextIndex]);
-                    }
-                }
-                
-                subtitleElement.Visibility = nextIndices.Count > 0 ? Visibility.Visible : Visibility.Hidden;
-                
             }
-            else
+
+            if (true || nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastIndices.Contains(x)))
             {
                 subtitleElement.ClearContent();
+                lastIndices.Clear();
+                foreach (var nextIndex in nextIndices)
+                {
+                    lastIndices.Add(nextIndex);
+                    subtitleElement.Add(indexToEnhancedParagraphs[nextIndex]);
+                }
             }
+                
+            subtitleElement.Visibility = nextIndices.Count > 0 ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }

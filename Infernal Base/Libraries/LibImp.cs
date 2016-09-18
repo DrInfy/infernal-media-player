@@ -57,11 +57,12 @@ namespace Base.Libraries
             return list;
         }
 
+
         public static Point ToPoint(string textX, string textY, Size scale, Vector adjust)
         {
-            int valX, valY;
-            if (int.TryParse(textX, NumberStyles.Integer, CultureInfo.InvariantCulture, out valX)
-                && int.TryParse(textY, NumberStyles.Integer, CultureInfo.InvariantCulture, out valY))
+            double valX, valY;
+            if (double.TryParse(textX, NumberStyles.Float, CultureInfo.InvariantCulture, out valX)
+                && double.TryParse(textY, NumberStyles.Float, CultureInfo.InvariantCulture, out valY))
             {
                 return new Point(valX * scale.Width, valY * scale.Height) + adjust;
             }
@@ -72,7 +73,7 @@ namespace Base.Libraries
         public static string GetBetween(string text, string start, string end)
         {
             var index = text.IndexOf(start, StringComparison.Ordinal);
-            var endIndex = text.IndexOf(end, StringComparison.Ordinal);
+            var endIndex = text.IndexOf(end, index + start.Length, StringComparison.Ordinal);
 
             if (index > -1 && endIndex > -1 && endIndex > index)
             {
