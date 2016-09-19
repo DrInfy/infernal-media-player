@@ -8,8 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Imp.Base.Libraries;
-using Imp.Base.Subtitles;
 using Imp.DirectShow.Helpers;
+using Imp.DirectShow.Subtitles;
 using Nikse.SubtitleEdit.Core;
 using SEdge.Core;
 

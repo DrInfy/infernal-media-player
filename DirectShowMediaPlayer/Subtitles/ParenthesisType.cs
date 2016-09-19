@@ -1,4 +1,4 @@
-﻿namespace Imp.Base.Subtitles
+﻿namespace Imp.DirectShow.Subtitles
 {
     public enum ParenthesisType
     {

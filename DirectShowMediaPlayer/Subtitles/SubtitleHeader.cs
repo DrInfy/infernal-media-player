@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Nikse.SubtitleEdit.Core;
 
-namespace Imp.Base.Subtitles
+namespace Imp.DirectShow.Subtitles
 {
     public class SubtitleHeader
     {

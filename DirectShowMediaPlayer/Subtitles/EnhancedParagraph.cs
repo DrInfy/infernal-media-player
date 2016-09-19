@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Nikse.SubtitleEdit.Core;
 
-namespace Imp.Base.Subtitles
+namespace Imp.DirectShow.Subtitles
 {
     public class EnhancedParagraph
     {
@@ -13,7 +13,7 @@ namespace Imp.Base.Subtitles
         public EnhancedParagraph(SubtitleHeader header, Paragraph p)
         {
             this.Paragraph = p;
-            Header = header;
+            this.Header = header;
             if (header.IsAss)
             {
                 SubtitleFormatReader.GetAssTags(p.Text, this);

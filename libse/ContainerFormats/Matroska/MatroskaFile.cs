@@ -78,7 +78,11 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
                 : _tracks;
         }
 
-        public bool ReadSubtitlesAndTracks()
+        /// <summary>
+        /// Reads track info and attachments. TODO: Chapters
+        /// </summary>
+        /// <returns></returns>
+        public bool ReadMetadata()
         {
             ReadSegmentInfoTracksAndAttachments();
 
@@ -445,7 +449,7 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
             switch (flags & 6)
             {
                 case 0: // 00000000 = No lacing
-                    System.Diagnostics.Debug.Print("No lacing");
+                    //System.Diagnostics.Debug.Print("No lacing");
                     break;
                 case 2: // 00000010 = Xiph lacing
                     frames = _stream.ReadByte() + 1;

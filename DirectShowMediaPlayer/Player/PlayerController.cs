@@ -1,14 +1,24 @@
 ﻿#region Usings
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 using DirectShowLib;
 using Imp.Base;
 using Imp.Base.Controllers;
 using Imp.DirectShow.Helpers;
+using Imp.DirectShow.Subtitles;
+using Nikse.SubtitleEdit.Core;
+using Nikse.SubtitleEdit.Core.ContainerFormats.Matroska;
+using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4;
+using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4.Boxes;
+using Nikse.SubtitleEdit.Core.SubtitleFormats;
 
 #endregion
 
@@ -77,6 +87,10 @@ namespace Imp.DirectShow.Player
         }
 
         public Size VideoSize => new Size(graphs.NaturalVideoWidth, graphs.NaturalVideoHeight);
+
+        public List<SubtitleTrack> SubtitleTracks = new List<SubtitleTrack>();
+
+        private Dictionary<string, FontFamily> fontTypefaces { get; set; } = new Dictionary<string, FontFamily>();
 
         #endregion
 
@@ -204,13 +218,217 @@ namespace Imp.DirectShow.Player
 
         public virtual void OpenSource(out ImpError result)
         {
+            ReadTracks();
+
             graphs.OpenSource(out result);
 
             graphs.RenderAudioStream(ref result);
 
             graphs.RenderVideoStream(ref result, FilePath);
             graphs.SetMediaSeekingInterface(graphs.GraphBuilder as IMediaSeeking);
+
+            FinalizeSubtitles();
         }
+
+        #region Subtitles
+
+        private void FinalizeSubtitles()
+        {
+            foreach (var subtitleTrack in this.SubtitleTracks)
+            {
+                subtitleTrack.Subtitles = CreateEnhancedSubTitles(subtitleTrack.RawSubs, subtitleTrack.Format, this.VideoSize);
+                if (subtitleTrack.Subtitles != null)
+                {
+                    subtitleTrack.Loaded = true;
+                }
+            }
+        }
+
+        private void ReadTracks()
+        {
+            var extension = Path.GetExtension(this.FilePath);
+            if (extension == ".mkv" || extension == ".mks")
+            {
+                using (var matroska = new MatroskaFile(this.FilePath))
+                {
+                    var stopwatch = Stopwatch.StartNew();
+                    if (matroska.ReadMetadata())
+                    {
+                        Debug.WriteLine($"Read time: {(int) stopwatch.Elapsed.TotalMilliseconds} ms");
+
+                        stopwatch.Restart();
+                        var subTitleTrackInfo = matroska.Subtitles;
+
+                        foreach (var info in subTitleTrackInfo)
+                        {
+                            var subInfo = new SubtitleTrack();
+                            subInfo.Language = info.Language;
+                            subInfo.Name = info.Name;
+                            this.SubtitleTracks.Add(subInfo);
+
+                            var mkvSubs = matroska.GetSubtitle(info.TrackNumber, null);
+                            var resultingSubs = new Subtitle();
+                            subInfo.Format = Utilities.LoadMatroskaTextSubtitle(info, matroska, mkvSubs, resultingSubs);
+                            subInfo.RawSubs = resultingSubs;
+                            //subInfo.Subtitles = CreateEnhancedSubTitles(resultingSubs, format, this.VideoSize);
+                        }
+
+                        // Load all subtitles
+                        LoadFonts(matroska);
+
+                    }
+                }
+            }
+            else if (extension == ".mp4" || extension == ".m4v" || extension == ".3gp")
+            {
+                var mp4Parser = new MP4Parser(this.FilePath);
+                var mp4SubtitleTracks = mp4Parser.GetSubtitleTracks();
+
+                foreach (var trak in mp4SubtitleTracks)
+                {
+                    var subInfo = new SubtitleTrack();
+                    subInfo.Language = trak.Mdia.Mdhd.LanguageString;
+                    subInfo.Name = trak.Name;
+                    this.SubtitleTracks.Add(subInfo);
+                    subInfo.RawSubs = LoadMp4SubtitleForSync(trak);
+                }
+            }
+        }
+
+
+
+        private void LoadFonts(MatroskaFile matroska)
+        {
+            try
+            {
+                var attachments = matroska.Attachments;
+                Dictionary<string, List<MatroskaAttachment>> fontPackageDictionary = new Dictionary<string, List<MatroskaAttachment>>();
+                foreach (var attachment in attachments)
+                {
+                    string familyName;
+                    FontLoader.SaveToDisc(attachment.Data, attachment.Name);
+                }
+
+                var result = FontLoader.LoadFromDisc();
+
+                foreach (var fontFamily in result)
+                {
+                    AddFont(fontFamily.Key, fontFamily.Value);
+                }
+                //return;
+
+                //foreach (var attachment in attachments)
+                //{
+                //    if (attachment.MimeType == FontLoader.TrueTypeFont
+                //        || attachment.MimeType == FontLoader.FontTtf)
+                //    {
+                //        var familyName = FontLoader.LoadFontFamilyName(attachment.Data);
+
+                //        if (fontPackageDictionary.ContainsKey(familyName))
+                //        {
+                //            fontPackageDictionary[familyName].Add(attachment);
+
+                //        }
+                //        else
+                //        {
+                //            fontPackageDictionary.Add(familyName, new List<MatroskaAttachment>() { attachment });
+                //        }
+                //    }
+                //}
+
+                //foreach (var valuePair in fontPackageDictionary)
+                //{
+                //    string familyName = valuePair.Key;
+                //    var font = FontLoader.LoadFontFamily(valuePair.Value.Select(x => x.Data), familyName);
+
+                //    if (familyName != null && font != null)
+                //    {
+                //        subtitleElement.AddFont(familyName, font);
+                //    }
+                //}
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
+
+            }
+
+        }
+
+        public void AddFont(string fontFaceName, FontFamily fontFamily)
+        {
+            if (!fontTypefaces.ContainsKey(fontFaceName.ToLower()))
+            {
+                //TODO: remove this check
+                fontTypefaces.Add(fontFaceName.ToLower(), fontFamily);
+            }
+        }
+
+        private static Subtitle LoadMp4SubtitleForSync(Trak mp4SubtitleTrack)
+        {
+            var subtitle = new Subtitle();
+            if (mp4SubtitleTrack.Mdia.IsVobSubSubtitle)
+            {
+                // Not supported
+                return subtitle;
+            }
+            else
+            {
+                for (int i = 0; i < mp4SubtitleTrack.Mdia.Minf.Stbl.EndTimeCodes.Count; i++)
+                {
+                    if (mp4SubtitleTrack.Mdia.Minf.Stbl.Texts.Count > i)
+                    {
+                        var start = TimeSpan.FromSeconds(mp4SubtitleTrack.Mdia.Minf.Stbl.StartTimeCodes[i]);
+                        var end = TimeSpan.FromSeconds(mp4SubtitleTrack.Mdia.Minf.Stbl.EndTimeCodes[i]);
+                        string text = mp4SubtitleTrack.Mdia.Minf.Stbl.Texts[i];
+                        var p = new Paragraph(text, start.TotalMilliseconds, end.TotalMilliseconds);
+                        if (p.EndTime.TotalMilliseconds - p.StartTime.TotalMilliseconds > Configuration.Settings.General.SubtitleMaximumDisplayMilliseconds)
+                            p.EndTime.TotalMilliseconds = p.StartTime.TotalMilliseconds + Configuration.Settings.General.SubtitleMaximumDisplayMilliseconds;
+
+                        if (mp4SubtitleTrack.Mdia.IsClosedCaption && string.IsNullOrEmpty(text))
+                        {
+                            // do not add empty lines
+                        }
+                        else
+                        {
+                            subtitle.Paragraphs.Add(p);
+                        }
+                    }
+                }
+            }
+            return subtitle;
+        }
+
+        private SubtitleStylized CreateEnhancedSubTitles(Subtitle selectedSubs, SubtitleFormat format, Size playerControllerVideoSize)
+        {
+            try
+            {
+                var finalSubs = SubtitleFormatReader.ParseHeader(selectedSubs, format);
+                if (finalSubs.Header.PlayResX == null && finalSubs.Header.PlayResY == null)
+                {
+                    finalSubs.Header.PlayResX = (int)playerControllerVideoSize.Width;
+                    finalSubs.Header.PlayResY = (int)playerControllerVideoSize.Height;
+                }
+                else if (finalSubs.Header.PlayResY == null)
+                {
+                    finalSubs.Header.PlayResY = (int)(finalSubs.Header.PlayResX * playerControllerVideoSize.Height / playerControllerVideoSize.Width);
+                }
+                else if (finalSubs.Header.PlayResX == null)
+                {
+                    finalSubs.Header.PlayResY = (int)(finalSubs.Header.PlayResY * playerControllerVideoSize.Width / playerControllerVideoSize.Height);
+                }
+
+                return finalSubs;
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
+            }
+
+            return null;
+        }
+
+        #endregion 
 
         public void Activate()
         {

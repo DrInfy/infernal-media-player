@@ -5,19 +5,19 @@ using System.Linq;
 using Nikse.SubtitleEdit.Core;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
 
-namespace Imp.Base.Subtitles
+namespace Imp.DirectShow.Subtitles
 {
     public static class SubtitleFormatReader
     {
-        public static SubtitleHeader ParseHeader(Subtitle subtitle, SubtitleFormat format)
+        public static SubtitleStylized ParseHeader(Subtitle subtitle, SubtitleFormat format)
         {
-            var header = new SubtitleHeader();
-            header.UseStyles = format.HasStyleSupport;
+            var finalSubs = new SubtitleStylized();
+            finalSubs.Header.UseStyles = format.HasStyleSupport;
 
             var styles = new List<string>();
             if (format.GetType() == typeof(AdvancedSubStationAlpha) || format.GetType() == typeof(SubStationAlpha))
             {
-                ReadAss(subtitle, format, header);
+                ReadAss(subtitle, finalSubs);
             }
             else if (format.GetType() == typeof(TimedText10) || format.GetType() == typeof(ItunesTimedText))
                 styles = TimedText10.GetStylesFromHeader(subtitle.Header);
@@ -26,17 +26,27 @@ namespace Imp.Base.Subtitles
 
             //subtitle.Header
             //header.
-            return header;
+            return finalSubs;
         }
 
-        private static void ReadAss(Subtitle subtitle, SubtitleFormat format, SubtitleHeader header)
+        private static void ReadAss(Subtitle subtitle, SubtitleStylized finalSubs)
         {
-            header.IsAss = true;
+            finalSubs.Header = new SubtitleHeader();
+            finalSubs.Header.IsAss = true;
 
-            header.SubtitleStyles = AdvancedSubStationAlpha.GetSsaStyle(subtitle.Header).ToDictionary(x => x.Name);
+            //ReadAdvancedSubStationAlpha(subtitle);
+            finalSubs.Header.SubtitleStyles = AdvancedSubStationAlpha.GetSsaStyle(subtitle.Header).ToDictionary(x => x.Name);
 
-            header.PlayResX = ReadDefinitionInt(subtitle.Header, "PlayResX");
-            header.PlayResY = ReadDefinitionInt(subtitle.Header, "PlayResY");
+            finalSubs.Header.PlayResX = ReadDefinitionInt(subtitle.Header, "PlayResX");
+            finalSubs.Header.PlayResY = ReadDefinitionInt(subtitle.Header, "PlayResY");
+        }
+
+        private static void ReadAdvancedSubStationAlpha(Subtitle subtitle)
+        {
+            foreach (var VARIABLE in subtitle.Header.Split('\n'))
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private static int? ReadDefinitionInt(string subtitleHeader, string text)
@@ -170,5 +180,7 @@ namespace Imp.Base.Subtitles
         {
             return index >= 0 && text.Length > index && text[index] == c;
         }
+
+        
     }
 }

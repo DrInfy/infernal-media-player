@@ -14,5 +14,10 @@ namespace Imp.DirectShow.Helpers
         {
             return Color.FromArgb(color.A, color.R, color.G, color.B);
         }
+
+        public static CustomColor ConvertToCustom(this System.Drawing.Color color)
+        {
+            return CustomColor.FromArgb(color.A, color.R, color.G, color.B);
+        }
     }
 }

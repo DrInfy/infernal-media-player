@@ -221,10 +221,10 @@ namespace Imp.Player.Controllers
 
         private void MediaLoaded(PlayerController playerController)
         {
-            if (loadingItem.FileType.HasFlag(FileTypes.Videos))
-            {
-                subtitleController.LoadSubtitles(loadingItem.FullPath, Path.GetExtension(loadingItem.FullPath), playerController.VideoSize);
-            }
+            //if (loadingItem.FileType.HasFlag(FileTypes.Videos))
+            //{
+            //    subtitleController.LoadSubtitles(loadingItem.FullPath, Path.GetExtension(loadingItem.FullPath), playerController.VideoSize);
+            //}
 
             playingItem = loadingItem;
             itemOnPlayer = playingItem;
@@ -550,10 +550,10 @@ namespace Imp.Player.Controllers
                 window.PlayerBottom.SliderTime.Maximum = duration;
                 window.PlayerBottom.SliderTime.Value = position;
 
-                if (subtitleController.Active)
-                {
-                    this.subtitleController.Update(position);
-                }
+                //if (subtitleController.Active)
+                //{
+                //    this.subtitleController.Update(position);
+                //}
 
                 if (window.Width > 400)
                 {
