@@ -29,63 +29,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > 0;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<tmx version=\"1.4\">" + Environment.NewLine +
-                "  <header creationtool=\"Subtitle Edit\" creationtoolversion=\"3.4\" datatype=\"html\" segtype=\"sentence\" adminlang=\"en-us\" srclang=\"EN\" o-encoding=\"utf-8\">" + Environment.NewLine +
-                "    <note>This is a subtitle</note>" + Environment.NewLine +
-                "  </header>" + Environment.NewLine +
-                "  <body />" + Environment.NewLine +
-                "</tmx>";
-
-            string lang = LanguageAutoDetect.AutoDetectLanguageName("en_US", subtitle);
-            if (lang.StartsWith("en_"))
-                lang = "EN";
-            else if (lang.Length == 5)
-                lang = lang.Substring(3);
-
-            string paragraphInnerXml =
-                "  <prop type=\"start\">[START]</prop>" + Environment.NewLine +
-                "  <prop type=\"end\">[END]</prop>" + Environment.NewLine +
-                "  <tuv xml:lang=\"" + lang + "\">" + Environment.NewLine +
-                "    <seg>[TEXT]</seg>" + Environment.NewLine +
-                "  </tuv>";
-
-            var xml = new XmlDocument();
-            xml.LoadXml(xmlStructure);
-
-            XmlNode body = xml.DocumentElement.SelectSingleNode("body");
-            int count = 1;
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                XmlNode paragraph = xml.CreateElement("tu");
-
-                XmlAttribute tuid = xml.CreateAttribute("tuid");
-                tuid.InnerText = count.ToString("D4");
-                paragraph.Attributes.Append(tuid);
-
-                XmlAttribute datatype = xml.CreateAttribute("datatype");
-                datatype.InnerText = "html";
-                paragraph.Attributes.Append(datatype);
-
-                string innerXml = paragraphInnerXml;
-                innerXml = innerXml.Replace("[START]", p.StartTime.ToString());
-                innerXml = innerXml.Replace("[END]", p.EndTime.ToString());
-                paragraph.InnerXml = innerXml;
-
-                XmlNode textNode = paragraph.SelectSingleNode("tuv/seg");
-                textNode.InnerText = HtmlUtil.RemoveHtmlTags(p.Text, true);
-                textNode.InnerXml = textNode.InnerXml.Replace(Environment.NewLine, "<br />");
-
-                body.AppendChild(paragraph);
-                count++;
-            }
-
-            return ToUtf8XmlString(xml);
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             _errorCount = 0;

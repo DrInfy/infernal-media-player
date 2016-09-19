@@ -2,52 +2,52 @@
 {
     internal class Element
     {
-        private readonly ElementId _id;
-        private readonly long _dataPosition;
-        private readonly long _dataSize;
-
-        public Element(ElementId id, long dataPosition, long dataSize)
-        {
-            _id = id;
-            _dataPosition = dataPosition;
-            _dataSize = dataSize;
-        }
+        #region  Public Fields and Properties
 
         public ElementId Id
         {
-            get
-            {
-                return _id;
-            }
+            get { return this.id; }
         }
 
         public long DataPosition
         {
-            get
-            {
-                return _dataPosition;
-            }
+            get { return this.dataPosition; }
         }
 
         public long DataSize
         {
-            get
-            {
-                return _dataSize;
-            }
+            get { return this.dataSize; }
         }
 
         public long EndPosition
         {
-            get
-            {
-                return _dataPosition + _dataSize;
-            }
+            get { return this.dataPosition + this.dataSize; }
+        }
+
+        #endregion
+
+        #region Local Fields
+
+        private readonly ElementId id;
+        private readonly long dataPosition;
+        private readonly long dataSize;
+
+        #endregion
+
+        #region Common
+
+        public Element(ElementId id, long dataPosition, long dataSize)
+        {
+            this.id = id;
+            this.dataPosition = dataPosition;
+            this.dataSize = dataSize;
         }
 
         public override string ToString()
         {
-            return string.Format(@"{0} ({1})", _id, _dataSize);
+            return string.Format(@"{0} ({1})", this.id, this.dataSize);
         }
+
+        #endregion
     }
 }

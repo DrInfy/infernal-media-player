@@ -33,7 +33,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             //OFF THE RECORD STARTS RIGHT NOW.   7:00:01:27AM
             //HERE IS THE RUNDOWN.               7:00:05:03AM

@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfernalWorkOutTracker", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSE", "libse\LibSE.csproj", "{3E3CB28F-3A7B-430F-9EB3-0D6C1E53B753}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imp Subtitles", "Imp Subtitles\Imp Subtitles.csproj", "{719EBA4E-AA78-44A8-B7D4-25F7921681D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEdge.Core", "SEdge.Core\SEdge.Core.csproj", "{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +80,22 @@ Global
 		{3E3CB28F-3A7B-430F-9EB3-0D6C1E53B753}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E3CB28F-3A7B-430F-9EB3-0D6C1E53B753}.Release|x64.ActiveCfg = Release|Any CPU
 		{3E3CB28F-3A7B-430F-9EB3-0D6C1E53B753}.Release|x64.Build.0 = Release|Any CPU
+		{719EBA4E-AA78-44A8-B7D4-25F7921681D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{719EBA4E-AA78-44A8-B7D4-25F7921681D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{719EBA4E-AA78-44A8-B7D4-25F7921681D5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{719EBA4E-AA78-44A8-B7D4-25F7921681D5}.Debug|x64.Build.0 = Debug|Any CPU
+		{719EBA4E-AA78-44A8-B7D4-25F7921681D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{719EBA4E-AA78-44A8-B7D4-25F7921681D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{719EBA4E-AA78-44A8-B7D4-25F7921681D5}.Release|x64.ActiveCfg = Release|Any CPU
+		{719EBA4E-AA78-44A8-B7D4-25F7921681D5}.Release|x64.Build.0 = Release|Any CPU
+		{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}.Debug|x64.Build.0 = Debug|Any CPU
+		{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}.Release|x64.ActiveCfg = Release|Any CPU
+		{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

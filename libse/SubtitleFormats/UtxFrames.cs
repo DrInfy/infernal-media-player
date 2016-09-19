@@ -28,24 +28,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            //I'd forgotten.
-            //#2060,2188
-
-            //Were you somewhere far away?
-            //- Yes, four years in Switzerland.
-            //#3885,3926
-
-            const string paragraphWriteFormat = "{0}{1}#{2},{3}{1}";
-
-            var sb = new StringBuilder();
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                sb.AppendLine(string.Format(paragraphWriteFormat, p.Text, Environment.NewLine, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime)));
-            }
-            return sb.ToString().Trim();
-        }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {

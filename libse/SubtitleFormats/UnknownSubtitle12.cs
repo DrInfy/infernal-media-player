@@ -40,7 +40,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return string.Format("{0:0.00}", tc.TotalSeconds);
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             var sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)

@@ -46,7 +46,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return tc.ToHHMMSSFF();
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             var sb = new StringBuilder();
             int count = 1;

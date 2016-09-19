@@ -79,6 +79,7 @@
     <Compile Include="Element\SubtitleElement.cs" />
     <Compile Include="Helpers\DirectShowUtil.cs" />
     <Compile Include="Helpers\DShowHelper.cs" />
+    <Compile Include="Helpers\PresentationExtensions.cs" />
     <Compile Include="Player\FilterGraphs.cs" />
     <Compile Include="Helpers\FormatHelper.cs" />
     <Compile Include="Player\MediaLoader.cs" />
@@ -96,6 +97,10 @@
     <ProjectReference Include="..\libse\LibSE.csproj">
       <Project>{3e3cb28f-3a7b-430f-9eb3-0d6c1e53b753}</Project>
       <Name>LibSE</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SEdge.Core\SEdge.Core.csproj">
+      <Project>{6F3FD01F-0BCC-4646-BA2E-F33D02DBA620}</Project>
+      <Name>SEdge.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

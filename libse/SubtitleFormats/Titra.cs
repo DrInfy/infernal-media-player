@@ -36,38 +36,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
         {
             return (int)Math.Round(15.7 * durationSeconds);
         }
-
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine(@"TVS - TITRA FILM
-
-Titre VO :   L'heure d'été
-Titre VST :
-Création :   23/10/2009 - 16:31
-Révision :   26/10/2009 - 17:48
-Langue VO :  Français
-Langue VST : Espagnol
-Bobine :     e01
-
-BEWARE : No more than 40 characters ON A LINE
-ATTENTION : Pas plus de 40 caractères PAR LIGNE
-
-");
-            const string writeFormat = "* {0} :\t{1}\t{2}\t{3}{4}{5}";
-            int index = 0;
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                index++;
-                var text = HtmlUtil.RemoveHtmlTags(p.Text, true);
-                sb.AppendLine(string.Format(writeFormat, index, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), GetMaxCharsForDuration(p.Duration.TotalSeconds) + "c", Environment.NewLine, text));
-                sb.AppendLine();
-                if (!text.Contains(Environment.NewLine))
-                    sb.AppendLine();
-            }
-            return sb.ToString();
-        }
-
         private static string EncodeTimeCode(TimeCode time)
         {
             //00:03:15:22 (last is frame)

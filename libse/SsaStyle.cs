@@ -2,6 +2,8 @@
 using System;
 using System.Drawing;
 using System.Text;
+using SEdge.Core;
+using SEdge.Core.Texts;
 
 namespace Nikse.SubtitleEdit.Core
 {
@@ -13,11 +15,11 @@ namespace Nikse.SubtitleEdit.Core
         public bool Italic { get; set; }
         public bool Bold { get; set; }
         public bool Underline { get; set; }
-        public Color Primary { get; set; }
-        public Color Secondary { get; set; }
-        public Color Tertiary { get; set; }
-        public Color Outline { get; set; }
-        public Color Background { get; set; }
+        public CustomColor Primary { get; set; }
+        public CustomColor Secondary { get; set; }
+        public CustomColor Tertiary { get; set; }
+        public CustomColor Outline { get; set; }
+        public CustomColor Background { get; set; }
         public int ShadowWidth { get; set; }
         public double OutlineWidth { get; set; }
         public string Alignment { get; set; }
@@ -30,176 +32,50 @@ namespace Nikse.SubtitleEdit.Core
 
         public SsaStyle()
         {
-            FontName = Configuration.Settings.SubtitleSettings.SsaFontName.ToLower();
-            FontSize = (int)Configuration.Settings.SubtitleSettings.SsaFontSize;
-            Primary = Color.FromArgb(Configuration.Settings.SubtitleSettings.SsaFontColorArgb);
-            Secondary = Color.Yellow;
-            Outline = Color.Black;
-            Background = Color.Black;
-            Alignment = "2";
-            OutlineWidth = Configuration.Settings.SubtitleSettings.SsaOutline;
-            ShadowWidth = Configuration.Settings.SubtitleSettings.SsaShadow;
-            MarginLeft = 10;
-            MarginRight = 10;
-            MarginVertical = 10;
-            BorderStyle = "1";
-            if (Configuration.Settings.SubtitleSettings.SsaOpaqueBox)
-                BorderStyle = "3";
-            RawLine = string.Empty;
-            LoadedFromHeader = false;
+            this.FontName = "Arial";
+            this.FontSize = 32;
+            this.Primary = CustomColor.White;
+            this.Secondary = CustomColor.Yellow;
+            this.Outline = CustomColor.Black;
+            this.Background = CustomColor.Black;
+            this.Alignment = "2";
+            this.OutlineWidth = 1;
+            this.ShadowWidth = 1;
+            this.MarginLeft = 10;
+            this.MarginRight = 10;
+            this.MarginVertical = 10;
+            this.BorderStyle = "1";
+            this.RawLine = string.Empty;
+            this.LoadedFromHeader = false;
         }
 
         public SsaStyle(SsaStyle ssaStyle)
         {
-            Name = ssaStyle.Name;
-            FontName = ssaStyle.FontName;
-            FontSize = ssaStyle.FontSize;
+            this.Name = ssaStyle.Name;
+            this.FontName = ssaStyle.FontName;
+            this.FontSize = ssaStyle.FontSize;
 
-            Italic = ssaStyle.Italic;
-            Bold = ssaStyle.Bold;
-            Underline = ssaStyle.Underline;
+            this.Italic = ssaStyle.Italic;
+            this.Bold = ssaStyle.Bold;
+            this.Underline = ssaStyle.Underline;
 
-            Primary = ssaStyle.Primary;
-            Secondary = ssaStyle.Secondary;
-            Tertiary = ssaStyle.Tertiary;
-            Outline = ssaStyle.Outline;
-            Background = ssaStyle.Background;
+            this.Primary = ssaStyle.Primary;
+            this.Secondary = ssaStyle.Secondary;
+            this.Tertiary = ssaStyle.Tertiary;
+            this.Outline = ssaStyle.Outline;
+            this.Background = ssaStyle.Background;
 
-            ShadowWidth = ssaStyle.ShadowWidth;
-            OutlineWidth = ssaStyle.OutlineWidth;
+            this.ShadowWidth = ssaStyle.ShadowWidth;
+            this.OutlineWidth = ssaStyle.OutlineWidth;
 
-            Alignment = ssaStyle.Alignment;
-            MarginLeft = ssaStyle.MarginLeft;
-            MarginRight = ssaStyle.MarginRight;
-            MarginVertical = ssaStyle.MarginVertical;
+            this.Alignment = ssaStyle.Alignment;
+            this.MarginLeft = ssaStyle.MarginLeft;
+            this.MarginRight = ssaStyle.MarginRight;
+            this.MarginVertical = ssaStyle.MarginVertical;
 
-            BorderStyle = ssaStyle.BorderStyle;
-            RawLine = ssaStyle.RawLine;
-            LoadedFromHeader = ssaStyle.LoadedFromHeader;
-        }
-
-        public string ToRawSsa(string styleFormat)
-        {
-            var sb = new StringBuilder();
-            sb.Append("Style: ");
-            var format = styleFormat.ToLowerInvariant().Substring(8).Split(',');
-            for (int i = 0; i < format.Length; i++)
-            {
-                string f = format[i].Trim();
-                if (f == "name")
-                    sb.Append(Name);
-                else if (f == "fontname")
-                    sb.Append(FontName);
-                else if (f == "fontsize")
-                    sb.Append(FontSize);
-                else if (f == "primarycolour")
-                    sb.Append(ColorTranslator.ToWin32(Primary));
-                else if (f == "secondarycolour")
-                    sb.Append(ColorTranslator.ToWin32(Secondary));
-                else if (f == "tertiarycolour")
-                    sb.Append(ColorTranslator.ToWin32(Tertiary));
-                else if (f == "outlinecolour")
-                    sb.Append(ColorTranslator.ToWin32(Outline));
-                else if (f == "backcolour")
-                    sb.Append(ColorTranslator.ToWin32(Background));
-                else if (f == "bold")
-                    sb.Append(Convert.ToInt32(Bold));
-                else if (f == "italic")
-                    sb.Append(Convert.ToInt32(Italic));
-                else if (f == "underline")
-                    sb.Append(Convert.ToInt32(Underline));
-                else if (f == "outline")
-                    sb.Append(Outline);
-                else if (f == "shadow")
-                    sb.Append(OutlineWidth);
-                else if (f == "shadow")
-                    sb.Append(ShadowWidth);
-                else if (f == "marginl")
-                    sb.Append(MarginLeft);
-                else if (f == "marginr")
-                    sb.Append(MarginRight);
-                else if (f == "marginv")
-                    sb.Append(MarginVertical);
-                else if (f == "borderstyle")
-                    sb.Append(BorderStyle);
-                else if (f == "encoding")
-                    sb.Append('1');
-                else if (f == "strikeout")
-                    sb.Append('0');
-                else if (f == "scalex")
-                    sb.Append("100");
-                else if (f == "scaley")
-                    sb.Append("100");
-                else if (f == "spacing")
-                    sb.Append('0');
-                else if (f == "angle")
-                    sb.Append('0');
-                sb.Append(',');
-            }
-            string s = sb.ToString().Trim();
-            return s.Substring(0, s.Length - 1);
-        }
-
-        public string ToRawAss(string styleFormat)
-        {
-            var sb = new StringBuilder();
-            sb.Append("Style: ");
-            var format = styleFormat.ToLowerInvariant().Substring(8).Split(',');
-            for (int i = 0; i < format.Length; i++)
-            {
-                string f = format[i].Trim();
-                if (f == "name")
-                    sb.Append(Name);
-                else if (f == "fontname")
-                    sb.Append(FontName);
-                else if (f == "fontsize")
-                    sb.Append(FontSize);
-                else if (f == "primarycolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Primary));
-                else if (f == "secondarycolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Secondary));
-                else if (f == "tertiarycolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Tertiary));
-                else if (f == "outlinecolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Outline));
-                else if (f == "backcolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Background));
-                else if (f == "bold")
-                    sb.Append(Convert.ToInt32(Bold));
-                else if (f == "italic")
-                    sb.Append(Convert.ToInt32(Italic));
-                else if (f == "underline")
-                    sb.Append(Convert.ToInt32(Underline));
-                else if (f == "outline")
-                    sb.Append(OutlineWidth);
-                else if (f == "shadow")
-                    sb.Append(ShadowWidth);
-                else if (f == "alignment")
-                    sb.Append(Alignment);
-                else if (f == "marginl")
-                    sb.Append(MarginLeft);
-                else if (f == "marginr")
-                    sb.Append(MarginRight);
-                else if (f == "marginv")
-                    sb.Append(MarginVertical);
-                else if (f == "borderstyle")
-                    sb.Append(BorderStyle);
-                else if (f == "encoding")
-                    sb.Append('1');
-                else if (f == "strikeout")
-                    sb.Append('0');
-                else if (f == "scalex")
-                    sb.Append("100");
-                else if (f == "scaley")
-                    sb.Append("100");
-                else if (f == "spacing")
-                    sb.Append('0');
-                else if (f == "angle")
-                    sb.Append('0');
-                sb.Append(',');
-            }
-            string s = sb.ToString().Trim();
-            return s.Substring(0, s.Length - 1);
+            this.BorderStyle = ssaStyle.BorderStyle;
+            this.RawLine = ssaStyle.RawLine;
+            this.LoadedFromHeader = ssaStyle.LoadedFromHeader;
         }
     }
 }

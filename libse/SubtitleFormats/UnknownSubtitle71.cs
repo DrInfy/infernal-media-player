@@ -74,7 +74,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return sb.ToString();
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             // 1 .
             // 0 0 : 0 0 : 0 4 : 1 2

@@ -39,11 +39,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return false;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            return "Not implemented!";
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             var buffer = FileUtil.ReadAllBytesShared(fileName);

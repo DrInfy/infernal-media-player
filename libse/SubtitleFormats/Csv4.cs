@@ -37,22 +37,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > 0;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            const string format = "{1}{0}{2}{0}{3}";
-            var sb = new StringBuilder();
-            foreach (var p in subtitle.Paragraphs)
-            {
-                string text = p.Text.Replace(Environment.NewLine, "///").Replace("\"", string.Empty);
-                if (text.Contains(','))
-                {
-                    text = "\"" + text + "\"";
-                }
-                sb.AppendLine(string.Format(format, Separator, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), text));
-            }
-            return sb.ToString().Trim();
-        }
-
         private static string EncodeTimeCode(TimeCode time)
         {
             return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));

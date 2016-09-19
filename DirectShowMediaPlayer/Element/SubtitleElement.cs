@@ -9,7 +9,9 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Imp.Base.Libraries;
 using Imp.Base.Subtitles;
+using Imp.DirectShow.Helpers;
 using Nikse.SubtitleEdit.Core;
+using SEdge.Core;
 
 namespace Imp.DirectShow.Element
 {
@@ -89,24 +91,7 @@ namespace Imp.DirectShow.Element
                 controls.Add(child);
             }
 
-            defaultStyle = new SsaStyle()
-            {
-                Alignment = "2",
-                Background = System.Drawing.Color.Black,
-                Bold = false,
-                BorderStyle = "1",
-                FontName = "Arial",
-                FontSize = 42,
-                Italic = false,
-                MarginVertical = 60,
-                MarginRight = 60,
-                MarginLeft = 60,
-                Name = "SystemDefault",
-                Primary = System.Drawing.Color.White,
-                Outline = System.Drawing.Color.Black,
-                OutlineWidth = 2,
-                Tertiary = System.Drawing.Color.Black
-            };
+            defaultStyle = new SsaStyle();
         }
 
         public void Clear()

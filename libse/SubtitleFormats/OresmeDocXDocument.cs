@@ -71,7 +71,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
   </w:body>
 </w:document>";
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             string xmlStructure = Layout.Replace("'", "\"");
 

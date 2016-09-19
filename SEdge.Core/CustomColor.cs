@@ -270,6 +270,16 @@ namespace SEdge.Core
             this.A = (byte) MathHelper.Clamp(alpha * 255, Byte.MinValue, Byte.MaxValue);
         }
 
+        public static CustomColor FromArgb(int a, int r, int g, int b)
+        {
+            return new CustomColor(r, g, b, a);
+        }
+
+        public static CustomColor FromRgb(int r, int g, int b)
+        {
+            return new CustomColor(r, g, b);
+        }
+
         /// <summary>
         /// Gets or sets the blue component.
         /// </summary>
@@ -1226,5 +1236,10 @@ namespace SEdge.Core
         }
 
         #endregion
+
+        public string ToArgb()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

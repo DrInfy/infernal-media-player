@@ -36,7 +36,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             string format = "{0}) {1} {2} Durée {3} Lis : {4} Nbc : {5}" + Environment.NewLine + "{6}" + Environment.NewLine;
             var sb = new StringBuilder();

@@ -33,28 +33,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            var sb = new StringBuilder();
-            int index = 0;
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                sb.AppendLine(string.Format("{0:0000} : {1},{2},10", index + 1, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime)));
-                sb.AppendLine("80 80 80");
-                foreach (string line in p.Text.SplitToLines())
-                    sb.AppendLine("C1Y00 " + line.Trim());
-                sb.AppendLine();
-                index++;
-            }
-            return sb.ToString();
-        }
-
-        private static string EncodeTimeCode(TimeCode time)
-        {
-            //00:03:15:22 (last is frame)
-            return string.Format("{0:00}{1:00}{2:00}{3:00}", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             //01072508010729007

@@ -33,7 +33,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             Configuration.Settings.General.CurrentFrameRate = 24.0;
             const string paragraphWriteFormat = "{0}\r\n{1}\r\n{2}\r\n";

@@ -28,31 +28,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine(@"[LayoutData]
-'Picture bottom layout',4,Tahoma,0.069,17588159451135,0,0,0,0,1,2,0,1,0.00345,0
-'Picture top layout',4,Tahoma,0.1,17588159451135,0,0,0,0,1,0,0,1,0.005,0
-'Picture left layout',4,Tahoma,0.1,17588159451135,0,0,0,0,0,1,1,1,0.005,0
-'Picture right layout',4,Tahoma,0.1,17588159451135,0,0,0,0,2,1,1,1,0.005,0
-
-[LayoutDataEx]
-1,0
-1,0
-1,0
-1,1
-
-[ItemData]").Replace("'", "\"");
-            int i = 0;
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                i++;
-                sb.AppendLine(string.Format("{0},1,\"{1}\",\"{2}\",0,\"{3}\"", i, p.StartTime, p.EndTime, p.Text.Replace(Environment.NewLine, "\\n").Replace("\"", string.Empty)));
-            }
-            return sb.ToString().Trim() + Environment.NewLine;
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             //1,1,"00:01:57,269","00:01:59,169",0,"These hills here are full of Apaches."

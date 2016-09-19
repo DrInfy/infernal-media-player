@@ -11,7 +11,6 @@ namespace Nikse.SubtitleEdit.Core
     public class Subtitle
     {
         private List<Paragraph> _paragraphs;
-        private readonly List<HistoryItem> _history;
         private SubtitleFormat _format;
         private bool _wasLoadedWithFrameNumbers;
         public string Header { get; set; }
@@ -29,22 +28,10 @@ namespace Nikse.SubtitleEdit.Core
             }
         }
 
-        public List<HistoryItem> HistoryItems
-        {
-            get { return _history; }
-        }
-
         public Subtitle()
         {
             _paragraphs = new List<Paragraph>();
-            _history = new List<HistoryItem>();
             FileName = "Untitled";
-        }
-
-        public Subtitle(List<HistoryItem> historyItems)
-            : this()
-        {
-            _history = historyItems;
         }
 
         /// <summary>
@@ -186,48 +173,6 @@ namespace Nikse.SubtitleEdit.Core
                 return LoadSubtitle(fileName, out encoding, Encoding.Unicode);
 
             return null;
-        }
-
-        public void MakeHistoryForUndo(string description, SubtitleFormat subtitleFormat, DateTime fileModified, Subtitle original, string originalSubtitleFileName, int lineNumber, int linePosition, int linePositionAlternate)
-        {
-            // don't fill memory with history - use a max rollback points
-            if (_history.Count > MaximumHistoryItems)
-                _history.RemoveAt(0);
-
-            _history.Add(new HistoryItem(_history.Count, this, description, FileName, fileModified, subtitleFormat.FriendlyName, original, originalSubtitleFileName, lineNumber, linePosition, linePositionAlternate));
-        }
-
-        public bool CanUndo
-        {
-            get
-            {
-                return _history.Count > 0;
-            }
-        }
-
-        public string UndoHistory(int index, out string subtitleFormatFriendlyName, out DateTime fileModified, out Subtitle originalSubtitle, out string originalSubtitleFileName)
-        {
-            _paragraphs.Clear();
-            foreach (Paragraph p in _history[index].Subtitle.Paragraphs)
-                _paragraphs.Add(new Paragraph(p));
-
-            subtitleFormatFriendlyName = _history[index].SubtitleFormatFriendlyName;
-            FileName = _history[index].FileName;
-            fileModified = _history[index].FileModified;
-            originalSubtitle = new Subtitle(_history[index].OriginalSubtitle);
-            originalSubtitleFileName = _history[index].OriginalSubtitleFileName;
-
-            return FileName;
-        }
-
-        /// <summary>
-        /// Creates subtitle as text in its native format.
-        /// </summary>
-        /// <param name="format">Format to output</param>
-        /// <returns>Native format as text string</returns>
-        public string ToText(SubtitleFormat format)
-        {
-            return format.ToText(this, Path.GetFileNameWithoutExtension(FileName));
         }
 
         public void AddTimeToAllParagraphs(TimeSpan time)
@@ -539,9 +484,6 @@ namespace Nikse.SubtitleEdit.Core
                     break;
                 case SubtitleSortCriteria.TextCharactersPerSeconds:
                     _paragraphs.Sort((p1, p2) => Utilities.GetCharactersPerSecond(p1).CompareTo(Utilities.GetCharactersPerSecond(p2)));
-                    break;
-                case SubtitleSortCriteria.WordsPerMinute:
-                    _paragraphs.Sort((p1, p2) => p1.WordsPerMinute.CompareTo(p2.WordsPerMinute));
                     break;
                 case SubtitleSortCriteria.Style:
                     _paragraphs.Sort((p1, p2) => string.Compare(p1.Extra, p2.Extra, StringComparison.Ordinal));

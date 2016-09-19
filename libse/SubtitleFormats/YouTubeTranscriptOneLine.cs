@@ -36,17 +36,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            var sb = new StringBuilder();
-            const string writeFormat = "{0}{1}";
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                sb.AppendLine(string.Format(writeFormat, EncodeTimeCode(p.StartTime), HtmlUtil.RemoveHtmlTags(p.Text.Replace(Environment.NewLine, " "))));
-            }
-            return sb.ToString();
-        }
-
         private static string EncodeTimeCode(TimeCode time)
         {
             return string.Format("{0}:{1:00}", time.Hours * 60 + time.Minutes, time.Seconds);

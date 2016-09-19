@@ -31,23 +31,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            //0:01:37.89,0:01:40.52,NTP You should come to the Drama Club, too.
-            //0:01:40.52,0:01:43.77,NTP Yeah. The Drama Club is worried|that you haven't been coming.
-            //0:01:44.13,0:01:47.00,NTP I see. Sorry, I'll drop by next time.
-
-            const string paragraphWriteFormat = "{0},{1},NTP {2}";
-
-            var sb = new StringBuilder();
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                var text = p.Text.Replace(Environment.NewLine, "|");
-                sb.AppendLine(string.Format(paragraphWriteFormat, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), text));
-            }
-            return sb.ToString().Trim();
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             //0:01:37.89,0:01:40.52,NTP You...|Line2!

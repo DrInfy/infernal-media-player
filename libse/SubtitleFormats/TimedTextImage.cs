@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Xml;
+using SEdge.Core.Texts;
 
 namespace Nikse.SubtitleEdit.Core.SubtitleFormats
 {
@@ -54,11 +55,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                 }
             }
             return false;
-        }
-
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            throw new NotImplementedException();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)

@@ -499,6 +499,12 @@
     <Compile Include="XSub.cs" />
     <Compile Include="ZipExtractor.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SEdge.Core\SEdge.Core.csproj">
+      <Project>{6f3fd01f-0bcc-4646-ba2e-f33d02dba620}</Project>
+      <Name>SEdge.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

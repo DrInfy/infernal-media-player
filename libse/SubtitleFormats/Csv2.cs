@@ -52,18 +52,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return fine > failed;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            const string format = "{1}{0}{2}{0}{3}{0}\"{4}\"";
-            var sb = new StringBuilder();
-            sb.AppendLine(string.Format(format, Separator, "Number", "Start time (hh:mm:ss:ff)", "End time (hh:mm:ss:ff)", "Text"));
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                sb.AppendLine(string.Format(format, Separator, p.Number, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), p.Text.Replace(Environment.NewLine, "\n")));
-            }
-            return sb.ToString().Trim();
-        }
-
         private static string EncodeTimeCode(TimeCode time)
         {
             return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));

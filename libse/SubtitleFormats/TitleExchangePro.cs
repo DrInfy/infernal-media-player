@@ -38,27 +38,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                //00:01:48:22,       00:01:52:17,       - I need those samples, fast!//- Yes, professor.
-                string text = p.Text;
-                text = text.Replace("<i>", "@Italic@");
-                text = text.Replace("</i>", "@Italic@");
-                text = text.Replace(Environment.NewLine, "//");
-                sb.AppendLine(string.Format("{0},\t{1},\t{2}", EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), HtmlUtil.RemoveHtmlTags(text)));
-            }
-            return sb.ToString();
-        }
-
-        private static string EncodeTimeCode(TimeCode time)
-        {
-            //00:03:15:22 (last is frame)
-            return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             //00:01:48:22,       00:01:52:17,       - I need those samples, fast!//- Yes, professor.

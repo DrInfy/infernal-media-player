@@ -28,7 +28,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             var u52 = new UnknownSubtitle52();
             return u52.ToText(subtitle, title).ToRtf();
@@ -49,7 +49,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             var lines2 = text.ToString().FromRtf().SplitToLines().ToList();
             var u52 = new UnknownSubtitle52();
             u52.LoadSubtitle(subtitle, lines2, fileName);
-            _errorCount = u52.ErrorCount;
         }
     }
 }

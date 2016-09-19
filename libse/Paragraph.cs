@@ -1,4 +1,5 @@
 ﻿using System;
+using SEdge.Core.Texts;
 
 namespace Nikse.SubtitleEdit.Core
 {
@@ -140,18 +141,7 @@ namespace Nikse.SubtitleEdit.Core
         {
             get
             {
-                return Utilities.GetNumberOfLines(Text);
-            }
-        }
-
-        public double WordsPerMinute
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(Text))
-                    return 0;
-                int wordCount = HtmlUtil.RemoveHtmlTags(Text, true).Split(new[] { ' ', ',', '.', '!', '?', ';', ':', '(', ')', '[', ']', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
-                return (60.0 / Duration.TotalSeconds) * wordCount;
+                return TextHelper.GetNumberOfLines(Text);
             }
         }
     }

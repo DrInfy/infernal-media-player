@@ -140,7 +140,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             }
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             bool hasStyleHead = false;
             bool convertedFromSubStationAlpha = false;

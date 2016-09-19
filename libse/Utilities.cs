@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using SEdge.Core;
 
 namespace Nikse.SubtitleEdit.Core
 {
@@ -772,6 +773,11 @@ namespace Nikse.SubtitleEdit.Core
         }
 
         public static string ColorToHex(Color c)
+        {
+            return string.Format("#{0:x2}{1:x2}{2:x2}", c.R, c.G, c.B);
+        }
+
+        public static string ColorToHex(CustomColor c)
         {
             return string.Format("#{0:x2}{1:x2}{2:x2}", c.R, c.G, c.B);
         }

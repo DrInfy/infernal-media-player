@@ -34,7 +34,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return time.ToHHMMSSFF();
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             //<TitlerData>
             // <Data StartTimecode='00:00:02;21' EndTimecode='00:00:05;21' Title='CAPTIONING PROVIDED BY

@@ -36,46 +36,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            const string timeCodeFormatNoHours = "{0:00}:{1:00}.{2:000}"; // h:mm:ss.cc
-            const string timeCodeFormatHours = "{0}:{1:00}:{2:00}.{3:000}"; // h:mm:ss.cc
-            const string paragraphWriteFormat = "{0} --> {1}{4}{2}{3}{4}";
-
-            var sb = new StringBuilder();
-            sb.AppendLine("WEBVTT FILE");
-            sb.AppendLine();
-            int count = 1;
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                string start = string.Format(timeCodeFormatNoHours, p.StartTime.Minutes, p.StartTime.Seconds, p.StartTime.Milliseconds);
-                string end = string.Format(timeCodeFormatNoHours, p.EndTime.Minutes, p.EndTime.Seconds, p.EndTime.Milliseconds);
-
-                if (p.StartTime.Hours > 0 || p.EndTime.Hours > 0)
-                {
-                    start = string.Format(timeCodeFormatHours, p.StartTime.Hours, p.StartTime.Minutes, p.StartTime.Seconds, p.StartTime.Milliseconds);
-                    end = string.Format(timeCodeFormatHours, p.EndTime.Hours, p.EndTime.Minutes, p.EndTime.Seconds, p.EndTime.Milliseconds);
-                }
-
-                string style = string.Empty;
-                if (!string.IsNullOrEmpty(p.Extra) && subtitle.Header == "WEBVTT FILE")
-                    style = p.Extra;
-                sb.Append(count);
-                sb.AppendLine();
-                sb.AppendLine(string.Format(paragraphWriteFormat, start, end, FormatText(p), style, Environment.NewLine));
-                count++;
-            }
-            return sb.ToString().Trim();
-        }
-
-        private static string FormatText(Paragraph p)
-        {
-            string text = p.Text;
-            while (text.Contains(Environment.NewLine + Environment.NewLine))
-                text = text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
-            return text;
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             _errorCount = 0;

@@ -39,18 +39,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return fine > failed;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            const string format = "{1}{0}{2}{0}{3}{0}\"{4}\"";
-            var sb = new StringBuilder();
-            sb.AppendLine(string.Format(format, Separator, "Number", "Start time in milliseconds", "End time in milliseconds", "Text"));
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                sb.AppendLine(string.Format(format, Separator, p.Number, p.StartTime.TotalMilliseconds, p.EndTime.TotalMilliseconds, p.Text.Replace(Environment.NewLine, "\n")));
-            }
-            return sb.ToString().Trim();
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             _errorCount = 0;

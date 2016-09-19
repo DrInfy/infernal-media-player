@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using SEdge.Core.Maths;
 
 namespace Nikse.SubtitleEdit.Core.SubtitleFormats
 {
@@ -183,7 +184,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
 
         public class AribTextATag
         {
-            public Point Location { get; set; }
+            public Vector2 Location { get; set; }
             public byte[] Data { get; set; }
             public string Text { get; set; }
         }
@@ -193,9 +194,9 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             private static readonly Regex ATag = new Regex(@"\d+;\d+ a", RegexOptions.Compiled);
 
             public double DurationInSeconds { get; set; }
-            public Point AreaSize { get; set; }
-            public Point AreaLocation { get; set; }
-            public Point FontWidthAndHeight { get; set; }
+            public Vector2 AreaSize { get; set; }
+            public Vector2 AreaLocation { get; set; }
+            public Vector2 FontWidthAndHeight { get; set; }
             public int CharacterSpacing { get; set; }
             public int LineSpacing { get; set; }
             public List<AribTextATag> Texts { get; set; }
@@ -224,7 +225,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                                 var decodedText = AribB24Decoder.AribToString(buffer, start, len);
                                 Texts.Add(new AribTextATag
                                 {
-                                    Location = new Point(x, y),
+                                    Location = new Vector2(x, y),
                                     Text = decodedText
                                 });
                             }
@@ -243,7 +244,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                             int x, y;
                             if (arr.Length == 2 && int.TryParse(arr[0], out x) && int.TryParse(arr[1], out y))
                             {
-                                AreaSize = new Point(x, y);
+                                AreaSize = new Vector2(x, y);
                             }
                         }
                         else if (code.EndsWith(" _"))
@@ -252,7 +253,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                             int x, y;
                             if (arr.Length == 2 && int.TryParse(arr[0], out x) && int.TryParse(arr[1], out y))
                             {
-                                AreaLocation = new Point(x, y);
+                                AreaLocation = new Vector2(x, y);
                             }
                         }
                         else if (code.EndsWith(" W"))
@@ -261,7 +262,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                             int x, y;
                             if (arr.Length == 2 && int.TryParse(arr[0], out x) && int.TryParse(arr[1], out y))
                             {
-                                FontWidthAndHeight = new Point(x, y);
+                                FontWidthAndHeight = new Vector2(x, y);
                             }
                         }
                         else if (code.EndsWith(" X"))
@@ -363,11 +364,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                 }
             }
             return false;
-        }
-
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            throw new NotImplementedException();
         }
 
         public void Save(string fileName, string videoFileName, Subtitle subtitle)

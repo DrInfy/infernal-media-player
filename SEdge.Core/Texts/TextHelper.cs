@@ -4,15 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using SEdge.Core.Maths;
-using SEdge.Maths;
 
-namespace SEdge.Core.Libraries
+namespace SEdge.Core.Texts
 {
     public static class TextHelper
     {
-        public static readonly CultureInfo Ci = CultureInfo.InvariantCulture; // new CultureInfo("en-US", false);
+        public static readonly CultureInfo Ci = CultureInfo.InvariantCulture;
 
         public static Array GetValues<T>()
         {
@@ -45,6 +43,8 @@ namespace SEdge.Core.Libraries
             return text;
         }
 
+
+       
 
         /// <summary>
         /// Adds the nulls to string so that it has at least x numbers.
@@ -111,6 +111,24 @@ namespace SEdge.Core.Libraries
         public static float ParseFloat(string number)
         {
             return float.Parse(number, Ci.NumberFormat);
+        }
+
+        /// <summary>
+        /// Gets the number of lines base on the amount of '\n'.
+        /// </summary>
+        public static int GetNumberOfLines(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0;
+
+            int lines = 1;
+            int index = text.IndexOf('\n');
+            while (index >= 0)
+            {
+                lines++;
+                index = text.IndexOf('\n', index + 1);
+            }
+            return lines;
         }
 
         public static string WrapText(string text, int maxLineWidth, int minimumLines)

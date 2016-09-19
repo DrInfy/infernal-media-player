@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SEdge.Core</RootNamespace>
     <AssemblyName>SEdge.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,9 +44,14 @@
   <ItemGroup>
     <Compile Include="CodeAnnotations.cs" />
     <Compile Include="CustomColor.cs" />
+    <Compile Include="Files\FastFileStream.cs" />
     <Compile Include="Maths\Average.cs" />
+    <Compile Include="Maths\Vector2.cs" />
+    <Compile Include="Texts\ColorTranslator.cs" />
+    <Compile Include="Texts\Extensions.cs" />
+    <Compile Include="Texts\NumberHelper.cs" />
     <Compile Include="Texts\TextHelper.cs" />
-    <Compile Include="Maths\ZMath.cs" />
+    <Compile Include="Maths\MathHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

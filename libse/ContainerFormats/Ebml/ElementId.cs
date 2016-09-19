@@ -124,10 +124,12 @@
         CodecId = 0x86,
         CodecPrivate = 0x63A2,
         CodecName = 0x258688,
+
         /// <summary> The UID of an attachment that is used by this codec. </summary>
         /// <remarks> Probably not all that useful, no multiple allowed.</remarks>
         AttachmentLink = 0x7446,
         CodecDecodeAll = 0xAA,
+
         /// <summary> Specify that this track is an overlay track for the Track specified (in the u-integer). That means when this track has a gap (see SilentTracks) the overlay track should be used instead. The order of multiple TrackOverlay matters, the first one is the one that should be used. If not found it should be the second, etc.</summary>
         TrackOverlay = 0x6FAB,
         CodecDelay = 0x56AA,

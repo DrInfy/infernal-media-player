@@ -42,18 +42,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > _errorCount;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            const string paragraphWriteFormat = "{0},{1}\r\n{2}\r\n\r\n";
-
-            var sb = new StringBuilder();
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                sb.AppendFormat(paragraphWriteFormat, FormatTime(p.StartTime), FormatTime(p.EndTime), p.Text);
-            }
-            return sb.ToString().Trim();
-        }
-
         private static string FormatTime(TimeCode timeCode)
         {
             return string.Format("{0}:{1:00}:{2:00}.{3:000}", timeCode.Hours, timeCode.Minutes, timeCode.Seconds, timeCode.Milliseconds);

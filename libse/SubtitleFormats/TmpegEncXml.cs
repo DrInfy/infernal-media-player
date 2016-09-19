@@ -220,7 +220,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
     </Subtitle>
 </TMPGEncVMESubtitleTextFormat>";
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             var xmlStructure = Layout.Replace('\'', '"');
 

@@ -29,62 +29,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > 0;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<AudioDoc name=\"title\">" + Environment.NewLine +
-                "<SpeakerList/>" + Environment.NewLine +
-                "<SegmentList/>" + Environment.NewLine +
-                "</AudioDoc>";
-
-            var xml = new XmlDocument();
-            xml.LoadXml(xmlStructure);
-            xml.DocumentElement.Attributes["name"].InnerText = title;
-
-            if (subtitle.Header != null && subtitle.Header.Contains("<SpeakerList"))
-            {
-                var header = new XmlDocument();
-                try
-                {
-                    header.LoadXml(subtitle.Header);
-                    var speakerListNode = header.DocumentElement.SelectSingleNode("SpeakerList");
-                    if (speakerListNode != null)
-                        xml.DocumentElement.SelectSingleNode("SpeakerList").InnerXml = speakerListNode.InnerXml;
-                }
-                catch
-                {
-                }
-            }
-
-            XmlNode reel = xml.DocumentElement.SelectSingleNode("SegmentList");
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                XmlNode paragraph = xml.CreateElement("SpeechSegment");
-
-                XmlAttribute start = xml.CreateAttribute("stime");
-                start.InnerText = ToTimeCode(p.StartTime.TotalMilliseconds);
-                paragraph.Attributes.Append(start);
-
-                XmlAttribute end = xml.CreateAttribute("etime");
-                end.InnerText = ToTimeCode(p.EndTime.TotalMilliseconds);
-                paragraph.Attributes.Append(end);
-
-                if (p.Actor != null)
-                {
-                    XmlAttribute spkid = xml.CreateAttribute("spkid");
-                    spkid.InnerText = p.Actor;
-                    paragraph.Attributes.Append(spkid);
-                }
-
-                paragraph.InnerText = HtmlUtil.RemoveHtmlTags(p.Text.Replace(Environment.NewLine, "<s/>"));
-
-                reel.AppendChild(paragraph);
-            }
-
-            return ToUtf8XmlString(xml);
-        }
-
         private static string ToTimeCode(double totalMilliseconds)
         {
             return string.Format("{0:0##}", totalMilliseconds / TimeCode.BaseUnit);

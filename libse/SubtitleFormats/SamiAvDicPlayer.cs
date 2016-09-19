@@ -28,7 +28,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             base.LoadSubtitle(subtitle, text.SplitToLines().ToList(), fileName);
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             var text = base.ToText(subtitle, title);
             return text.Replace("<SYNC", "<AVDicPlayer_TEDSYNⓒ_VER1.1");

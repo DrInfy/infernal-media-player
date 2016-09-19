@@ -12,7 +12,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             get { return "TMPGEnc AW5"; }
         }
 
-        public override string ToText(Subtitle subtitle, string title)
+        public string ToText(Subtitle subtitle, string title)
         {
             string xmlStructure = Layout.Replace("'", "\"");
             var xml = new XmlDocument();

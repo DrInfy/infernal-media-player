@@ -246,38 +246,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                     new UnknownSubtitle83(),
                 };
 
-                string path = Configuration.PluginsDirectory;
-                if (Directory.Exists(path))
-                {
-                    foreach (string pluginFileName in Directory.EnumerateFiles(path, "*.DLL"))
-                    {
-                        try
-                        {
-                            var assembly = System.Reflection.Assembly.Load(FileUtil.ReadAllBytesShared(pluginFileName));
-                            if (assembly != null)
-                            {
-                                foreach (var exportedType in assembly.GetExportedTypes())
-                                {
-                                    try
-                                    {
-                                        object pluginObject = Activator.CreateInstance(exportedType);
-                                        var po = pluginObject as SubtitleFormat;
-                                        if (po != null)
-                                            _allSubtitleFormats.Insert(1, po);
-                                    }
-                                    catch
-                                    {
-                                        // ignored
-                                    }
-                                }
-                            }
-                        }
-                        catch
-                        {
-                        }
-                    }
-                }
-
                 return _allSubtitleFormats;
             }
         }
@@ -315,17 +283,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             }
         }
 
-        public int ErrorCount
-        {
-            get
-            {
-                return _errorCount;
-            }
-        }
-
         abstract public bool IsMine(List<string> lines, string fileName);
-
-        abstract public string ToText(Subtitle subtitle, string title);
 
         abstract public void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName);
 
@@ -349,27 +307,27 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             }
         }
 
-        public static int MillisecondsToFrames(double milliseconds)
+        public static int MillisecondsToFrames(double milliseconds, double frameRate = 30.0)
         {
-            return (int)Math.Round(milliseconds / (TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate));
+            return (int)Math.Round(milliseconds / (TimeCode.BaseUnit / frameRate));
         }
 
-        public static int MillisecondsToFramesMaxFrameRate(double milliseconds)
+        public static int MillisecondsToFramesMaxFrameRate(double milliseconds, double frameRate = 30.0)
         {
-            int frames = (int)Math.Round(milliseconds / (TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate));
-            if (frames >= Configuration.Settings.General.CurrentFrameRate)
-                frames = (int)(Configuration.Settings.General.CurrentFrameRate - 0.01);
+            int frames = (int)Math.Round(milliseconds / (TimeCode.BaseUnit / frameRate));
+            if (frames >= frameRate)
+                frames = (int)(frameRate - 0.01);
             return frames;
         }
 
-        public static int FramesToMilliseconds(double frames)
+        public static int FramesToMilliseconds(double frames, double frameRate = 30.0)
         {
-            return (int)Math.Round(frames * (TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate));
+            return (int)Math.Round(frames * (TimeCode.BaseUnit / frameRate));
         }
 
-        public static int FramesToMillisecondsMax999(double frames)
+        public static int FramesToMillisecondsMax999(double frames, double frameRate = 30.0)
         {
-            int ms = (int)Math.Round(frames * (TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate));
+            int ms = (int)Math.Round(frames * (TimeCode.BaseUnit / frameRate));
             return Math.Min(ms, 999);
         }
 

@@ -30,45 +30,6 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return subtitle.Paragraphs.Count > 0;
         }
 
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<Subtitles/>";
-
-            var xml = new XmlDocument();
-            xml.LoadXml(xmlStructure);
-
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                XmlNode paragraph = xml.CreateElement("Subtitle");
-
-                XmlNode number = xml.CreateElement("Number");
-                number.InnerText = p.Number.ToString(CultureInfo.InvariantCulture);
-                paragraph.AppendChild(number);
-
-                XmlNode start = xml.CreateElement("Start");
-                start.InnerText = p.StartTime.ToString();
-                paragraph.AppendChild(start);
-
-                XmlNode end = xml.CreateElement("End");
-                end.InnerText = p.EndTime.ToString();
-                paragraph.AppendChild(end);
-
-                XmlNode duration = xml.CreateElement("Duration");
-                duration.InnerText = p.Duration.ToShortString();
-                paragraph.AppendChild(duration);
-
-                XmlNode text = xml.CreateElement("Text");
-                text.InnerText = HtmlUtil.RemoveHtmlTags(p.Text);
-                paragraph.AppendChild(text);
-
-                xml.DocumentElement.AppendChild(paragraph);
-            }
-
-            return ToUtf8XmlString(xml);
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             _errorCount = 0;
