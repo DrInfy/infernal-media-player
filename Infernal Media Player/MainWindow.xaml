@@ -5,7 +5,6 @@
 
     xmlns:Element="clr-namespace:MediaPlayer.Element;assembly=MediaPlayer" xmlns:Panels="clr-namespace:Imp.Panels"
     xmlns:lists="clr-namespace:ImpControls.Lists;assembly=ImpControls"
-    xmlns:controls="clr-namespace:Imp.Controls"
     x:Class="Imp.MainWindow"
         Title="Infernal Media Player" Height="800" MinHeight="100" MinWidth="300" Width="1200" WindowStyle="None" WindowState="Normal" Loaded="Window_Loaded" MouseLeave="Window_MouseLeave" MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel" SizeChanged="Window_SizeChanged" MouseDoubleClick="Window_MouseDoubleClick" ScrollViewer.VerticalScrollBarVisibility="Disabled" Icon="imp-logo-ico.ico" Activated="Window_Activated" AllowDrop="True" Drop="Window_Drop">
 
@@ -50,7 +49,7 @@
         <Element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" IsTabStop="False" />
         <Image x:Name="LogoViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Source="/Infernal Media Player;component/Images/imp-logo.png" Stretch="None" />
         <Image x:Name="ImageViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Stretch="None" Visibility="Hidden" />
-        <controls:SubtitleElement x:Name="Subtitles" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden"/>
+        <Element:SubtitleElement x:Name="Subtitles" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden"/>
 
         <Rectangle Name="SplitterRight" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
 

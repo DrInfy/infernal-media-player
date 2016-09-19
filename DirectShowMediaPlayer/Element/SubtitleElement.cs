@@ -3,23 +3,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
 using Base.Libraries;
 using Base.Subtitles;
 using Imp.Libraries;
-using ImpControls.Gui;
 using Nikse.SubtitleEdit.Core;
 
-namespace Imp.Controls
+namespace MediaPlayer.Element
 {
     public class SubtitleElement : Grid
     {
-        private static double fontScale = 72.0 / 96.0;
+        private static double fontScale = 72.0 / 120.0;
         private readonly Brush defaultBrush = new SolidColorBrush {Color = Colors.White};
         private readonly Pen defaultOutlinePen = new Pen(new SolidColorBrush(Colors.Black), 3);
         private readonly Typeface defaultTypeface = new Typeface("Verdana");

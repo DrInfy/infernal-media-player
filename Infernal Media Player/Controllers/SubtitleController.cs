@@ -14,7 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Base.Controllers;
 using Base.Subtitles;
-using Imp.Controls;
+using MediaPlayer.Element;
 using MediaPlayer.Subtitles;
 using Nikse.SubtitleEdit.Core;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Matroska;
@@ -251,7 +251,11 @@ namespace Imp.Controllers
                 }
             }
 
+#if DEBUG
             if (true || nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastIndices.Contains(x)))
+#else
+            if (nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastIndices.Contains(x)))
+#endif
             {
                 subtitleElement.ClearContent();
                 lastIndices.Clear();

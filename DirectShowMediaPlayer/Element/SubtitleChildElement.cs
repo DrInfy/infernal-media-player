@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Pen = System.Windows.Media.Pen;
 
-namespace Imp.Controls
+namespace MediaPlayer.Element
 {
     public class SubtitleChildElement: Control // System.Windows.Controls.Image
     {
