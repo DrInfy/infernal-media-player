@@ -2,12 +2,12 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Base.Libraries;
+using Imp.Base.Libraries;
 using Microsoft.WindowsAPICodePack.Shell;
 
 #endregion
 
-namespace ImpControls.SpecialFolder
+namespace Imp.Controls.SpecialFolder
 {
     public static class SpecialFolderLoader
     {

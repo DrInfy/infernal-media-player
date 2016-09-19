@@ -4,12 +4,12 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Base;
-using Base.ListLogic;
+using Imp.Base;
+using Imp.Base.ListLogic;
 
 #endregion
 
-namespace ImpControls.Lists
+namespace Imp.Controls.Lists
 {
     public class PlaylistListBox : ImpListBox<PlaylistItem>
     {

@@ -1,10 +1,10 @@
 ﻿#region Usings
 
-using Imp.Controllers;
+
 
 #endregion
 
-namespace Base.Interfaces
+namespace Imp.Base.Interfaces
 {
     public interface IEventController
     {

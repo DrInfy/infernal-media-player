@@ -1,4 +1,4 @@
-﻿namespace Ipv.Image
+﻿namespace Imp.Player.Image
 {
     public enum ImageType
     {

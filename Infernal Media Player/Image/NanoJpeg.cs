@@ -6,7 +6,7 @@ using System;
 
 #pragma warning disable 1591
 
-namespace Imp.Image
+namespace Imp.Player.Image
 {
     // nj_result_t: Result codes for njDecode().
     public enum nj_result_t

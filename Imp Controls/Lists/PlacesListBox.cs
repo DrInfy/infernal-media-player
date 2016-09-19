@@ -2,12 +2,12 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Base.ListLogic;
-using ImpControls.SpecialFolder;
+using Imp.Base.ListLogic;
+using Imp.Controls.SpecialFolder;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls.Lists
 {
     /// <summary>
     /// Listbox showing drives and additional places like "My Pictures" folder or

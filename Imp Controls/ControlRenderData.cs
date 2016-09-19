@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls
 {
     public struct ControlRenderData
     {

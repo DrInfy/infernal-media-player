@@ -5,16 +5,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows;
-using Base.Commands;
-using Base.FileData;
-using Base.Interfaces;
-using Base.Libraries;
-using Base.ListLogic;
-using Imp.Controllers;
+using Imp.Base.Commands;
+using Imp.Base.FileData;
+using Imp.Base.Interfaces;
+using Imp.Base.Libraries;
+using Imp.Base.ListLogic;
 
 #endregion
 
-namespace Base.Controllers
+namespace Imp.Base.Controllers
 {
     public delegate void ExecDelegate<in T>(T cmd, object argument = null);
 

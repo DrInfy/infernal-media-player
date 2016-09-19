@@ -9,7 +9,7 @@ using System.Windows.Interop;
 
 // ReSharper disable InconsistentNaming
 
-namespace Base.Libraries
+namespace Imp.Base.Libraries
 {
     public static class ImpNativeMethods
     {
@@ -21,7 +21,7 @@ namespace Base.Libraries
             public static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
         }
 
-        [FlagsAttribute]
+        [Flags]
         public enum EXECUTION_STATE : uint
         {
             ES_SYSTEM_REQUIRED = 0x00000001,

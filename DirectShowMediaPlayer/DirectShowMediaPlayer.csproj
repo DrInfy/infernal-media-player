@@ -7,7 +7,7 @@
     <ProjectGuid>{85B2D6C8-5D46-4083-823C-9FB4CC52F19E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MediaPlayer</RootNamespace>
+    <RootNamespace>Imp.DirectShow</RootNamespace>
     <AssemblyName>MediaPlayer</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

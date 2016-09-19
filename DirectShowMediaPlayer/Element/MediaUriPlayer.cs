@@ -1,13 +1,13 @@
 ﻿#region Usings
 
 using System;
-using Base.Interfaces;
-using Base.Libraries;
-using MediaPlayer.Player;
+using Imp.Base.Interfaces;
+using Imp.Base.Libraries;
+using Imp.DirectShow.Player;
 
 #endregion
 
-namespace MediaPlayer.Element
+namespace Imp.DirectShow.Element
 {
     public class MediaUriPlayer : D3DRenderer, IMediaUriPlayer
     {

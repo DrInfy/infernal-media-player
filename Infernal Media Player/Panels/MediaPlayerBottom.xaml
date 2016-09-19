@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ImpControls="clr-namespace:ImpControls;assembly=ImpControls" x:Class="Imp.Panels.MediaPlayerBottom" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Imp.Controls;assembly=ImpControls"
+             x:Class="Imp.Player.Panels.MediaPlayerBottom" 
              mc:Ignorable="d" 
              d:DesignHeight="40" d:DesignWidth="1000">
     <UserControl.Resources>
@@ -22,11 +23,11 @@
             
         </Grid.ColumnDefinitions>
 
-        <ImpControls:ImpButton Name="ButtonPlay"  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="2" Clicked="ButtonPlay_Clicked" IsTabStop="False"/>
-        <ImpControls:ImpButton Name="ButtonLoop"  HorizontalAlignment="Left"  Margin="40,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="3" Clicked="ButtonLoop_Clicked" IsTabStop="False"/>
-        <ImpControls:ImpButton Name="ButtonNext"  HorizontalAlignment="Left"  Margin="80,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="3" Clicked="ButtonNext_Clicked" IsTabStop="False"/>
+        <controls:ImpButton Name="ButtonPlay"  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="2" Clicked="ButtonPlay_Clicked" IsTabStop="False"/>
+        <controls:ImpButton Name="ButtonLoop"  HorizontalAlignment="Left"  Margin="40,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="3" Clicked="ButtonLoop_Clicked" IsTabStop="False"/>
+        <controls:ImpButton Name="ButtonNext"  HorizontalAlignment="Left"  Margin="80,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="3" Clicked="ButtonNext_Clicked" IsTabStop="False"/>
 
-        <ImpControls:ImpButton Name="ButtonMute"  HorizontalAlignment="Right"  Margin="0,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="2" Grid.Column="1" Clicked="ButtonMute_Clicked" CurrentState="1" IsTabStop="False"/>
+        <controls:ImpButton Name="ButtonMute"  HorizontalAlignment="Right"  Margin="0,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="2" Grid.Column="1" Clicked="ButtonMute_Clicked" CurrentState="1" IsTabStop="False"/>
 
         <ProgressBar  Name="SliderTime" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="130,3,60,20" HorizontalContentAlignment="Stretch" Grid.ColumnSpan="2" SmallChange="0.1" Foreground="DarkRed" OverridesDefaultStyle="False" AllowDrop="False" MouseMove="sliderTime_MouseMove" MouseUp="sliderTime_MouseUp" MouseDown="sliderTime_MouseDown" IsTabStop="False"/>
         

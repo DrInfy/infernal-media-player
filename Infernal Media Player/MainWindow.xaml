@@ -1,11 +1,12 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ImpControls="clr-namespace:ImpControls;assembly=ImpControls"
 
-    xmlns:Element="clr-namespace:MediaPlayer.Element;assembly=MediaPlayer" xmlns:Panels="clr-namespace:Imp.Panels"
-    xmlns:lists="clr-namespace:ImpControls.Lists;assembly=ImpControls"
-    x:Class="Imp.MainWindow"
+    xmlns:element="clr-namespace:Imp.DirectShow.Element;assembly=MediaPlayer"
+    xmlns:controls="clr-namespace:Imp.Controls;assembly=ImpControls"
+    xmlns:lists="clr-namespace:Imp.Controls.Lists;assembly=ImpControls"
+    xmlns:panels="clr-namespace:Imp.Player.Panels"
+    x:Class="Imp.Player.MainWindow"
         Title="Infernal Media Player" Height="800" MinHeight="100" MinWidth="300" Width="1200" WindowStyle="None" WindowState="Normal" Loaded="Window_Loaded" MouseLeave="Window_MouseLeave" MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel" SizeChanged="Window_SizeChanged" MouseDoubleClick="Window_MouseDoubleClick" ScrollViewer.VerticalScrollBarVisibility="Disabled" Icon="imp-logo-ico.ico" Activated="Window_Activated" AllowDrop="True" Drop="Window_Drop">
 
     <Window.Resources>
@@ -38,28 +39,28 @@
         
         <Label x:Name="LabelTopic" Grid.Row="0" Grid.ColumnSpan="5" Content="Titleeeeeeeeeeee" HorizontalAlignment="Stretch" Margin="0,0,200,0" VerticalAlignment="Stretch" FontSize="12"/>
         
-        <ImpControls:ImpButton x:Name="ButtonExit" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,0,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
-        <ImpControls:ImpButton x:Name="ButtonMax" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,40,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" CheckStates="2" IsTabStop="False"/>
-        <ImpControls:ImpButton x:Name="ButtonMin" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,80,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
+        <controls:ImpButton x:Name="ButtonExit" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,0,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
+        <controls:ImpButton x:Name="ButtonMax" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,40,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" CheckStates="2" IsTabStop="False"/>
+        <controls:ImpButton x:Name="ButtonMin" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,80,00" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
 
-        <ImpControls:ImpButton x:Name="ButtonPlayList" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,120,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" CheckStates="2" IsTabStop="False"/>
-        <ImpControls:ImpButton x:Name="ButtonOpen" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,160,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
+        <controls:ImpButton x:Name="ButtonPlayList" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,120,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" CheckStates="2" IsTabStop="False"/>
+        <controls:ImpButton x:Name="ButtonOpen" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,160,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
 
         <Rectangle Name="SplitterLeft" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
-        <Element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" IsTabStop="False" />
+        <element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" IsTabStop="False" />
         <Image x:Name="LogoViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Source="/Infernal Media Player;component/Images/imp-logo.png" Stretch="None" />
         <Image x:Name="ImageViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Stretch="None" Visibility="Hidden" />
-        <Element:SubtitleElement x:Name="Subtitles" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden"/>
+        <element:SubtitleElement x:Name="Subtitles" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden"/>
 
         <Rectangle Name="SplitterRight" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
 
-        <Panels:OpenPanel x:Name="PanelOpen" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" SizeChanged="Panel_SizeChanged" MinWidth="125" IsTabStop="False"/>
+        <panels:OpenPanel x:Name="PanelOpen" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" SizeChanged="Panel_SizeChanged" MinWidth="125" IsTabStop="False"/>
 
-        <Panels:PlaylistPanel x:Name="PanelPlaylist" Grid.Column="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" SizeChanged="Panel_SizeChanged" MinWidth="125" IsTabStop="False"/>
+        <panels:PlaylistPanel x:Name="PanelPlaylist" Grid.Column="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" SizeChanged="Panel_SizeChanged" MinWidth="125" IsTabStop="False"/>
 
 
 
-        <Panels:MediaPlayerBottom x:Name="PlayerBottom" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" IsTabStop="False"/>
+        <panels:MediaPlayerBottom x:Name="PlayerBottom" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" IsTabStop="False"/>
         <Label x:Name="LabelEvent" Style="{StaticResource ShadowStyle}" Grid.Row="1" Grid.Column="2" Content="Titleeeeeeeeeeee" HorizontalAlignment="Left" Margin="0,0,200,0" VerticalAlignment="Top" FontSize="18" Height="35" Width="500" IsTabStop="False"/>
 
 

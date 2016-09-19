@@ -1,4 +1,4 @@
-﻿namespace MediaPlayer.Player
+﻿namespace Imp.DirectShow.Player
 {
     public enum MediaCommand
     {

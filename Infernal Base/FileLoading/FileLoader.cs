@@ -5,7 +5,7 @@ using System.Windows.Threading;
 
 #endregion
 
-namespace Base.FileLoading
+namespace Imp.Base.FileLoading
 {
     public abstract class FileLoader<T>
     {

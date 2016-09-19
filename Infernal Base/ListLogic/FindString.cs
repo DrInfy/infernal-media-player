@@ -1,4 +1,4 @@
-﻿namespace Base.ListLogic
+﻿namespace Imp.Base.ListLogic
 {
     /// <summary>
     /// Search string structure for taking account for how many times a piece of string

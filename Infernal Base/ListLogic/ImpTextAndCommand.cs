@@ -1,10 +1,10 @@
 ﻿#region Usings
 
-using Base.Commands;
+using Imp.Base.Commands;
 
 #endregion
 
-namespace Base.ListLogic
+namespace Imp.Base.ListLogic
 {
     public class TextAndCommand<T>
     {

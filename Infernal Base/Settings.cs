@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace Base
+namespace Imp.Base
 {
     [Serializable]
     public class Settings

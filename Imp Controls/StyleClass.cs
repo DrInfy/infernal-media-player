@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls
 {
     /// <summary>
     /// Specifies styling for a control

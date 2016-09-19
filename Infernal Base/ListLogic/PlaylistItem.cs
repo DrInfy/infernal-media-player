@@ -1,13 +1,13 @@
 ﻿#region Usings
 
 using System.IO;
-using Base.FileData;
-using Base.FileData.FileReading;
-using Base.Libraries;
+using Imp.Base.FileData;
+using Imp.Base.FileData.FileReading;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace Base.ListLogic
+namespace Imp.Base.ListLogic
 {
     public class PlaylistItem
     {

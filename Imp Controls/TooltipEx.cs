@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls
 {
     public class ToolTipEx : ToolTip
     {

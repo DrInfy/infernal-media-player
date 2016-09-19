@@ -1,11 +1,10 @@
 ﻿#region Usings
 
 using System.Windows;
-using Base;
 
 #endregion
 
-namespace Imp.Controllers
+namespace Imp.Base.Interfaces
 {
     public interface IPanelController
     {

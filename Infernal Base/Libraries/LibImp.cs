@@ -7,11 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
-using Base.FileData;
+using Imp.Base.FileData;
 
 #endregion
 
-namespace Base.Libraries
+namespace Imp.Base.Libraries
 {
     public static class LibImp
     {

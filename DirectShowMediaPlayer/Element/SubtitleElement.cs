@@ -7,12 +7,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using Base.Libraries;
-using Base.Subtitles;
-using Imp.Libraries;
+using Imp.Base.Libraries;
+using Imp.Base.Subtitles;
 using Nikse.SubtitleEdit.Core;
 
-namespace MediaPlayer.Element
+namespace Imp.DirectShow.Element
 {
     public class SubtitleElement : Grid
     {

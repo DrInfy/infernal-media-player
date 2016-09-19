@@ -4,11 +4,12 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Base;
+using Imp.Base;
+using Imp.Base.Interfaces;
 
 #endregion
 
-namespace Imp.Controllers
+namespace Imp.Player.Controllers
 {
     public class PanelController : IPanelController
     {

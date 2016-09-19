@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 #endregion
 
-namespace ImpControls.Gui
+namespace Imp.Controls.Gui
 {
     public enum BtnNumber
     {

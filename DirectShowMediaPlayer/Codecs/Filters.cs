@@ -6,7 +6,7 @@ using DirectShowLib;
 
 // Code of MediaPortal (www.team-mediaportal.com)
 
-namespace WPFMediaKit.DirectShow.MediaPlayers
+namespace Imp.DirectShow.Codecs
 {
     /// <summary>
     ///  Provides collections of devices and compression codecs

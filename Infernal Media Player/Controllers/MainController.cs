@@ -11,23 +11,22 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Base;
-using Base.Commands;
-using Base.Controllers;
-using Base.FileData;
-using Base.FileLoading;
-using Base.Libraries;
-using Base.ListLogic;
-using Imp.Image;
-using Imp.Libraries;
-using ImpControls.Controllers;
-using MediaPlayer;
-using MediaPlayer.Player;
+using Imp.Base;
+using Imp.Base.Commands;
+using Imp.Base.Controllers;
+using Imp.Base.FileData;
+using Imp.Base.FileLoading;
+using Imp.Base.Libraries;
+using Imp.Base.ListLogic;
+using Imp.Controls.Controllers;
+using Imp.DirectShow.Player;
+using Imp.Player.Image;
+using Imp.Player.Libraries;
 using Microsoft.WindowsAPICodePack.Taskbar;
 
 #endregion
 
-namespace Imp.Controllers
+namespace Imp.Player.Controllers
 {
     public partial class MainController : BaseController
     {

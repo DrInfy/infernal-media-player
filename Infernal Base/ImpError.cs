@@ -1,4 +1,4 @@
-﻿namespace Base
+﻿namespace Imp.Base
 {
     public enum ErrorType
     {

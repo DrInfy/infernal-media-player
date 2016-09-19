@@ -5,7 +5,7 @@ using System.IO;
 
 #endregion
 
-namespace Base.FileData.FileReading
+namespace Imp.Base.FileData.FileReading
 {
     /// <summary>
     ///     Flac tag, generally flac and ogg vorbis files use these

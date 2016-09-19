@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 
 #endregion
 
-namespace Imp.Image
+namespace Imp.Player.Image
 {
     public class ImpJpgDecoder
     {

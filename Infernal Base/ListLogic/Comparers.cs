@@ -2,12 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-using Base.FileData;
-using Base.Libraries;
+using Imp.Base.FileData;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace Base.ListLogic
+namespace Imp.Base.ListLogic
 {
     public class ComparerSelectableFileName : IComparer<Selectable<FileImpInfo>>
     {

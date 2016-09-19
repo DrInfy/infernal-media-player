@@ -3,11 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Threading;
-using Base.Libraries;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace Base.ListLogic
+namespace Imp.Base.ListLogic
 {
     public class PlayListController : ListController<PlaylistItem>
     {

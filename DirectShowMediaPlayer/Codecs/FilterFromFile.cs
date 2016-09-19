@@ -7,7 +7,7 @@ using DirectShowLib;
 
 // Code of MediaPortal (www.team-mediaportal.com)
 
-namespace WPFMediaKit.DirectShow.MediaPlayers
+namespace Imp.DirectShow.Codecs
 {
     [ComVisible(false)]
     [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("00000001-0000-0000-C000-000000000046")]

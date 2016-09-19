@@ -8,14 +8,14 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using Base;
-using Base.Commands;
-using Base.ListLogic;
-using SelectionMode = Base.ListLogic.SelectionMode;
+using Imp.Base;
+using Imp.Base.Commands;
+using Imp.Base.ListLogic;
+using SelectionMode = Imp.Base.ListLogic.SelectionMode;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls.Lists
 {
     public delegate void ListSelectionChangedEventHandler();
 

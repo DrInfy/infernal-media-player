@@ -4,13 +4,12 @@ using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Base;
-using Base.FileLoading;
-using Ipv.Image;
+using Imp.Base;
+using Imp.Base.FileLoading;
 
 #endregion
 
-namespace Imp.Image
+namespace Imp.Player.Image
 {
     public class ImageLoader : FileLoader<BitmapSource>
     {

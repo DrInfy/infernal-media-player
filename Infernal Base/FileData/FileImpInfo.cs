@@ -2,11 +2,11 @@
 
 using System;
 using System.IO;
-using Base.Libraries;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace Base.FileData
+namespace Imp.Base.FileData
 {
     public class FileImpInfo
     {

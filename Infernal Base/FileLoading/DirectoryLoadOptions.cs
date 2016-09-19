@@ -3,13 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Base.FileData;
-using Base.Libraries;
-using Base.ListLogic;
+using Imp.Base.FileData;
+using Imp.Base.Libraries;
+using Imp.Base.ListLogic;
 
 #endregion
 
-namespace Base.FileLoading
+namespace Imp.Base.FileLoading
 {
     public class DirectoryLoadOptions
     {

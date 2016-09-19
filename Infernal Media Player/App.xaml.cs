@@ -2,14 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
-using System.Windows.Media;
-using Imp.Libraries;
+using Imp.Player.Libraries;
 
 #endregion
 
-namespace Infernal_Media_Player
+namespace Imp.Player
 {
     /// <summary>
     /// Interaction logic for App.xaml

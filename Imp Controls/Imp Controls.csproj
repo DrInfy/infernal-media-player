@@ -7,7 +7,7 @@
     <ProjectGuid>{898C26C5-F2E9-4516-88F1-4C555681C278}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ImpControls</RootNamespace>
+    <RootNamespace>Imp.Controls</RootNamespace>
     <AssemblyName>ImpControls</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

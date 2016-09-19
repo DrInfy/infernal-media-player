@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
-namespace MediaPlayer.Codecs
+namespace Imp.DirectShow.Codecs
 {
     [ComImport, Guid("04FE9017-F873-410E-871E-AB91661A4EF7")]
     internal class FFDShow { }

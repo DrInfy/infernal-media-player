@@ -3,11 +3,11 @@
 using System;
 using System.Windows;
 using System.Windows.Input;
-using Base.ListLogic;
+using Imp.Base.ListLogic;
 
 #endregion
 
-namespace ImpControls.Lists
+namespace Imp.Controls.Lists
 {
     public class ContextMenuList : ImpListBox<ImpTextAndCommand>
     {

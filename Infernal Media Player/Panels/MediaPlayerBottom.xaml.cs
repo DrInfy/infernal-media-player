@@ -2,13 +2,13 @@
 
 using System.Windows.Controls;
 using System.Windows.Input;
-using Base.Commands;
-using Imp.Controllers;
-using ImpControls.Gui;
+using Imp.Base.Commands;
+using Imp.Controls.Gui;
+using Imp.Player.Controllers;
 
 #endregion
 
-namespace Imp.Panels
+namespace Imp.Player.Panels
 {
     /// <summary>
     /// Interaction logic for MediaPlayerBottom.xaml

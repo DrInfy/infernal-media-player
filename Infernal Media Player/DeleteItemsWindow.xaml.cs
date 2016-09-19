@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using Imp.Controllers;
-using ImpControls.Gui;
+using Imp.Controls.Gui;
+using Imp.Player.Controllers;
 
 #endregion
 
-namespace Imp
+namespace Imp.Player
 {
     /// <summary>
     /// Interaction logic for DeleteItemsWindow.xaml

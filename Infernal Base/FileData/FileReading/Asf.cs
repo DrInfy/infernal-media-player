@@ -6,7 +6,7 @@ using System.IO;
 
 #endregion
 
-namespace Base.FileData.FileReading
+namespace Imp.Base.FileData.FileReading
 {
     /// <summary>
     ///     Windows media and asf files are generallt tagged with this type

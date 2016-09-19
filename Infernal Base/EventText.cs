@@ -1,4 +1,4 @@
-﻿namespace Imp.Controllers
+﻿namespace Imp.Base
 {
     public enum EventType
     {

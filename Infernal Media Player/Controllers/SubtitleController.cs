@@ -1,21 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Text;
-using System.Globalization;
 using System.Linq;
-using System.Resources;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using Base.Controllers;
-using Base.Subtitles;
-using MediaPlayer.Element;
-using MediaPlayer.Subtitles;
+using Imp.Base.Subtitles;
+using Imp.DirectShow.Element;
+using Imp.DirectShow.Subtitles;
 using Nikse.SubtitleEdit.Core;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Matroska;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4;
@@ -23,7 +13,7 @@ using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4.Boxes;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
 using Size = System.Windows.Size;
 
-namespace Imp.Controllers
+namespace Imp.Player.Controllers
 {
     public class SubtitleController
     {

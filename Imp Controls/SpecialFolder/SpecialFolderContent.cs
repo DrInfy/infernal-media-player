@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace ImpControls.SpecialFolder
+namespace Imp.Controls.SpecialFolder
 {
     public class SpecialFolderContent
     {

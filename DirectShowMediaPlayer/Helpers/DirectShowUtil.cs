@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Runtime.InteropServices;
 using DirectShowLib;
+using Imp.DirectShow.Codecs;
 
 // Code of MediaPortal (www.team-mediaportal.com)
 
-namespace WPFMediaKit.DirectShow.MediaPlayers
+namespace Imp.DirectShow.Helpers
 {
     public static class DirectShowUtil
     {

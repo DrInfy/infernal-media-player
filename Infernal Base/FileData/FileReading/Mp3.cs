@@ -5,7 +5,7 @@ using System.IO;
 
 #endregion
 
-namespace Base.FileData.FileReading
+namespace Imp.Base.FileData.FileReading
 {
     /// <summary>
     /// Mp3 tags, most common tag, with several different versions

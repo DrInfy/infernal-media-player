@@ -7,7 +7,7 @@
     <ProjectGuid>{432C12B3-4F8C-4BEA-91DD-50562A8383D6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Base</RootNamespace>
+    <RootNamespace>Imp.Base</RootNamespace>
     <AssemblyName>Infernal Base</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

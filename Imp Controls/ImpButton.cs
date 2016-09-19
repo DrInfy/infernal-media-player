@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Base.Interfaces;
+using Imp.Base.Interfaces;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls
 {
     public class ImpButton : ImpBaseControl, IStateButton
     {

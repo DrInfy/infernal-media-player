@@ -4,13 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Input;
-using Base.Libraries;
-using Base.ListLogic;
-using ImpControls.SpecialFolder;
+using Imp.Base.Libraries;
+using Imp.Base.ListLogic;
+using Imp.Controls.SpecialFolder;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls.Lists
 {
     public class DirectoryListBox : ImpListBox<ImpFolder>
     {

@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
-using WPFMediaKit.DirectX;
+using Imp.DirectShow.DirectX;
 
 #endregion
 
-namespace MediaPlayer.Player
+namespace Imp.DirectShow.Player
 {
     /// <summary>
     /// Delegate signature to notify of a new surface

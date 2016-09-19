@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls
 {
     public abstract class ImpBaseControl : Control
     {

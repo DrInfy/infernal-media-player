@@ -1,4 +1,4 @@
-﻿namespace Base.ListLogic
+﻿namespace Imp.Base.ListLogic
 {
     public enum SelectionMode
     {

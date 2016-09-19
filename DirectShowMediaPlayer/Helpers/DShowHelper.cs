@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace MediaPlayer.Helpers
+namespace Imp.DirectShow.Helpers
 {
     public static class DShowHelper
     {

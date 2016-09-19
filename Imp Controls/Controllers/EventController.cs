@@ -5,14 +5,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Base;
-using Base.Interfaces;
-using Base.Libraries;
-using Imp.Controllers;
+using Imp.Base;
+using Imp.Base.Interfaces;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace ImpControls.Controllers
+namespace Imp.Controls.Controllers
 {
     public class EventController : IEventController
     {

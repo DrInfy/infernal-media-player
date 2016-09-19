@@ -2,12 +2,12 @@
 
 using System.Collections.Generic;
 using System.Windows;
-using Base.Interfaces;
-using Base.ListLogic;
+using Imp.Base.Interfaces;
+using Imp.Base.ListLogic;
 
 #endregion
 
-namespace Base.Controllers
+namespace Imp.Base.Controllers
 {
     public interface IControllerContextMenu<TCmdType, in TMenuType> : IBaseController<TCmdType>
     {

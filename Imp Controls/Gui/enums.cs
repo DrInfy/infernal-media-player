@@ -1,4 +1,4 @@
-﻿namespace ImpControls.Gui
+﻿namespace Imp.Controls.Gui
 {
     public enum BrushType
     {

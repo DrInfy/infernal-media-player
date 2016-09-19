@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Base.ListLogic;
+using Imp.Base.ListLogic;
 
 #endregion
 
-namespace Base.Libraries
+namespace Imp.Base.Libraries
 {
     public static class StringHandler
     {

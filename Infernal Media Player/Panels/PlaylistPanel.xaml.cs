@@ -3,15 +3,15 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Base;
-using Base.Commands;
-using Base.ListLogic;
-using Imp.Controllers;
-using ImpControls.Gui;
+using Imp.Base;
+using Imp.Base.Commands;
+using Imp.Base.ListLogic;
+using Imp.Controls.Gui;
+using Imp.Player.Controllers;
 
 #endregion
 
-namespace Imp.Panels
+namespace Imp.Player.Panels
 {
     /// <summary>
     /// Interaction logic for PlaylistPanel.xaml

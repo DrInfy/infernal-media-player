@@ -1,9 +1,8 @@
 ﻿using System;
 
-
 // Code of MediaPortal (www.team-mediaportal.com)
 
-namespace WPFMediaKit.DirectShow.MediaPlayers
+namespace Imp.DirectShow.Codecs
 {
     public class ClassId
     {

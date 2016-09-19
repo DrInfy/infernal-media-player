@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
-using Base;
-using Base.FileData;
-using Base.Libraries;
-using Base.ListLogic;
-using ImpControls.SpecialFolder;
+using Imp.Base;
+using Imp.Base.FileData;
+using Imp.Base.Libraries;
+using Imp.Base.ListLogic;
+using Imp.Controls.SpecialFolder;
 
 #endregion
 
-namespace ImpControls
+namespace Imp.Controls.Lists
 {
     /// <summary>
     /// Listbox showing files in a folder

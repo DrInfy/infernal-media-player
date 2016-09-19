@@ -1,10 +1,10 @@
 ﻿#region Usings
 
-using Base.Libraries;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace Base.ListLogic
+namespace Imp.Base.ListLogic
 {
     public class ImpFolder : DoubleString
     {

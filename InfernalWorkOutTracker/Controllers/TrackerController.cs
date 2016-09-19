@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Base;
-using Base.Commands;
-using Base.Controllers;
-using Base.Interfaces;
-using Base.ListLogic;
+using Imp.Base;
+using Imp.Base.Commands;
+using Imp.Base.Controllers;
+using Imp.Base.Interfaces;
+using Imp.Base.ListLogic;
 
 namespace InfernalWorkOutTracker.Controllers
 {

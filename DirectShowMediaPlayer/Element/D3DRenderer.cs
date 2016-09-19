@@ -11,7 +11,7 @@ using System.Windows.Threading;
 
 #endregion
 
-namespace MediaPlayer.Element
+namespace Imp.DirectShow.Element
 {
     /// <summary>
     /// The D3DRenderer class provides basic functionality needed

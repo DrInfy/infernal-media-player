@@ -2,11 +2,11 @@
 
 using System;
 using DirectShowLib;
-using MediaPlayer.Player;
+using Imp.DirectShow.Player;
 
 #endregion
 
-namespace MediaPlayer.Helpers
+namespace Imp.DirectShow.Helpers
 {
     internal static class FormatHelper
     {

@@ -2,12 +2,12 @@
 
 using System.Collections.Generic;
 using System.Windows.Input;
-using Base;
-using Base.Commands;
+using Imp.Base;
+using Imp.Base.Commands;
 
 #endregion
 
-namespace Imp.Controllers
+namespace Imp.Player.Controllers
 {
     public partial class MainController
     {

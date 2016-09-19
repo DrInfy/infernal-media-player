@@ -5,14 +5,14 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
-using Base;
-using Base.Controllers;
 using DirectShowLib;
-using MediaPlayer.Helpers;
+using Imp.Base;
+using Imp.Base.Controllers;
+using Imp.DirectShow.Helpers;
 
 #endregion
 
-namespace MediaPlayer.Player
+namespace Imp.DirectShow.Player
 {
     public class PlayerController
     {

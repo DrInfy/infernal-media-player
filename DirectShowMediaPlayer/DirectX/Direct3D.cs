@@ -8,7 +8,7 @@ using DirectShowLib;
 
 #endregion
 
-namespace WPFMediaKit.DirectX
+namespace Imp.DirectShow.DirectX
 {
     [StructLayout(LayoutKind.Sequential)]
     public class RECT

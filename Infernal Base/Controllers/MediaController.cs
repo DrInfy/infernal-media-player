@@ -1,13 +1,12 @@
 ﻿#region Usings
 
 using System;
-using Base.Interfaces;
-using Base.Libraries;
-using Imp.Controllers;
+using Imp.Base.Interfaces;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace Base.Controllers
+namespace Imp.Base.Controllers
 {
     public class MediaController
     {

@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 #endregion
 
-namespace Base.Commands
+namespace Imp.Base.Commands
 {
     public static class GlobalKeyboard
     {

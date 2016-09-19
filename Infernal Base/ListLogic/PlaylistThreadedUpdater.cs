@@ -8,7 +8,7 @@ using System.Windows.Threading;
 
 #endregion
 
-namespace Base.ListLogic
+namespace Imp.Base.ListLogic
 {
     public class PlaylistThreadedUpdater
     {

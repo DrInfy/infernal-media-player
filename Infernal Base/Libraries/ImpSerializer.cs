@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 #endregion
 
-namespace Base.Libraries
+namespace Imp.Base.Libraries
 {
     public static class ImpSerializer
     {

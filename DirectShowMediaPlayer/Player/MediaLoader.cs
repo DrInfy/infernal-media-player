@@ -1,12 +1,12 @@
 ﻿#region Usings
 
 using System.Windows.Threading;
-using Base;
-using Base.FileLoading;
+using Imp.Base;
+using Imp.Base.FileLoading;
 
 #endregion
 
-namespace MediaPlayer.Player
+namespace Imp.DirectShow.Player
 {
     public class MediaLoader : FileLoader<PlayerController>
     {

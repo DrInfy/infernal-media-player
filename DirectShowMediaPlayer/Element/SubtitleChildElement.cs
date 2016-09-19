@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Pen = System.Windows.Media.Pen;
 
-namespace MediaPlayer.Element
+namespace Imp.DirectShow.Element
 {
     public class SubtitleChildElement: Control // System.Windows.Controls.Image
     {

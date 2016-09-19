@@ -5,7 +5,7 @@ using System.IO;
 
 #endregion
 
-namespace Base.FileData.FileReading
+namespace Imp.Base.FileData.FileReading
 {
     /// <summary>
     /// M4A tags, used in mp4 files and mp3 from iTunes

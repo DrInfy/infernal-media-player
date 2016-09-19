@@ -1,4 +1,4 @@
-﻿namespace Base.Interfaces
+﻿namespace Imp.Base.Interfaces
 {
     public interface IStateButton
     {

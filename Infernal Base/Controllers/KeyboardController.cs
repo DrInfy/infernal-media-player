@@ -1,12 +1,12 @@
 ﻿#region Usings
 
 using System.Collections.Generic;
-using Base.Commands;
-using Base.Interfaces;
+using Imp.Base.Commands;
+using Imp.Base.Interfaces;
 
 #endregion
 
-namespace Base.Controllers
+namespace Imp.Base.Controllers
 {
     public abstract class KeyboardController<TCmdType> : IUpdateable, IBaseController<TCmdType>
     {

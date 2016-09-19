@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Base
+namespace Imp.Base
 {
     public enum LoopMode
     {

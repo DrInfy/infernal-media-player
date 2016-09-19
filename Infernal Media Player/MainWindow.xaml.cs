@@ -7,18 +7,18 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Base;
-using Base.Commands;
-using Base.FileData;
-using Base.FileLoading;
-using Base.Libraries;
-using Imp.Controllers;
-using Imp.Libraries;
-using ImpControls.Gui;
+using Imp.Base;
+using Imp.Base.Commands;
+using Imp.Base.FileData;
+using Imp.Base.FileLoading;
+using Imp.Base.Libraries;
+using Imp.Controls.Gui;
+using Imp.Player.Controllers;
+using Imp.Player.Libraries;
 
 #endregion
 
-namespace Imp
+namespace Imp.Player
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

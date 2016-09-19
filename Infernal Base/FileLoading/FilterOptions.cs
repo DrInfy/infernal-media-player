@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Base.FileLoading
+namespace Imp.Base.FileLoading
 {
     [Flags]
     public enum FilterOptions

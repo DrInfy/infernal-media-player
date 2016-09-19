@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 #endregion
 
-namespace Base.Commands
+namespace Imp.Base.Commands
 {
     public class KeyCommand<T>
     {

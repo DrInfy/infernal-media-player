@@ -9,7 +9,7 @@ using Hjg.Pngcs;
 
 #endregion
 
-namespace Imp.Image
+namespace Imp.Player.Image
 {
     public class ImpPngDecoder
     {

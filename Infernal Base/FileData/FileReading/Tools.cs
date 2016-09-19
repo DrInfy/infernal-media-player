@@ -6,7 +6,7 @@ using System.Text;
 
 #endregion
 
-namespace Base.FileData.FileReading
+namespace Imp.Base.FileData.FileReading
 {
     internal static class Tools
     {

@@ -4,15 +4,14 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
-using Base;
 using DirectShowLib;
-using MediaPlayer.Helpers;
-using WPFMediaKit.DirectShow.MediaPlayers;
+using Imp.Base;
+using Imp.DirectShow.Helpers;
 using FilterCategory = DirectShowLib.FilterCategory;
 
 #endregion
 
-namespace MediaPlayer.Player
+namespace Imp.DirectShow.Player
 {
     internal class FilterGraphs
     {

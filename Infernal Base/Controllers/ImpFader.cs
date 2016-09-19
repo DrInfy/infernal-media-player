@@ -1,11 +1,11 @@
 ﻿#region Usings
 
 using System;
-using Base.Libraries;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace Base.Controllers
+namespace Imp.Base.Controllers
 {
     public enum FadeType
     {

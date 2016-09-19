@@ -1,4 +1,4 @@
-﻿namespace ImpControls
+﻿namespace Imp.Controls
 {
     /// <summary>
     /// Button class that allows button to be pushed down

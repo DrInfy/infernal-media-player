@@ -3,11 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Base.Libraries;
+using Imp.Base.Libraries;
 
 #endregion
 
-namespace Base.ListLogic
+namespace Imp.Base.ListLogic
 {
     /// <summary>
     /// Implements the basic logical operations for list types

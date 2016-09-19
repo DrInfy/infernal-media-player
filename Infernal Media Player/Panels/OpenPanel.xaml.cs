@@ -8,23 +8,23 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Base;
-using Base.Commands;
-using Base.Controllers;
-using Base.FileData;
-using Base.FileLoading;
-using Base.Libraries;
-using Base.ListLogic;
-using Imp.Controllers;
-using ImpControls;
-using ImpControls.Gui;
-using ImpControls.SpecialFolder;
+using Imp.Base;
+using Imp.Base.Commands;
+using Imp.Base.Controllers;
+using Imp.Base.FileData;
+using Imp.Base.FileLoading;
+using Imp.Base.Libraries;
+using Imp.Base.ListLogic;
+using Imp.Controls;
+using Imp.Controls.Gui;
+using Imp.Controls.SpecialFolder;
+using Imp.Player.Controllers;
 
 //using Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 #endregion
 
-namespace Imp.Panels
+namespace Imp.Player.Panels
 {
     /// <summary>
     /// Interaction logic for OpenPanel.xaml

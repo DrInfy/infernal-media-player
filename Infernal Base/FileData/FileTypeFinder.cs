@@ -6,7 +6,7 @@ using System.IO;
 
 #endregion
 
-namespace Base.FileData
+namespace Imp.Base.FileData
 {
     public class FileTypeFinder
     {

@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace ImpControls.Lists
+namespace Imp.Controls.Lists
 {
     public class StringListBox : ImpListBox<String>
     {

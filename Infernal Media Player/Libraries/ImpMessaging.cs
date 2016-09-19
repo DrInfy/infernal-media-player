@@ -10,7 +10,7 @@ using TheCodeKing.Net.Messaging;
 
 #endregion
 
-namespace Imp.Libraries
+namespace Imp.Player.Libraries
 {
     internal static class ImpMessaging
     {

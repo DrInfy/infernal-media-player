@@ -1,4 +1,4 @@
-﻿namespace Base.Commands
+﻿namespace Imp.Base.Commands
 {
     public enum ImpCommand
     {

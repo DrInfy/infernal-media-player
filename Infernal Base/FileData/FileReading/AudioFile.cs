@@ -1,4 +1,4 @@
-﻿namespace Base.FileData.FileReading
+﻿namespace Imp.Base.FileData.FileReading
 {
     /// <summary>
     /// Class which creates an appropriate interface based on the file extension.
