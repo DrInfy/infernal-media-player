@@ -131,10 +131,15 @@ namespace Imp.DirectShow.Element
             }
         }
 
+        public void CopyFonts(Dictionary<string, FontFamily> fontDict)
+        {
+            this.fontTypefaces = fontDict;
+        }
+
         protected override void OnRender(DrawingContext drawingContext)
         {
-            imageWidth = ImageWidthFunc();
-            imageHeight = ImageHeightFunc();
+            imageWidth = ImageWidthFunc?.Invoke() ?? 0;
+            imageHeight = ImageHeightFunc?.Invoke() ?? 0;
 
             if (paragraphs != null && imageWidth > 0 && imageHeight > 0)
             {

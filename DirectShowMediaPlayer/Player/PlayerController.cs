@@ -88,11 +88,16 @@ namespace Imp.DirectShow.Player
 
         public Size VideoSize => new Size(graphs.NaturalVideoWidth, graphs.NaturalVideoHeight);
 
-        public List<SubtitleTrack> SubtitleTracks = new List<SubtitleTrack>();
-
-        private Dictionary<string, FontFamily> fontTypefaces { get; set; } = new Dictionary<string, FontFamily>();
+        public SubtitleTrack SelectedSubtitleTrack { get; private set; }
 
         #endregion
+
+        public List<SubtitleTrack> SubtitleTracks = new List<SubtitleTrack>();
+
+        public Dictionary<string, FontFamily> Fonts { get; } = new Dictionary<string, FontFamily>();
+
+        private List<int> lastSubtitleIndices = new List<int>();
+        private List<int> nextSubtitleIndices = new List<int>();
 
         #region Events
 
@@ -218,6 +223,7 @@ namespace Imp.DirectShow.Player
 
         public virtual void OpenSource(out ImpError result)
         {
+            this.SelectedSubtitleTrack = null;
             ReadTracks();
 
             graphs.OpenSource(out result);
@@ -240,6 +246,10 @@ namespace Imp.DirectShow.Player
                 if (subtitleTrack.Subtitles != null)
                 {
                     subtitleTrack.Loaded = true;
+                    if (this.SelectedSubtitleTrack == null)
+                    {
+                        this.SelectedSubtitleTrack = subtitleTrack;
+                    }
                 }
             }
         }
@@ -254,10 +264,15 @@ namespace Imp.DirectShow.Player
                     var stopwatch = Stopwatch.StartNew();
                     if (matroska.ReadMetadata())
                     {
-                        Debug.WriteLine($"Read time: {(int) stopwatch.Elapsed.TotalMilliseconds} ms");
+                        Debug.WriteLine($"Read metadata time: {(int) stopwatch.Elapsed.TotalMilliseconds} ms");
 
                         stopwatch.Restart();
                         var subTitleTrackInfo = matroska.Subtitles;
+
+                        var mkvSubs = matroska.GetSubtitle(null);
+                        var resultingSubs = new Subtitle();
+                        Debug.WriteLine($"Read from file time: {(int)stopwatch.Elapsed.TotalMilliseconds} ms");
+                        stopwatch.Restart();
 
                         foreach (var info in subTitleTrackInfo)
                         {
@@ -266,16 +281,19 @@ namespace Imp.DirectShow.Player
                             subInfo.Name = info.Name;
                             this.SubtitleTracks.Add(subInfo);
 
-                            var mkvSubs = matroska.GetSubtitle(info.TrackNumber, null);
-                            var resultingSubs = new Subtitle();
-                            subInfo.Format = Utilities.LoadMatroskaTextSubtitle(info, matroska, mkvSubs, resultingSubs);
+                            subInfo.Format = Utilities.LoadMatroskaTextSubtitle(info, matroska, mkvSubs[info.TrackNumber], resultingSubs);
                             subInfo.RawSubs = resultingSubs;
+
+                            Debug.WriteLine($"Read from matroska time: {(int)stopwatch.Elapsed.TotalMilliseconds} ms");
+                            stopwatch.Restart();
+
                             //subInfo.Subtitles = CreateEnhancedSubTitles(resultingSubs, format, this.VideoSize);
                         }
 
                         // Load all subtitles
                         LoadFonts(matroska);
-
+                        Debug.WriteLine($"Read fonts time: {(int)stopwatch.Elapsed.TotalMilliseconds} ms");
+                        stopwatch.Restart();
                     }
                 }
             }
@@ -301,19 +319,23 @@ namespace Imp.DirectShow.Player
         {
             try
             {
+                this.Fonts.Clear();
                 var attachments = matroska.Attachments;
-                Dictionary<string, List<MatroskaAttachment>> fontPackageDictionary = new Dictionary<string, List<MatroskaAttachment>>();
-                foreach (var attachment in attachments)
+                //Dictionary<string, List<MatroskaAttachment>> fontPackageDictionary = new Dictionary<string, List<MatroskaAttachment>>();
+                if (attachments != null)
                 {
-                    string familyName;
-                    FontLoader.SaveToDisc(attachment.Data, attachment.Name);
-                }
+                    foreach (var attachment in attachments)
+                    {
+                        string familyName;
+                        FontLoader.SaveToDisc(attachment.Data, attachment.Name);
+                    }
 
-                var result = FontLoader.LoadFromDisc();
+                    var result = FontLoader.LoadFromDisc();
 
-                foreach (var fontFamily in result)
-                {
-                    AddFont(fontFamily.Key, fontFamily.Value);
+                    foreach (var fontFamily in result)
+                    {
+                        AddFont(fontFamily.Key, fontFamily.Value);
+                    }
                 }
                 //return;
 
@@ -357,10 +379,10 @@ namespace Imp.DirectShow.Player
 
         public void AddFont(string fontFaceName, FontFamily fontFamily)
         {
-            if (!fontTypefaces.ContainsKey(fontFaceName.ToLower()))
+            if (!this.Fonts.ContainsKey(fontFaceName.ToLower()))
             {
                 //TODO: remove this check
-                fontTypefaces.Add(fontFaceName.ToLower(), fontFamily);
+                this.Fonts.Add(fontFaceName.ToLower(), fontFamily);
             }
         }
 
@@ -418,6 +440,14 @@ namespace Imp.DirectShow.Player
                     finalSubs.Header.PlayResY = (int)(finalSubs.Header.PlayResY * playerControllerVideoSize.Width / playerControllerVideoSize.Height);
                 }
 
+                finalSubs.Paragraphs = new List<EnhancedParagraph>();
+
+                for (int i = 0; i < selectedSubs.Paragraphs.Count; i++)
+                {
+                    var p = selectedSubs.Paragraphs[i];
+                    finalSubs.Paragraphs.Add(new EnhancedParagraph(finalSubs.Header, p));
+                }
+
                 return finalSubs;
             }
             catch (Exception ex)
@@ -427,6 +457,7 @@ namespace Imp.DirectShow.Player
 
             return null;
         }
+
 
         #endregion 
 

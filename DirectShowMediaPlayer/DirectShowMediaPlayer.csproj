@@ -74,6 +74,7 @@
     <Compile Include="Codecs\Filters.cs" />
     <Compile Include="DirectX\Direct3D.cs" />
     <Compile Include="Element\D3DRenderer.cs" />
+    <Compile Include="Element\MediaRenderer.cs" />
     <Compile Include="Element\MediaUriPlayer.cs" />
     <Compile Include="Element\SubtitleChildElement.cs" />
     <Compile Include="Element\SubtitleElement.cs" />

@@ -18,10 +18,12 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
         private double _frameRate;
         private string _videoCodecId;
 
-        private int _subtitleRipTrackNumber;
-        private List<MatroskaSubtitle> _subtitleRip = new List<MatroskaSubtitle>();
+        //private int _subtitleRipTrackNumber;
+        private Dictionary<int, List<MatroskaSubtitle>> _subtitleRip = new Dictionary<int, List<MatroskaSubtitle>>();
+        
         private List<MatroskaTrackInfo> _tracks;
         private List<MatroskaAttachment> _attachments;
+        private HashSet<int> subtitleTrackNumbers;
 
         private readonly Element _segmentElement;
         private long _timecodeScale = 1000000;
@@ -374,8 +376,14 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
 
         private void ReadCluster(Element clusterElement)
         {
-            long clusterTimeCode = 0;
+            _subtitleRip.Clear();
+            foreach (var trackNumberSubtitle in this.Subtitles.Select(x => x.TrackNumber))
+            {
+                _subtitleRip.Add(trackNumberSubtitle, new List<MatroskaSubtitle>());
+            }
 
+            long clusterTimeCode = 0;
+            int trackNumber;
             Element element;
             while (_stream.Position < clusterElement.EndPosition && (element = ReadElement()) != null)
             {
@@ -388,10 +396,10 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
                         ReadBlockGroupElement(element, clusterTimeCode);
                         break;
                     case ElementId.SimpleBlock:
-                        var subtitle = ReadSubtitleBlock(element, clusterTimeCode);
+                        var subtitle = ReadSubtitleBlock(element, clusterTimeCode, out trackNumber);
                         if (subtitle != null)
                         {
-                            _subtitleRip.Add(subtitle);
+                            _subtitleRip[trackNumber].Add(subtitle);
                         }
                         break;
                     default:
@@ -404,19 +412,19 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
         private void ReadBlockGroupElement(Element clusterElement, long clusterTimeCode)
         {
             MatroskaSubtitle subtitle = null;
-
+            int trackNumber;
             Element element;
             while (_stream.Position < clusterElement.EndPosition && (element = ReadElement()) != null)
             {
                 switch (element.Id)
                 {
                     case ElementId.Block:
-                        subtitle = ReadSubtitleBlock(element, clusterTimeCode);
+                        subtitle = ReadSubtitleBlock(element, clusterTimeCode, out trackNumber);
                         if (subtitle == null)
                         {
                             return;
                         }
-                        _subtitleRip.Add(subtitle);
+                        _subtitleRip[trackNumber].Add(subtitle);
                         break;
                     case ElementId.BlockDuration:
                         var duration = (long)ReadUInt((int)element.DataSize);
@@ -432,10 +440,11 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
             }
         }
 
-        private MatroskaSubtitle ReadSubtitleBlock(Element blockElement, long clusterTimeCode)
+        private MatroskaSubtitle ReadSubtitleBlock(Element blockElement, long clusterTimeCode, out int trackNumber)
         {
-            var trackNumber = (int)ReadVariableLengthUInt();
-            if (trackNumber != _subtitleRipTrackNumber)
+            trackNumber = (int)ReadVariableLengthUInt();
+            //if (this.Subtitles.Select(x => x.TrackNumber).Contains(trackNumber)) // != _subtitleRipTrackNumber)
+            if (!this._subtitleRip.ContainsKey(trackNumber)) // trackNumber != _subtitleRipTrackNumber)
             {
                 _stream.Seek(blockElement.EndPosition, SeekOrigin.Begin);
                 return null;
@@ -477,9 +486,9 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
             return new MatroskaSubtitle(data, clusterTimeCode + timeCode);
         }
 
-        public List<MatroskaSubtitle> GetSubtitle(int trackNumber, LoadMatroskaCallback progressCallback)
+        public Dictionary<int,List<MatroskaSubtitle>> GetSubtitle(LoadMatroskaCallback progressCallback)
         {
-            _subtitleRipTrackNumber = trackNumber;
+            //_subtitleRipTrackNumber = trackNumber;
             ReadSegmentCluster(progressCallback);
             return _subtitleRip;
         }

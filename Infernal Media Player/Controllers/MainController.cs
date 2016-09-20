@@ -43,7 +43,7 @@ namespace Imp.Player.Controllers
         private readonly MediaLoader mediaLoader;
         private readonly MainWindow window;
         private BitmapSource currentImage;
-        private readonly SubtitleController subtitleController;
+        //private readonly SubtitleController subtitleController;
 
         #endregion
 
@@ -75,7 +75,8 @@ namespace Imp.Player.Controllers
                 window.PlayerBottom.ButtonLoop,
                 EventC);
 
-            subtitleController = new SubtitleController(window);
+            window.UriPlayer.SubtitleElement = window.Subtitles;
+            //subtitleController = new SubtitleController(window);
 
             Initialize(EventC, PanelC, mediaController);
 

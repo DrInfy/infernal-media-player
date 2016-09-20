@@ -1,18 +1,25 @@
-﻿#region Usings
-
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using Imp.Base.Interfaces;
 using Imp.Base.Libraries;
 using Imp.DirectShow.Player;
 
-#endregion
-
 namespace Imp.DirectShow.Element
 {
-    public class MediaUriPlayer : D3DRenderer, IMediaUriPlayer
+    public class MediaUriPlayer: MediaRenderer, IMediaUriPlayer
     {
+        private MediaRenderer renderer ;
+
+
         #region Fields
 
+        private List<int> lastSubtitleIndices = new List<int>();
+        private List<int> nextSubtitleIndices = new List<int>();
         private PlayerController controller;
         private double volume = 1;
 
@@ -31,8 +38,8 @@ namespace Imp.DirectShow.Element
                         return;
                     controller.Command(MediaCommand.Close);
 
-                    controller.NewAllocatorFrame -= OnMediaPlayerNewAllocatorFramePrivate;
-                    controller.NewAllocatorSurface -= OnMediaPlayerNewAllocatorSurfacePrivate;
+                    controller.NewAllocatorFrame -= this.renderer.OnMediaPlayerNewAllocatorFramePrivate;
+                    controller.NewAllocatorSurface -= this.renderer.OnMediaPlayerNewAllocatorSurfacePrivate;
                     controller = null;
                 }
                 controller = value;
@@ -40,6 +47,7 @@ namespace Imp.DirectShow.Element
             }
         }
 
+        public SubtitleElement SubtitleElement { get; set; }
         public bool IsPlaying => controller != null;
         public double Duration => controller != null ? LibImp.TicksToSeconds(controller.Duration) : 0;
 
@@ -70,6 +78,29 @@ namespace Imp.DirectShow.Element
 
         #endregion
 
+        public MediaUriPlayer()
+        {
+            this.renderer = this;
+            //this.renderer = new MediaRenderer()
+            //{
+            //    VerticalAlignment = VerticalAlignment.Stretch,
+            //    HorizontalAlignment = HorizontalAlignment.Stretch,
+            //    Margin = new Thickness(0),
+            //    Visibility = Visibility.Visible
+            //};
+            //<element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" />
+            //this.subtitleElement = new SubtitleElement()
+            //{
+            //    VerticalAlignment = VerticalAlignment.Stretch,
+            //    HorizontalAlignment = HorizontalAlignment.Stretch,
+            //    Margin = new Thickness(0),
+            //    Visibility = Visibility.Visible
+            //};
+
+            //this.Children.Add(this.renderer);
+            //this.Children.Add(this.subtitleElement);
+        }
+
         public void Play()
         {
             controller?.Command(MediaCommand.Play);
@@ -93,29 +124,81 @@ namespace Imp.DirectShow.Element
 
         protected virtual void InitializeMediaPlayer()
         {
+            this.SubtitleElement.Clear();
+            this.SubtitleElement.Visibility = this.controller.SelectedSubtitleTrack != null ? Visibility.Visible : Visibility.Hidden;
+            this.SubtitleElement.CopyFonts(this.controller.Fonts);
+            this.SubtitleElement.ImageWidthFunc = () => this.VideoImage?.ActualWidth ?? 0;
+            this.SubtitleElement.ImageHeightFunc = () => this.VideoImage?.ActualHeight ?? 0;
+
             /* Hook into the normal .NET events */
             controller.MediaEnded += OnMediaPlayerEnded;
 
             /* These events fire when we get new D3Dsurfaces or frames */
-            controller.NewAllocatorFrame += OnMediaPlayerNewAllocatorFramePrivate;
-            controller.NewAllocatorSurface += OnMediaPlayerNewAllocatorSurfacePrivate;
+            controller.NewAllocatorFrame += Controller_NewAllocatorFrame;
+            controller.NewAllocatorFrame += this.renderer.OnMediaPlayerNewAllocatorFramePrivate;
+            controller.NewAllocatorSurface += this.renderer.OnMediaPlayerNewAllocatorSurfacePrivate;
 
             controller.Volume = Volume;
             controller.Activate();
         }
 
-        /// <summary>
-        /// Is executes when a new D3D surfaces has been allocated
-        /// </summary>
-        /// <param name="pSurface">The pointer to the D3D surface</param>
-        private void OnMediaPlayerNewAllocatorSurfacePrivate(object sender, IntPtr pSurface)
+        private void Controller_NewAllocatorFrame()
         {
-            SetBackBuffer(pSurface);
+            var position = this.Position;
+
+            if (this.controller.SelectedSubtitleTrack != null)
+            {
+
+                /* Ensure we run on the correct Dispatcher */
+                
+
+                this.nextSubtitleIndices.Clear();
+                for (int i = 0; i < this.controller.SelectedSubtitleTrack.Subtitles.Paragraphs.Count; i++)
+                {
+                    var p = this.controller.SelectedSubtitleTrack.Subtitles.Paragraphs[i].Paragraph;
+
+                    if (p.StartTime.TotalSeconds <= position
+                        && p.EndTime.TotalSeconds >= position)
+                    {
+                        this.nextSubtitleIndices.Add(i);
+                    }
+                }
+
+
+#if DEBUG
+                if (this.nextSubtitleIndices.Count != this.lastSubtitleIndices.Count || this.nextSubtitleIndices.Any(x => !this.lastSubtitleIndices.Contains(x)))
+#else
+            if (nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastSubtitleIndices.Contains(x)))
+#endif
+                {
+                    if (!this.Dispatcher.CheckAccess())
+                    {
+                        this.Dispatcher.Invoke(UpdateSubtitles);
+                        return;
+                    }
+
+                    //UpdateSubtitles();
+                }
+
+                
+            }
         }
 
-        private void OnMediaPlayerNewAllocatorFramePrivate()
+        private void UpdateSubtitles()
         {
-            InvalidateVideoImage();
+            this.SubtitleElement.ClearContent();
+            this.lastSubtitleIndices.Clear();
+
+            foreach (var nextIndex in this.nextSubtitleIndices)
+            {
+                this.lastSubtitleIndices.Add(nextIndex);
+                this.SubtitleElement.Add(
+                    this.controller.SelectedSubtitleTrack.Subtitles.Paragraphs[nextIndex]);
+            }
+
+            this.SubtitleElement.Visibility = this.nextSubtitleIndices.Count > 0 ? Visibility.Visible : Visibility.Hidden;
+
+            this.SubtitleElement.InvalidateVisual();
         }
 
         private void OnMediaPlayerEnded()

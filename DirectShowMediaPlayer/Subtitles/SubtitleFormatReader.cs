@@ -12,6 +12,7 @@ namespace Imp.DirectShow.Subtitles
         public static SubtitleStylized ParseHeader(Subtitle subtitle, SubtitleFormat format)
         {
             var finalSubs = new SubtitleStylized();
+            finalSubs.Header = new SubtitleHeader();
             finalSubs.Header.UseStyles = format.HasStyleSupport;
 
             var styles = new List<string>();
@@ -31,7 +32,6 @@ namespace Imp.DirectShow.Subtitles
 
         private static void ReadAss(Subtitle subtitle, SubtitleStylized finalSubs)
         {
-            finalSubs.Header = new SubtitleHeader();
             finalSubs.Header.IsAss = true;
 
             //ReadAdvancedSubStationAlpha(subtitle);

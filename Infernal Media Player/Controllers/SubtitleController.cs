@@ -26,7 +26,7 @@ namespace Imp.Player.Controllers
         private List<int> nextIndices = new List<int>();
         public SubtitleController(MainWindow window)
         {
-            this.subtitleElement = window.Subtitles;
+            //this.subtitleElement = window.Subtitles;
             this.window = window;
             this.subtitleElement.ImageWidthFunc = () => window.UriPlayer.ActualWidth;
             this.subtitleElement.ImageHeightFunc = () => window.UriPlayer.ActualHeight;
