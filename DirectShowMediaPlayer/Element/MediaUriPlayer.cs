@@ -38,6 +38,7 @@ namespace Imp.DirectShow.Element
                         return;
                     controller.Command(MediaCommand.Close);
 
+                    controller.NewAllocatorFrame -= Controller_NewAllocatorFrame;
                     controller.NewAllocatorFrame -= this.renderer.OnMediaPlayerNewAllocatorFramePrivate;
                     controller.NewAllocatorSurface -= this.renderer.OnMediaPlayerNewAllocatorSurfacePrivate;
                     controller = null;
@@ -62,6 +63,7 @@ namespace Imp.DirectShow.Element
             get { return volume; }
             set
             {
+                //this.renderer.OnMediaPlayerNewAllocatorFramePrivate();
                 volume = value;
                 if (controller != null)
                     controller.Volume = value;
@@ -120,6 +122,8 @@ namespace Imp.DirectShow.Element
         {
             controller?.Command(MediaCommand.Close);
             controller = null;
+            this.SubtitleElement.Clear();
+            this.SubtitleElement.Visibility = Visibility.Hidden;
         }
 
         protected virtual void InitializeMediaPlayer()
@@ -168,7 +172,7 @@ namespace Imp.DirectShow.Element
 #if DEBUG
                 if (this.nextSubtitleIndices.Count != this.lastSubtitleIndices.Count || this.nextSubtitleIndices.Any(x => !this.lastSubtitleIndices.Contains(x)))
 #else
-            if (nextIndices.Count != lastIndices.Count || nextIndices.Any(x => !lastSubtitleIndices.Contains(x)))
+                if (this.nextSubtitleIndices.Count != this.lastSubtitleIndices.Count || this.nextSubtitleIndices.Any(x => !this.lastSubtitleIndices.Contains(x)))
 #endif
                 {
                     if (!this.Dispatcher.CheckAccess())
@@ -179,8 +183,6 @@ namespace Imp.DirectShow.Element
 
                     //UpdateSubtitles();
                 }
-
-                
             }
         }
 

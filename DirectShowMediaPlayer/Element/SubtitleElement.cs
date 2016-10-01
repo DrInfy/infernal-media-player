@@ -17,7 +17,7 @@ namespace Imp.DirectShow.Element
 {
     public class SubtitleElement : Grid
     {
-        private static double fontScale = 72.0 / 120.0;
+        private static double fontScale = 72.0 / 96.0; // 120.0;
         private readonly Brush defaultBrush = new SolidColorBrush {Color = Colors.White};
         private readonly Pen defaultOutlinePen = new Pen(new SolidColorBrush(Colors.Black), 3);
         private readonly Typeface defaultTypeface = new Typeface("Verdana");

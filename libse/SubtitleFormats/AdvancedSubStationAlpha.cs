@@ -309,7 +309,11 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
 
         public static string GetFormattedText(string text)
         {
-            return text.Replace("\\N", Environment.NewLine).Replace("\\n", Environment.NewLine);
+            var sb = new StringBuilder(text);
+            sb.Replace("\\N", Environment.NewLine);
+            sb.Replace("\\n", Environment.NewLine);
+            sb.Replace("\\h", "\u00A0");
+            return sb.ToString();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)

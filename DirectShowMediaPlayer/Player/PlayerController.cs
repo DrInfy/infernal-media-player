@@ -299,17 +299,17 @@ namespace Imp.DirectShow.Player
             }
             else if (extension == ".mp4" || extension == ".m4v" || extension == ".3gp")
             {
-                var mp4Parser = new MP4Parser(this.FilePath);
-                var mp4SubtitleTracks = mp4Parser.GetSubtitleTracks();
+                //var mp4Parser = new MP4Parser(this.FilePath);
+                //var mp4SubtitleTracks = mp4Parser.GetSubtitleTracks();
 
-                foreach (var trak in mp4SubtitleTracks)
-                {
-                    var subInfo = new SubtitleTrack();
-                    subInfo.Language = trak.Mdia.Mdhd.LanguageString;
-                    subInfo.Name = trak.Name;
-                    this.SubtitleTracks.Add(subInfo);
-                    subInfo.RawSubs = LoadMp4SubtitleForSync(trak);
-                }
+                //foreach (var trak in mp4SubtitleTracks)
+                //{
+                //    var subInfo = new SubtitleTrack();
+                //    subInfo.Language = trak.Mdia.Mdhd.LanguageString;
+                //    subInfo.Name = trak.Name;
+                //    this.SubtitleTracks.Add(subInfo);
+                //    subInfo.RawSubs = LoadMp4SubtitleForSync(trak);
+                //}
             }
         }
 
@@ -563,9 +563,7 @@ namespace Imp.DirectShow.Player
         /// </summary>
         protected void InvokeMediaEnded(EventArgs e)
         {
-            var mediaEndedHandler = MediaEnded;
-            if (mediaEndedHandler != null)
-                mediaEndedHandler();
+            MediaEnded?.Invoke();
         }
 
         private void FreeResources()
@@ -648,9 +646,7 @@ namespace Imp.DirectShow.Player
         /// </summary>
         protected void InvokeNewAllocatorFrame()
         {
-            var newAllocatorFrameHandler = NewAllocatorFrame;
-            if (newAllocatorFrameHandler != null)
-                newAllocatorFrameHandler();
+            NewAllocatorFrame?.Invoke();
         }
 
         /// <summary>
@@ -659,9 +655,7 @@ namespace Imp.DirectShow.Player
         /// <param name="pSurface">The COM pointer to the D3D surface</param>
         protected void InvokeNewAllocatorSurface(IntPtr pSurface)
         {
-            var del = NewAllocatorSurface;
-            if (del != null)
-                del(this, pSurface);
+            NewAllocatorSurface?.Invoke(this, pSurface);
         }
 
         public void MoveTo(long value)

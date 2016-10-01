@@ -376,11 +376,7 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
 
         private void ReadCluster(Element clusterElement)
         {
-            _subtitleRip.Clear();
-            foreach (var trackNumberSubtitle in this.Subtitles.Select(x => x.TrackNumber))
-            {
-                _subtitleRip.Add(trackNumberSubtitle, new List<MatroskaSubtitle>());
-            }
+            
 
             long clusterTimeCode = 0;
             int trackNumber;
@@ -488,6 +484,12 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
 
         public Dictionary<int,List<MatroskaSubtitle>> GetSubtitle(LoadMatroskaCallback progressCallback)
         {
+            _subtitleRip.Clear();
+            foreach (var trackNumberSubtitle in this.Subtitles.Select(x => x.TrackNumber))
+            {
+                _subtitleRip.Add(trackNumberSubtitle, new List<MatroskaSubtitle>());
+            }
+
             //_subtitleRipTrackNumber = trackNumber;
             ReadSegmentCluster(progressCallback);
             return _subtitleRip;
