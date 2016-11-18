@@ -713,6 +713,11 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
             int marginVIndex = -1;
             int borderStyleIndex = -1;
 
+            int ScaleXIndex = -1;
+            int ScaleYIndex = -1;
+            int SpacingIndex = -1;
+            int AngleIndex = -1;
+
             if (header == null)
                 header = HeaderNoStyles;
 
@@ -763,6 +768,14 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
                                 marginVIndex = i;
                             else if (f == "borderstyle")
                                 borderStyleIndex = i;
+                            else if (f == "ScaleX")
+                                borderStyleIndex = i;
+                            else if (f == "ScaleY")
+                                borderStyleIndex = i;
+                            else if (f == "Spacing")
+                                borderStyleIndex = i;
+                            else if (f == "Angle")
+                                borderStyleIndex = i;
                         }
                     }
                 }
@@ -777,6 +790,7 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
                         for (int i = 0; i < format.Length; i++)
                         {
                             string f = format[i].Trim().ToLower();
+
                             if (i == nameIndex)
                             {
                                 style.Name = format[i].Trim();
@@ -860,6 +874,30 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
                             else if (i == borderStyleIndex)
                             {
                                 style.BorderStyle = f;
+                            }
+                            else if (i == ScaleXIndex)
+                            {
+                                double number;
+                                if (double.TryParse(f, out number))
+                                    style.ScaleX = number;
+                            }
+                            else if (i == ScaleYIndex)
+                            {
+                                double number;
+                                if (double.TryParse(f, out number))
+                                    style.ScaleY = number;
+                            }
+                            else if (i == SpacingIndex)
+                            {
+                                double number;
+                                if (double.TryParse(f, out number))
+                                    style.Spacing = number;
+                            }
+                            else if (i == AngleIndex)
+                            {
+                                double number;
+                                if (double.TryParse(f, out number))
+                                    style.Angle = number;
                             }
                         }
                     }

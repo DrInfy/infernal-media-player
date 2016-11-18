@@ -26,10 +26,13 @@ namespace Nikse.SubtitleEdit.Core
         public int MarginLeft { get; set; }
         public int MarginRight { get; set; }
         public int MarginVertical { get; set; }
+        public double ScaleX { get; set; }
+        public double ScaleY { get; set; }
+        public double Spacing { get; set; }
+        public double Angle { get; set; }
         public string BorderStyle { get; set; }
         public string RawLine { get; set; }
         public bool LoadedFromHeader { get; set; }
-
         public SsaStyle()
         {
             this.FontName = "Arial";
@@ -47,6 +50,10 @@ namespace Nikse.SubtitleEdit.Core
             this.BorderStyle = "1";
             this.RawLine = string.Empty;
             this.LoadedFromHeader = false;
+            this.ScaleX = 100;
+            this.ScaleY = 100;
+            this.Spacing = 0;
+            this.Angle = 0;
         }
 
         public SsaStyle(SsaStyle ssaStyle)
@@ -76,6 +83,11 @@ namespace Nikse.SubtitleEdit.Core
             this.BorderStyle = ssaStyle.BorderStyle;
             this.RawLine = ssaStyle.RawLine;
             this.LoadedFromHeader = ssaStyle.LoadedFromHeader;
+
+            this.ScaleX = ssaStyle.ScaleX;
+            this.ScaleY = ssaStyle.ScaleY;
+            this.Spacing = ssaStyle.Spacing;
+            this.Angle = ssaStyle.Angle;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.Windows.Media.Media3D;
 using Imp.Base.Libraries;
 using Imp.DirectShow.Helpers;
 using Imp.DirectShow.Subtitles;
@@ -35,12 +36,13 @@ namespace Imp.DirectShow.Element
         private double imageHeight;
         private double bottomReserved;
         private double topReserved;
-        
+
         /// <summary> 
         /// Store added texts so that duplicate entries will properly collide with each other.
         /// Contains used reserved value.
         /// </summary>
-        private Dictionary<string,double> addedTexts = new Dictionary<string, double>();
+        private Dictionary<string, double> addedTexts = new Dictionary<string, double>();
+
         public Func<double> ImageWidthFunc { get; set;
             //get { return _imageWidth; }
             //set
@@ -107,7 +109,7 @@ namespace Imp.DirectShow.Element
                 control.ClearContent();
             }
 
-            
+
             this.Effect = null;
             this.paragraphs.Clear();
             //this.InvalidateMeasure();
@@ -381,7 +383,10 @@ namespace Imp.DirectShow.Element
             return finalPoint;
         }
 
-        private void PreventCollision(FormattedText fText, EnhancedParagraph paragraph, ref Point finalPoint, double h,
+        private void PreventCollision(FormattedText fText,
+            EnhancedParagraph paragraph,
+            ref Point finalPoint,
+            double h,
             double vMargin)
         {
             if (addedTexts.ContainsKey(paragraph.Text))
@@ -395,6 +400,7 @@ namespace Imp.DirectShow.Element
                 bottomReserved += fText.Height;
             }
         }
+
         private void PreventCollisionTop(FormattedText fText, EnhancedParagraph paragraph, ref Point finalPoint)
         {
             if (addedTexts.ContainsKey(paragraph.Text))
@@ -409,9 +415,26 @@ namespace Imp.DirectShow.Element
             }
         }
 
-        public Point Process(FormattedText fText, string text, EnhancedParagraph paragraph, SsaStyle style, Size scale,
-            Pen outlinePen, SubtitleChildElement mainControl, SubtitleChildElement outlineControl)
+        public Point Process(FormattedText fText,
+            string text,
+            EnhancedParagraph paragraph,
+            SsaStyle style,
+            Size scale,
+            Pen outlinePen,
+            SubtitleChildElement mainControl,
+            SubtitleChildElement outlineControl)
         {
+            var transformGroup = new TransformGroup();
+
+            var props = new SubtitleProperties();
+            props.ExtraScaling = new Size(style.ScaleX, style.ScaleY);
+
+
+            mainControl.RenderTransform = transformGroup;
+            outlineControl.RenderTransform = transformGroup;
+
+
+
             var top = (ActualHeight - imageHeight) / 2;
             var left = (ActualWidth - imageWidth) / 2;
             var leftTopCorner = new Point(left, top);
@@ -606,6 +629,30 @@ namespace Imp.DirectShow.Element
                             }
                         }
                     }
+                    else if (tag.Tag.StartsWith("fsc"))
+                    {
+                        double val;
+                        string textval;
+
+                        if (tag.Tag.StartsWith("fscx"))
+                        {
+                            textval = LibImp.GetAfter(tag.Tag, "fscx");
+
+                            if (double.TryParse(textval, out val))
+                            {
+                                props.ExtraScaling.Width = val;
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("fscy"))
+                        {
+                            textval = LibImp.GetAfter(tag.Tag, "fscy");
+
+                            if (double.TryParse(textval, out val))
+                            {
+                                props.ExtraScaling.Height = val;
+                            }
+                        }
+                    }
                     else if (tag.Tag.StartsWith("fs"))
                     {
                         var content = LibImp.GetAfter(tag.Tag, "fs");
@@ -663,8 +710,9 @@ namespace Imp.DirectShow.Element
                         var color = ReadAssColor(tag);
                         outlinePen.Brush = new SolidColorBrush() {Color = color};
                     }
-                    else if (tag.Tag.StartsWith("3c&H"))
+                    else if (tag.Tag.StartsWith("4c&H"))
                     {
+                        // \4c sets the shadow color.
                         shadowColor = ReadAssColor(tag);
                     }
                     else if (tag.Tag.StartsWith("alpha"))
@@ -720,9 +768,16 @@ namespace Imp.DirectShow.Element
                         {
                             if (rotate == 3)
                             {
-                                var rotation = new RotateTransform() {Angle = val};
-                                mainControl.RenderTransform = rotation;
-                                outlineControl.RenderTransform = mainControl.RenderTransform;
+                                props.PitchRollYawRotation.Z = val;
+
+                            }
+                            else if (rotate == 2)
+                            {
+                                props.PitchRollYawRotation.Y = val;
+                            }
+                            else if (rotate == 1)
+                            {
+                                props.PitchRollYawRotation.X = val;
                             }
                         }
                     }
@@ -740,9 +795,11 @@ namespace Imp.DirectShow.Element
                             }
                         }
                     }
+
                 }
             }
 
+            props.Apply(transformGroup);
 
             var finalPoint = SetStylePosition(pos, style, scale, fText, alignment, leftTopCorner, paragraph);
             shadow = shadow ?? style.ShadowWidth;
@@ -812,10 +869,28 @@ namespace Imp.DirectShow.Element
         {
             var index = tag.Tag.IndexOf("&H");
             var endIndex = tag.Tag.IndexOf("&", index + 1);
-
-            var hex = tag.Tag.Substring(index + 2, endIndex - index - 2);
+            String hex;
+            try
+            {
+                if (index < 0)
+                {
+                    index = 2;
+                    if (endIndex < 0) { endIndex = tag.Tag.Length -1;}
+                    hex = tag.Tag.Substring(index, endIndex - index );
+                }
+                else
+                {
+                    hex = tag.Tag.Substring(index + 2, endIndex - index - 2);
+                }
             
-            return Convert.ToInt32(hex, 16);
+                return Convert.ToInt32(hex, 16);
+
+            }
+            catch
+            {
+            }
+
+            return 0;
         }
 
     }

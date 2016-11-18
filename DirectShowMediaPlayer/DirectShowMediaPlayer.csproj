@@ -93,6 +93,7 @@
     <Compile Include="Subtitles\ParenthesisType.cs" />
     <Compile Include="Subtitles\SubtitleFormatReader.cs" />
     <Compile Include="Subtitles\SubtitleHeader.cs" />
+    <Compile Include="Subtitles\SubtitleProperties.cs" />
     <Compile Include="Subtitles\SubtitleStyle.cs" />
     <Compile Include="Subtitles\SubtitleStylized.cs" />
     <Compile Include="Subtitles\SubtitleTag.cs" />

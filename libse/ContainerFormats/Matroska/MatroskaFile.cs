@@ -86,6 +86,7 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
         /// <returns></returns>
         public bool ReadMetadata()
         {
+            if (this._segmentElement == null) { return false;}
             ReadSegmentInfoTracksAndAttachments();
 
             return _tracks != null;
