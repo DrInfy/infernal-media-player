@@ -1168,7 +1168,6 @@ namespace SEdge.Core
         /// <summary>
         /// Gets or sets packed value of this <see cref="CustomColor"/>.
         /// </summary>
-        [CLSCompliant(false)]
         public UInt32 PackedValue
         {
             get { return this._packedValue; }

@@ -85,7 +85,7 @@ namespace Imp.Player.Controllers
             imageLoader.Loaded += ImageLoaded;
             imageLoader.LoadFailed += LoadFailed;
 
-            mediaLoader = new MediaLoader(window.Dispatcher);
+            mediaLoader = new MediaLoader(window.Dispatcher) { Subtitles = Settings.Subtitles };
             mediaLoader.Loaded += MediaLoaded;
             mediaLoader.LoadFailed += LoadFailed;
 
@@ -147,22 +147,18 @@ namespace Imp.Player.Controllers
                 return;
             }
 
-            //window.UriPlayer.com
             if (window.UriPlayer.Controller != null)
             {
                 window.UriPlayer.Controller.Command(MediaCommand.Close);
                 MediaC.MediaClosed();
             }
 
-            //MediaC.Stop();
             EventC.SetTitle("Loading...");
             window.Title = "Loading...";
 
             window.PanelPlaylist.ListPlaylist.PlayingThis(item);
 
             loadingItem = item;
-
-            //window.PanelPlaylist.ListPlaylist.PlayingThis(item);
 
             if (item.FileType == FileTypes.Pictures)
             {

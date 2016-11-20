@@ -93,6 +93,7 @@
     <Compile Include="Interfaces\IPanelController.cs" />
     <Compile Include="Interfaces\IStateButton.cs" />
     <Compile Include="Libraries\ConverterUtility.cs" />
+    <Compile Include="Libraries\DebugUtil.cs" />
     <Compile Include="Libraries\ImpSerializer.cs" />
     <Compile Include="Libraries\ImpNativeMethods.cs" />
     <Compile Include="ListLogic\Comparers.cs" />

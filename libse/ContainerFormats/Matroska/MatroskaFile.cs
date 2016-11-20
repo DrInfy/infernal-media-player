@@ -1,6 +1,8 @@
 ﻿using Nikse.SubtitleEdit.Core.ContainerFormats.Ebml;
+using SEdge.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -377,13 +379,12 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
 
         private void ReadCluster(Element clusterElement)
         {
-            
-
             long clusterTimeCode = 0;
             int trackNumber;
             Element element;
             while (_stream.Position < clusterElement.EndPosition && (element = ReadElement()) != null)
             {
+                DebugUtil.WriteLine("Element Cluster: " + element.Id);
                 switch (element.Id)
                 {
                     case ElementId.Timecode:
@@ -443,7 +444,7 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
             //if (this.Subtitles.Select(x => x.TrackNumber).Contains(trackNumber)) // != _subtitleRipTrackNumber)
             if (!this._subtitleRip.ContainsKey(trackNumber)) // trackNumber != _subtitleRipTrackNumber)
             {
-                _stream.Seek(blockElement.EndPosition, SeekOrigin.Begin);
+                _stream.Seek(blockElement.DataSize - 1, SeekOrigin.Current);
                 return null;
             }
 
@@ -536,6 +537,8 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
             Element element;
             while (_stream.Position < _segmentElement.EndPosition && (element = ReadElement()) != null)
             {
+                DebugUtil.WriteLine("Element: " + element.Id);
+
                 switch (element.Id)
                 {
                     case ElementId.Info:
@@ -553,6 +556,9 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
                         read.Add(element.Id);
                         if (read.Count == 3) return;
                         break;
+                    case ElementId.Cluster:
+                        // Metadata is stored at the start.
+                        return;
                     default:
                         _stream.Seek(element.DataSize, SeekOrigin.Current);
                         break;
@@ -628,6 +634,8 @@ namespace Nikse.SubtitleEdit.Core.ContainerFormats.Matroska
             Element element;
             while (_stream.Position < _segmentElement.EndPosition && (element = ReadElement()) != null)
             {
+                DebugUtil.WriteLine("Element: " + element.Id);
+
                 if (element.Id == ElementId.Cluster)
                 {
                     ReadCluster(element);

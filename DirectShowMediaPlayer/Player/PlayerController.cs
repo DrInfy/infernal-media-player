@@ -19,6 +19,7 @@ using Nikse.SubtitleEdit.Core.ContainerFormats.Matroska;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4.Boxes;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
+using Imp.Base.Libraries;
 
 #endregion
 
@@ -98,6 +99,7 @@ namespace Imp.DirectShow.Player
 
         private List<int> lastSubtitleIndices = new List<int>();
         private List<int> nextSubtitleIndices = new List<int>();
+        private readonly bool subtitles;
 
         #region Events
 
@@ -119,13 +121,14 @@ namespace Imp.DirectShow.Player
 
         #endregion
 
-        public PlayerController(string filePath, Dispatcher dispatcher)
+        public PlayerController(string filePath, Dispatcher dispatcher, bool subtitles)
         {
             graphs = new FilterGraphs(this);
             FilePath = filePath;
             this.dispatcher = dispatcher;
             //this.dispatcher = dispatcher;
             fader = new ImpFader();
+            this.subtitles = subtitles;
         }
 
         public void HandleCommand()
@@ -224,7 +227,10 @@ namespace Imp.DirectShow.Player
         public virtual void OpenSource(out ImpError result)
         {
             this.SelectedSubtitleTrack = null;
-            ReadTracks();
+            if (subtitles)
+            {
+                ReadTracks();
+            }
 
             graphs.OpenSource(out result);
 
@@ -233,7 +239,10 @@ namespace Imp.DirectShow.Player
             graphs.RenderVideoStream(ref result, FilePath);
             graphs.SetMediaSeekingInterface(graphs.GraphBuilder as IMediaSeeking);
 
-            FinalizeSubtitles();
+            if (subtitles)
+            {
+                FinalizeSubtitles();
+            }
         }
 
         #region Subtitles
@@ -264,18 +273,18 @@ namespace Imp.DirectShow.Player
                     var stopwatch = Stopwatch.StartNew();
                     if (matroska.ReadMetadata())
                     {
-                        Debug.WriteLine($"Read metadata time: {(int) stopwatch.Elapsed.TotalMilliseconds} ms");
+                        DebugUtil.WriteLine($"Read metadata time: {(int) stopwatch.Elapsed.TotalMilliseconds} ms");
 
                         stopwatch.Restart();
                         var subTitleTrackInfo = matroska.Subtitles;
 
                         var mkvSubs = matroska.GetSubtitle(null);
-                        var resultingSubs = new Subtitle();
-                        Debug.WriteLine($"Read from file time: {(int)stopwatch.Elapsed.TotalMilliseconds} ms");
+                        DebugUtil.WriteLine($"Read from file time: {(int)stopwatch.Elapsed.TotalMilliseconds} ms");
                         stopwatch.Restart();
 
                         foreach (var info in subTitleTrackInfo)
                         {
+                            var resultingSubs = new Subtitle();
                             var subInfo = new SubtitleTrack();
                             subInfo.Language = info.Language;
                             subInfo.Name = info.Name;
@@ -284,7 +293,7 @@ namespace Imp.DirectShow.Player
                             subInfo.Format = Utilities.LoadMatroskaTextSubtitle(info, matroska, mkvSubs[info.TrackNumber], resultingSubs);
                             subInfo.RawSubs = resultingSubs;
 
-                            Debug.WriteLine($"Read from matroska time: {(int)stopwatch.Elapsed.TotalMilliseconds} ms");
+                            DebugUtil.WriteLine($"Read from matroska time: {(int)stopwatch.Elapsed.TotalMilliseconds} ms");
                             stopwatch.Restart();
 
                             //subInfo.Subtitles = CreateEnhancedSubTitles(resultingSubs, format, this.VideoSize);

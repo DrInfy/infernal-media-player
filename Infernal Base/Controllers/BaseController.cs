@@ -44,8 +44,9 @@ namespace Imp.Base.Controllers
             {
                 Settings = (Settings) ImpSerializer.ReadFile(settingsPath, typeof (Settings));
             }
-            catch (Exception e)
+            catch // (Exception e)
             {
+
                 Settings = new Settings();
             }
         }

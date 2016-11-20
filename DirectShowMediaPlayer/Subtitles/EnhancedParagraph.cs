@@ -18,6 +18,10 @@ namespace Imp.DirectShow.Subtitles
             {
                 SubtitleFormatReader.GetAssTags(p.Text, this);
             }
+            else
+            {
+                Text = p.Text;
+            }
         }
     }
 }

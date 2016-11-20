@@ -153,6 +153,8 @@ namespace Imp.DirectShow.Element
                 for (int i = paragraphs.Count - 1; i >= 0; i--)
                 {
                     var p = paragraphs[i];
+                    if (p.Text == null) { continue; }
+
                     var mainControl = controls[controlIndex * 2 + 1];
                     var outLineControl = controls[controlIndex * 2];
 
@@ -424,6 +426,7 @@ namespace Imp.DirectShow.Element
             SubtitleChildElement mainControl,
             SubtitleChildElement outlineControl)
         {
+            
             var transformGroup = new TransformGroup();
 
             var props = new SubtitleProperties();
@@ -446,49 +449,229 @@ namespace Imp.DirectShow.Element
             double? blur = null;
             double? shadow = null;
             double? bord = null;
-
-            foreach (var tag in paragraph.Tags)
+            if (paragraph.Tags != null)
             {
-                var s = tag.StartIndex;
-                var e = Math.Min((tag.EndIndex ?? 10000) - tag.StartIndex, text.Length - tag.StartIndex);
 
-                if (tag.Type == ParenthesisType.Chevrons)
+                foreach (var tag in paragraph.Tags)
                 {
-                    if (tag.Tag == "i")
-                    {
-                        fText.SetFontStyle(FontStyles.Italic, s, e);
-                    }
-                    else if (tag.Tag == "b")
-                    {
-                        fText.SetFontStyle(FontStyles.Oblique, s, e);
-                    }
-                    else if (tag.Tag == "font")
-                    {
-                        if (tag.AdditionalContent.Contains("color="))
-                        {
-                            var index = tag.AdditionalContent.IndexOf("color=");
-                            index = tag.AdditionalContent.IndexOf("\"", index + 1);
-                            var endIndex = tag.AdditionalContent.IndexOf("\"", index + 1);
+                    var s = tag.StartIndex;
+                    var e = Math.Min((tag.EndIndex ?? 10000) - tag.StartIndex, text.Length - tag.StartIndex);
 
-                            var colorHex = tag.AdditionalContent.Substring(index + 1, endIndex - index - 1);
-                            var color = (Color) ColorConverter.ConvertFromString(colorHex);
-                            fText.SetForegroundBrush(
-                                new SolidColorBrush(color),
-                                s, e);
-                        }
-                        if (tag.AdditionalContent.Contains("size="))
+                    if (tag.Type == ParenthesisType.Chevrons)
+                    {
+                        if (tag.Tag == "i")
                         {
-                            var content = LibImp.GetBetween(tag.AdditionalContent, "size=\"", "\"");
-                            double val;
-                            if (double.TryParse(content, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture,
-                                out val))
+                            fText.SetFontStyle(FontStyles.Italic, s, e);
+                        }
+                        else if (tag.Tag == "b")
+                        {
+                            fText.SetFontStyle(FontStyles.Oblique, s, e);
+                        }
+                        else if (tag.Tag == "font")
+                        {
+                            if (tag.AdditionalContent.Contains("color="))
                             {
-                                fText.SetFontSize(val * scale.Height * fontScale, s, e);
+                                var index = tag.AdditionalContent.IndexOf("color=");
+                                index = tag.AdditionalContent.IndexOf("\"", index + 1);
+                                var endIndex = tag.AdditionalContent.IndexOf("\"", index + 1);
+
+                                var colorHex = tag.AdditionalContent.Substring(index + 1, endIndex - index - 1);
+                                var color = (Color) ColorConverter.ConvertFromString(colorHex);
+                                fText.SetForegroundBrush(
+                                    new SolidColorBrush(color),
+                                    s, e);
+                            }
+                            if (tag.AdditionalContent.Contains("size="))
+                            {
+                                var content = LibImp.GetBetween(tag.AdditionalContent, "size=\"", "\"");
+                                double val;
+                                if (double.TryParse(content, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out val))
+                                {
+                                    fText.SetFontSize(val * scale.Height * fontScale, s, e);
+                                }
+                            }
+                            if (tag.AdditionalContent.Contains("face="))
+                            {
+                                var content = LibImp.GetBetween(tag.AdditionalContent, "face=\"", "\"");
+                                FontFamily fontFamily;
+                                if (content == null || !this.fontTypefaces.TryGetValue(content.ToLower(), out fontFamily))
+                                {
+                                    fontFamily = new FontFamily(content);
+                                }
+
+                                var typeface = new Typeface(fontFamily,
+                                    style.Italic ? FontStyles.Italic : FontStyles.Normal,
+                                    style.Bold ? FontWeights.Bold : FontWeights.Normal,
+                                    FontStretches.SemiCondensed);
+
+                                fText.SetFontTypeface(typeface, s, e);
                             }
                         }
-                        if (tag.AdditionalContent.Contains("face="))
+                    }
+                    else if (tag.Type == ParenthesisType.Braces)
+                    {
+                        if (tag.Tag.StartsWith("pos"))
                         {
-                            var content = LibImp.GetBetween(tag.AdditionalContent, "face=\"", "\"");
+                            var content = LibImp.GetBetween(tag.Tag, "(", ")");
+                            if (content != null)
+                            {
+                                var parts = content.Split(',');
+                                int x, y;
+                                if (parts.Length == 2 && int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y))
+                                {
+                                    pos = new Point(x, y);
+                                }
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("an"))
+                        {
+                            var content = LibImp.GetAfter(tag.Tag, "an");
+                            if (content != null)
+                            {
+                                alignment = content;
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("bord"))
+                        {
+                            var content = LibImp.GetAfter(tag.Tag, "bord");
+                            if (content != null)
+                            {
+                                double val;
+                                if (double.TryParse(content, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture,
+                                    out val))
+                                {
+                                    bord = val * scale.Height * 1.5;
+                                    outlinePen.Thickness = bord.Value;
+                                }
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("shad"))
+                        {
+                            var content = LibImp.GetAfter(tag.Tag, "shad");
+                            if (content != null)
+                            {
+                                double val;
+                                if (double.TryParse(content, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture,
+                                    out val))
+                                {
+                                    shadow = val;
+                                }
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("clip"))
+                        {
+                            var content = LibImp.GetBetween(tag.Tag, "(", ")");
+                            if (content != null)
+                            {
+                                var parts = content.Split(',', ' ');
+                                if (parts.Length == 4)
+                                {
+                                    // Rectangle clip
+                                    var pathFigure = new PathFigure() {IsClosed = true};
+                                    var pG = new PathGeometry();
+                                    var point = LibImp.ToPoint(parts[0], parts[1], scale, lt);
+                                    var point2 = LibImp.ToPoint(parts[2], parts[3], scale, lt);
+                                    pathFigure.StartPoint = point;
+
+                                    pathFigure.Segments.Add(new LineSegment() {Point = new Point(point.X, point2.Y)});
+                                    pathFigure.Segments.Add(new LineSegment() {Point = new Point(point2.X, point2.Y)});
+                                    pathFigure.Segments.Add(new LineSegment() {Point = new Point(point2.X, point.Y)});
+                                    pathFigure.Segments.Add(new LineSegment() {Point = new Point(point.X, point.Y)});
+
+                                    pG.Figures.Add(pathFigure);
+                                    mainControl.Clip = pG;
+
+                                    mainControl.Clip = new RectangleGeometry()
+                                    {
+                                        Rect = new Rect(point, point2)
+                                    };
+                                }
+                                else if (parts.FirstOrDefault() == "m" && parts.Length > 3)
+                                {
+                                    //var scales = new Size(1,1);
+                                    var point = LibImp.ToPoint(parts[1], parts[2], scale, lt);
+
+                                    if (parts[3] == "l")
+                                    {
+                                        // Line geometry is simple enough.
+                                        var pathFigure = new PathFigure() {IsClosed = true};
+                                        var pG = new PathGeometry();
+                                        var index = 4;
+
+                                        pathFigure.StartPoint = point;
+
+                                        while (index + 1 < parts.Length)
+                                        {
+                                            var nextPoint = LibImp.ToPoint(parts[index], parts[index + 1], scale, lt);
+                                            pathFigure.Segments.Add(new LineSegment() {Point = nextPoint});
+                                            index += 2;
+                                        }
+
+                                        //pathFigure.StartPoint = new Point(0,0);
+                                        //pathFigure.Segments.Add(new LineSegment() { Point = new Point(500,0)});
+                                        //pathFigure.Segments.Add(new LineSegment() { Point = new Point(500, 2500) });
+                                        //pathFigure.Segments.Add(new LineSegment() { Point = new Point(0, 2500) });
+
+                                        pG.Figures.Add(pathFigure);
+                                        mainControl.Clip = pG;
+                                    }
+                                }
+
+                                outlineControl.Clip = mainControl.Clip;
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("blur"))
+                        {
+                            var content = LibImp.GetAfter(tag.Tag, "blur");
+                            if (content != null)
+                            {
+                                double val;
+                                if (double.TryParse(content, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture,
+                                    out val))
+                                {
+                                    blur = val;
+                                }
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("fsc"))
+                        {
+                            double val;
+                            string textval;
+
+                            if (tag.Tag.StartsWith("fscx"))
+                            {
+                                textval = LibImp.GetAfter(tag.Tag, "fscx");
+
+                                if (double.TryParse(textval, out val))
+                                {
+                                    props.ExtraScaling.Width = val;
+                                }
+                            }
+                            else if (tag.Tag.StartsWith("fscy"))
+                            {
+                                textval = LibImp.GetAfter(tag.Tag, "fscy");
+
+                                if (double.TryParse(textval, out val))
+                                {
+                                    props.ExtraScaling.Height = val;
+                                }
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("fs"))
+                        {
+                            var content = LibImp.GetAfter(tag.Tag, "fs");
+                            if (content != null)
+                            {
+                                int val;
+                                if (int.TryParse(content, NumberStyles.None, CultureInfo.InvariantCulture, out val))
+                                {
+                                    fText.SetFontSize(val * scale.Height * fontScale, s, e);
+                                }
+                            }
+                        }
+                        else if (tag.Tag.StartsWith("fn"))
+                        {
+                            var content = LibImp.GetAfter(tag.Tag, "fn");
                             FontFamily fontFamily;
                             if (content == null || !this.fontTypefaces.TryGetValue(content.ToLower(), out fontFamily))
                             {
@@ -502,300 +685,122 @@ namespace Imp.DirectShow.Element
 
                             fText.SetFontTypeface(typeface, s, e);
                         }
-                    }
-                }
-                else if (tag.Type == ParenthesisType.Braces)
-                {
-                    if (tag.Tag.StartsWith("pos"))
-                    {
-                        var content = LibImp.GetBetween(tag.Tag, "(", ")");
-                        if (content != null)
+                        else if (tag.Tag == "i1")
                         {
-                            var parts = content.Split(',');
-                            int x, y;
-                            if (parts.Length == 2 && int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y))
-                            {
-                                pos = new Point(x, y);
-                            }
+                            fText.SetFontStyle(FontStyles.Italic, s, e);
                         }
-                    }
-                    else if (tag.Tag.StartsWith("an"))
-                    {
-                        var content = LibImp.GetAfter(tag.Tag, "an");
-                        if (content != null)
+                        else if (tag.Tag == "i0")
                         {
-                            alignment = content;
+                            fText.SetFontStyle(FontStyles.Normal, s, e);
                         }
-                    }
-                    else if (tag.Tag.StartsWith("bord"))
-                    {
-                        var content = LibImp.GetAfter(tag.Tag, "bord");
-                        if (content != null)
+                        else if (tag.Tag == "b1" || tag.Tag == "b700" || tag.Tag == "b800" || tag.Tag == "b900")
+                        {
+                            fText.SetFontStyle(FontStyles.Oblique, s, e);
+                        }
+                        else if (tag.Tag == "b0" || tag.Tag == "b400")
+                        {
+                            fText.SetFontStyle(FontStyles.Normal, s, e);
+                        }
+                        else if (tag.Tag.StartsWith("c&H") || tag.Tag.StartsWith("1c&H"))
+                        {
+                            var color = ReadAssColor(tag);
+
+                            fText.SetForegroundBrush(
+                                new SolidColorBrush(color),
+                                s, e);
+                        }
+                        else if (tag.Tag.StartsWith("3c&H"))
+                        {
+                            var color = ReadAssColor(tag);
+                            outlinePen.Brush = new SolidColorBrush() {Color = color};
+                        }
+                        else if (tag.Tag.StartsWith("4c&H"))
+                        {
+                            // \4c sets the shadow color.
+                            shadowColor = ReadAssColor(tag);
+                        }
+                        else if (tag.Tag.StartsWith("alpha"))
+                        {
+                            mainControl.Opacity = 1 - ReadAssHex(tag) / 255.0;
+                            mainControl.DropShadowEffect.Opacity = outlineControl.Opacity = mainControl.Opacity;
+                        }
+                        else if (tag.Tag.StartsWith("1a"))
+                        {
+                            mainControl.Opacity = 1 - ReadAssHex(tag) / 255.0;
+                        }
+                        else if (tag.Tag.StartsWith("2a"))
+                        {
+                            // Sets the secondary fill alpha. This is only used for pre-highlight in standard karaoke.
+                            // Not supported.
+                        }
+                        else if (tag.Tag.StartsWith("3a"))
+                        {
+                            outlineControl.Opacity = 1 - ReadAssHex(tag) / 255.0;
+                        }
+                        else if (tag.Tag.StartsWith("4a"))
+                        {
+                            // Set Shadow Alpha
+                            mainControl.DropShadowEffect.Opacity = 1 - ReadAssHex(tag) / 255.0;
+                        }
+                        else if (tag.Tag.StartsWith("fr"))
                         {
                             double val;
-                            if (double.TryParse(content, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture,
-                                out val))
+                            string textval;
+                            int rotate;
+                            if (tag.Tag.StartsWith("frx"))
                             {
-                                bord = val * scale.Height * 1.5;
-                                outlinePen.Thickness = bord.Value;
+                                textval = LibImp.GetAfter(tag.Tag, "frx");
+                                rotate = 1;
                             }
-                        }
-                    }
-                    else if (tag.Tag.StartsWith("shad"))
-                    {
-                        var content = LibImp.GetAfter(tag.Tag, "shad");
-                        if (content != null)
-                        {
-                            double val;
-                            if (double.TryParse(content, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture,
-                                out val))
+                            else if (tag.Tag.StartsWith("fry"))
                             {
-                                shadow = val;
+                                textval = LibImp.GetAfter(tag.Tag, "fry");
+                                rotate = 2;
                             }
-                        }
-                    }
-                    else if (tag.Tag.StartsWith("clip"))
-                    {
-                        var content = LibImp.GetBetween(tag.Tag, "(", ")");
-                        if (content != null)
-                        {
-                            var parts = content.Split(',', ' ');
-                            if (parts.Length == 4)
+                            else if (tag.Tag.StartsWith("frz"))
                             {
-                                // Rectangle clip
-                                var pathFigure = new PathFigure() {IsClosed = true};
-                                var pG = new PathGeometry();
-                                var point = LibImp.ToPoint(parts[0], parts[1], scale, lt);
-                                var point2 = LibImp.ToPoint(parts[2], parts[3], scale, lt);
-                                pathFigure.StartPoint = point;
+                                textval = LibImp.GetAfter(tag.Tag, "frz");
+                                rotate = 3;
+                            }
+                            else
+                            {
+                                textval = LibImp.GetAfter(tag.Tag, "fr");
+                                rotate = 3;
+                            }
 
-                                pathFigure.Segments.Add(new LineSegment() {Point = new Point(point.X, point2.Y)});
-                                pathFigure.Segments.Add(new LineSegment() {Point = new Point(point2.X, point2.Y)});
-                                pathFigure.Segments.Add(new LineSegment() {Point = new Point(point2.X, point.Y)});
-                                pathFigure.Segments.Add(new LineSegment() {Point = new Point(point.X, point.Y)});
-
-                                pG.Figures.Add(pathFigure);
-                                mainControl.Clip = pG;
-
-                                mainControl.Clip = new RectangleGeometry()
+                            if (double.TryParse(textval, out val))
+                            {
+                                if (rotate == 3)
                                 {
-                                    Rect = new Rect(point, point2)
-                                };
-                            }
-                            else if (parts.FirstOrDefault() == "m" && parts.Length > 3)
-                            {
-                                //var scales = new Size(1,1);
-                                var point = LibImp.ToPoint(parts[1], parts[2], scale, lt);
+                                    props.PitchRollYawRotation.Z = val;
 
-                                if (parts[3] == "l")
+                                }
+                                else if (rotate == 2)
                                 {
-                                    // Line geometry is simple enough.
-                                    var pathFigure = new PathFigure() {IsClosed = true};
-                                    var pG = new PathGeometry();
-                                    var index = 4;
-
-                                    pathFigure.StartPoint = point;
-
-                                    while (index + 1 < parts.Length)
-                                    {
-                                        var nextPoint = LibImp.ToPoint(parts[index], parts[index + 1], scale, lt);
-                                        pathFigure.Segments.Add(new LineSegment() {Point = nextPoint});
-                                        index += 2;
-                                    }
-
-                                    //pathFigure.StartPoint = new Point(0,0);
-                                    //pathFigure.Segments.Add(new LineSegment() { Point = new Point(500,0)});
-                                    //pathFigure.Segments.Add(new LineSegment() { Point = new Point(500, 2500) });
-                                    //pathFigure.Segments.Add(new LineSegment() { Point = new Point(0, 2500) });
-
-                                    pG.Figures.Add(pathFigure);
-                                    mainControl.Clip = pG;
+                                    props.PitchRollYawRotation.Y = val;
+                                }
+                                else if (rotate == 1)
+                                {
+                                    props.PitchRollYawRotation.X = val;
                                 }
                             }
-
-                            outlineControl.Clip = mainControl.Clip;
                         }
-                    }
-                    else if (tag.Tag.StartsWith("blur"))
-                    {
-                        var content = LibImp.GetAfter(tag.Tag, "blur");
-                        if (content != null)
+                        else if (tag.Tag.StartsWith("org"))
                         {
-                            double val;
-                            if (double.TryParse(content, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture,
-                                out val))
+                            var content = LibImp.GetBetween(tag.Tag, "(", ")");
+                            if (content != null)
                             {
-                                blur = val;
+                                var parts = content.Split(',');
+                                int x, y;
+                                if (parts.Length == 2 && int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y))
+                                {
+                                    mainControl.TranslatePoint(new Point(x, y), mainControl);
+                                    outlineControl.TranslatePoint(new Point(x, y), mainControl);
+                                }
                             }
                         }
-                    }
-                    else if (tag.Tag.StartsWith("fsc"))
-                    {
-                        double val;
-                        string textval;
 
-                        if (tag.Tag.StartsWith("fscx"))
-                        {
-                            textval = LibImp.GetAfter(tag.Tag, "fscx");
-
-                            if (double.TryParse(textval, out val))
-                            {
-                                props.ExtraScaling.Width = val;
-                            }
-                        }
-                        else if (tag.Tag.StartsWith("fscy"))
-                        {
-                            textval = LibImp.GetAfter(tag.Tag, "fscy");
-
-                            if (double.TryParse(textval, out val))
-                            {
-                                props.ExtraScaling.Height = val;
-                            }
-                        }
                     }
-                    else if (tag.Tag.StartsWith("fs"))
-                    {
-                        var content = LibImp.GetAfter(tag.Tag, "fs");
-                        if (content != null)
-                        {
-                            int val;
-                            if (int.TryParse(content, NumberStyles.None, CultureInfo.InvariantCulture, out val))
-                            {
-                                fText.SetFontSize(val * scale.Height * fontScale, s, e);
-                            }
-                        }
-                    }
-                    else if (tag.Tag.StartsWith("fn"))
-                    {
-                        var content = LibImp.GetAfter(tag.Tag, "fn");
-                        FontFamily fontFamily;
-                        if (content == null || !this.fontTypefaces.TryGetValue(content.ToLower(), out fontFamily))
-                        {
-                            fontFamily = new FontFamily(content);
-                        }
-
-                        var typeface = new Typeface(fontFamily,
-                            style.Italic ? FontStyles.Italic : FontStyles.Normal,
-                            style.Bold ? FontWeights.Bold : FontWeights.Normal,
-                            FontStretches.SemiCondensed);
-
-                        fText.SetFontTypeface(typeface, s, e);
-                    }
-                    else if (tag.Tag == "i1")
-                    {
-                        fText.SetFontStyle(FontStyles.Italic, s, e);
-                    }
-                    else if (tag.Tag == "i0")
-                    {
-                        fText.SetFontStyle(FontStyles.Normal, s, e);
-                    }
-                    else if (tag.Tag == "b1" || tag.Tag == "b700" || tag.Tag == "b800" || tag.Tag == "b900")
-                    {
-                        fText.SetFontStyle(FontStyles.Oblique, s, e);
-                    }
-                    else if (tag.Tag == "b0" || tag.Tag == "b400")
-                    {
-                        fText.SetFontStyle(FontStyles.Normal, s, e);
-                    }
-                    else if (tag.Tag.StartsWith("c&H") || tag.Tag.StartsWith("1c&H"))
-                    {
-                        var color = ReadAssColor(tag);
-
-                        fText.SetForegroundBrush(
-                            new SolidColorBrush(color),
-                            s, e);
-                    }
-                    else if (tag.Tag.StartsWith("3c&H"))
-                    {
-                        var color = ReadAssColor(tag);
-                        outlinePen.Brush = new SolidColorBrush() {Color = color};
-                    }
-                    else if (tag.Tag.StartsWith("4c&H"))
-                    {
-                        // \4c sets the shadow color.
-                        shadowColor = ReadAssColor(tag);
-                    }
-                    else if (tag.Tag.StartsWith("alpha"))
-                    {
-                        mainControl.Opacity = 1 - ReadAssHex(tag) / 255.0;
-                        mainControl.DropShadowEffect.Opacity = outlineControl.Opacity = mainControl.Opacity;
-                    }
-                    else if (tag.Tag.StartsWith("1a"))
-                    {
-                        mainControl.Opacity = 1 - ReadAssHex(tag) / 255.0;
-                    }
-                    else if (tag.Tag.StartsWith("2a"))
-                    {
-                        // Sets the secondary fill alpha. This is only used for pre-highlight in standard karaoke.
-                        // Not supported.
-                    }
-                    else if (tag.Tag.StartsWith("3a"))
-                    {
-                        outlineControl.Opacity = 1 - ReadAssHex(tag) / 255.0;
-                    }
-                    else if (tag.Tag.StartsWith("4a"))
-                    {
-                        // Set Shadow Alpha
-                        mainControl.DropShadowEffect.Opacity = 1 - ReadAssHex(tag) / 255.0;
-                    }
-                    else if (tag.Tag.StartsWith("fr"))
-                    {
-                        double val;
-                        string textval;
-                        int rotate;
-                        if (tag.Tag.StartsWith("frx"))
-                        {
-                            textval = LibImp.GetAfter(tag.Tag, "frx");
-                            rotate = 1;
-                        }
-                        else if (tag.Tag.StartsWith("fry"))
-                        {
-                            textval = LibImp.GetAfter(tag.Tag, "fry");
-                            rotate = 2;
-                        }
-                        else if (tag.Tag.StartsWith("frz"))
-                        {
-                            textval = LibImp.GetAfter(tag.Tag, "frz");
-                            rotate = 3;
-                        }
-                        else
-                        {
-                            textval = LibImp.GetAfter(tag.Tag, "fr");
-                            rotate = 3;
-                        }
-
-                        if (double.TryParse(textval, out val))
-                        {
-                            if (rotate == 3)
-                            {
-                                props.PitchRollYawRotation.Z = val;
-
-                            }
-                            else if (rotate == 2)
-                            {
-                                props.PitchRollYawRotation.Y = val;
-                            }
-                            else if (rotate == 1)
-                            {
-                                props.PitchRollYawRotation.X = val;
-                            }
-                        }
-                    }
-                    else if (tag.Tag.StartsWith("org"))
-                    {
-                        var content = LibImp.GetBetween(tag.Tag, "(", ")");
-                        if (content != null)
-                        {
-                            var parts = content.Split(',');
-                            int x, y;
-                            if (parts.Length == 2 && int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y))
-                            {
-                                mainControl.TranslatePoint(new Point(x, y), mainControl);
-                                outlineControl.TranslatePoint(new Point(x, y), mainControl);
-                            }
-                        }
-                    }
-
                 }
             }
 

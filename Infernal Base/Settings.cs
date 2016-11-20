@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 namespace Imp.Base
 {
-    [Serializable]
     public class Settings
     {
         #region Fields
@@ -16,6 +15,7 @@ namespace Imp.Base
         public double Volume = 0.75;
         public FileTypes LastFileTypes = FileTypes.Music | FileTypes.Videos;
         public LoopMode LastLoopMode = LoopMode.NoLoop;
+        public bool Subtitles = true;
 
         #endregion
     }

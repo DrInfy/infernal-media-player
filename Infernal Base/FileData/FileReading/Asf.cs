@@ -87,7 +87,7 @@ namespace Imp.Base.FileData.FileReading
                 fs = new FileStream(path, FileMode.Open, FileAccess.Read);
                 br = new BinaryReader(fs);
 
-                readGUID(ref g, ref br);
+                ReadGuid(ref g, ref br);
                 if (g != ASF_Header_Object)
                 {
                     // throw an exception
@@ -109,7 +109,7 @@ namespace Imp.Base.FileData.FileReading
                 // preroll value
 
                 // Process all the GUIDs until you get both the contextblock and the extendedcontextblock
-                while (readGUID(ref g, ref br))
+                while (ReadGuid(ref g, ref br))
                 {
                     sizeBlock = br.ReadInt64();
                     // this is the size of the block
@@ -227,11 +227,11 @@ namespace Imp.Base.FileData.FileReading
         /// <summary>
         ///     Reads a 128 bit GUID
         /// </summary>
-        /// <param name="g"></param>
+        /// <param name="guid"></param>
         /// <param name="br"></param>
         /// <returns></returns>
         /// <remarks></remarks>
-        private bool readGUID(ref Guid g, ref BinaryReader br)
+        private bool ReadGuid(ref Guid guid, ref BinaryReader br)
         {
             var int1 = 0;
             short shrt1 = 0;
@@ -248,12 +248,12 @@ namespace Imp.Base.FileData.FileReading
                 shrt1 = br.ReadInt16();
                 shrt2 = br.ReadInt16();
                 b = br.ReadBytes(8);
-                g = new Guid(int1, shrt1, shrt2, b);
+                guid = new Guid(int1, shrt1, shrt2, b);
                 return true;
             }
             catch (Exception ex)
             {
-                throw new Exception("Invalid WMA format.");
+                throw new Exception("Invalid WMA format.", ex);
             }
         }
 

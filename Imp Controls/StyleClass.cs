@@ -11,7 +11,6 @@ namespace Imp.Controls
     /// <summary>
     /// Specifies styling for a control
     /// </summary>
-    [Serializable]
     public class StyleClass
     {
         #region Static Fields and Constants
