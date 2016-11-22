@@ -52,11 +52,6 @@ namespace Imp.DirectShow.Element
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            GeometryPen.LineJoin = PenLineJoin.Miter;
-            GeometryPen.DashCap = PenLineCap.Round;
-            GeometryPen.EndLineCap = PenLineCap.Round;
-            GeometryPen.LineJoin = PenLineJoin.Round;
-            GeometryPen.StartLineCap = PenLineCap.Round;
             if (FormattedText != null)
             {
                 drawingContext.DrawText(FormattedText, FormattedTextPos);
@@ -64,8 +59,15 @@ namespace Imp.DirectShow.Element
 
             if (Geometry != null)
             {
+                GeometryPen.LineJoin = PenLineJoin.Miter;
+                GeometryPen.DashCap = PenLineCap.Round;
+                GeometryPen.EndLineCap = PenLineCap.Round;
+                GeometryPen.LineJoin = PenLineJoin.Round;
+                GeometryPen.StartLineCap = PenLineCap.Round;
                 drawingContext.DrawGeometry(null, GeometryPen, Geometry);
             }
+
+            base.OnRender(drawingContext);
         }
     }
 }

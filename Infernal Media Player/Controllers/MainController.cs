@@ -286,6 +286,20 @@ namespace Imp.Player.Controllers
             window.MenuList.CaptureMouse();
         }
 
+        protected override void ChangeSubtitles(object argument)
+        {
+
+            if (this.window.UriPlayer?.Controller != null)
+            {
+                this.window.UriPlayer.Controller.SubtitleTrackIndex++;
+                EventC.SetEvent(new EventText("Subtitle " + (this.window.UriPlayer.Controller.SubtitleTrackIndex + 1).ToString() + "!"));
+            }
+            else
+            {
+                EventC.SetEvent(new EventText("Not playing!"));
+            }
+        }
+
         protected override void Shuffle()
         {
             ClearPlayers();

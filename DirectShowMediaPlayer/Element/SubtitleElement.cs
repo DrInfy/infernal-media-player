@@ -34,14 +34,14 @@ namespace Imp.DirectShow.Element
 
         private double imageWidth;
         private double imageHeight;
-        private double bottomReserved;
-        private double topReserved;
+        //private double bottomReserved;
+        //private double topReserved;
 
         /// <summary> 
         /// Store added texts so that duplicate entries will properly collide with each other.
         /// Contains used reserved value.
         /// </summary>
-        private Dictionary<string, double> addedTexts = new Dictionary<string, double>();
+        private Dictionary<string, Rect> addedTexts = new Dictionary<string, Rect>();
 
         public Func<double> ImageWidthFunc { get; set;
             //get { return _imageWidth; }
@@ -70,7 +70,7 @@ namespace Imp.DirectShow.Element
         public SsaStyle defaultStyle { get; private set; }
 
 
-        private readonly DrawingVisual drawingVisual;
+        //private readonly DrawingVisual drawingVisual;
         private double _imageWidth;
         private double _imageHeight;
 
@@ -90,21 +90,21 @@ namespace Imp.DirectShow.Element
                 };
                 //this.AddChild(child);
                 this.Children.Add(child);
-                controls.Add(child);
+                this.controls.Add(child);
             }
 
-            defaultStyle = new SsaStyle();
+            this.defaultStyle = new SsaStyle();
         }
 
         public void Clear()
         {
             ClearContent();
-            fontTypefaces.Clear();
+            this.fontTypefaces.Clear();
         }
 
         public void ClearContent()
         {
-            foreach (var control in controls)
+            foreach (var control in this.controls)
             {
                 control.ClearContent();
             }
@@ -114,22 +114,23 @@ namespace Imp.DirectShow.Element
             this.paragraphs.Clear();
             //this.InvalidateMeasure();
             //this.InvalidateArrange();
-            this.InvalidateVisual();
+            InvalidateVisual();
             //this.UpdateLayout();
+            Visibility = Visibility.Hidden;
         }
 
         public void Add(EnhancedParagraph p)
         {
-            paragraphs.Add(p);
-            this.InvalidateVisual();
+            this.paragraphs.Add(p);
+            InvalidateVisual();
         }
 
         public void AddFont(string fontFaceName, FontFamily fontFamily)
         {
-            if (!fontTypefaces.ContainsKey(fontFaceName.ToLower()))
+            if (!this.fontTypefaces.ContainsKey(fontFaceName.ToLower()))
             {
                 //TODO: remove this check
-                fontTypefaces.Add(fontFaceName.ToLower(), fontFamily);
+                this.fontTypefaces.Add(fontFaceName.ToLower(), fontFamily);
             }
         }
 
@@ -140,26 +141,26 @@ namespace Imp.DirectShow.Element
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            imageWidth = ImageWidthFunc?.Invoke() ?? 0;
-            imageHeight = ImageHeightFunc?.Invoke() ?? 0;
+            this.imageWidth = this.ImageWidthFunc?.Invoke() ?? 0;
+            this.imageHeight = this.ImageHeightFunc?.Invoke() ?? 0;
 
-            if (paragraphs != null && imageWidth > 0 && imageHeight > 0)
+            if (this.paragraphs != null && this.imageWidth > 0 && this.imageHeight > 0)
             {
-                addedTexts.Clear();
+                this.addedTexts.Clear();
                 var controlIndex = 0;
-                topReserved = 0;
-                bottomReserved = 0;
+                //topReserved = 0;
+                //bottomReserved = 0;
 
-                for (int i = paragraphs.Count - 1; i >= 0; i--)
+                for (int i = this.paragraphs.Count - 1; i >= 0; i--)
                 {
-                    var p = paragraphs[i];
+                    var p = this.paragraphs[i];
                     if (p.Text == null) { continue; }
 
-                    var mainControl = controls[controlIndex * 2 + 1];
-                    var outLineControl = controls[controlIndex * 2];
+                    var mainControl = this.controls[controlIndex * 2 + 1];
+                    var outLineControl = this.controls[controlIndex * 2];
 
                     controlIndex++;
-                    if (controlIndex > controls.Count)
+                    if (controlIndex > this.controls.Count)
                     {
                         // No can do.
                         Debugger.Break();
@@ -169,7 +170,7 @@ namespace Imp.DirectShow.Element
 
                     FormattedText fText;
                     Pen outlinePen;
-                    var scale = new Size(imageWidth / p.Header.PlayResX ?? 1, imageHeight / p.Header.PlayResY ?? 1);
+                    var scale = new Size(this.imageWidth / p.Header.PlayResX ?? 1, this.imageHeight / p.Header.PlayResY ?? 1);
                     SsaStyle style;
                     Point finalPoint;
 
@@ -178,13 +179,13 @@ namespace Imp.DirectShow.Element
                     }
                     else
                     {
-                        style = defaultStyle;
+                        style = this.defaultStyle;
                     }
 
                     Typeface typeface = null;
                     FontFamily fontFamily;
 
-                    if (fontTypefaces.TryGetValue(style.FontName, out fontFamily))
+                    if (this.fontTypefaces.TryGetValue(style.FontName, out fontFamily))
                     {
                         //typeface = fontFamily.GetTypefaces().FirstOrDefault();
                         typeface = new Typeface(fontFamily,
@@ -264,9 +265,9 @@ namespace Imp.DirectShow.Element
             var vMargin = style.MarginVertical * scale.Width;
 
 
-            fText.MaxTextWidth = imageWidth - lMargin - rMargin;
+            fText.MaxTextWidth = this.imageWidth - lMargin - rMargin;
 
-            var h = imageHeight - fText.Height;
+            var h = Math.Max(0, this.imageHeight - fText.Height);
             Point finalPoint;
 
             if (point != null)
@@ -295,35 +296,35 @@ namespace Imp.DirectShow.Element
                         fText.TextAlignment = TextAlignment.Right;
                         break;
                     case "8":
-                        fText.MaxTextWidth = Math.Min(imageWidth - finalPoint.X - rMargin + leftTopCorner.X,
+                        fText.MaxTextWidth = Math.Min(this.imageWidth - finalPoint.X - rMargin + leftTopCorner.X,
                                                  finalPoint.X - lMargin - leftTopCorner.X) * 2;
                         finalPoint.X -= fText.MaxTextWidth / 2;
                         fText.TextAlignment = TextAlignment.Center;
                         break;
                     case "5":
-                        fText.MaxTextWidth = Math.Min(imageWidth - finalPoint.X - rMargin + leftTopCorner.X,
+                        fText.MaxTextWidth = Math.Min(this.imageWidth - finalPoint.X - rMargin + leftTopCorner.X,
                                                  finalPoint.X - lMargin - leftTopCorner.X) * 2;
                         finalPoint.X -= fText.MaxTextWidth / 2;
                         finalPoint.Y = finalPoint.Y - fText.Height / 2 - vMargin;
                         fText.TextAlignment = TextAlignment.Center;
                         break;
                     case "7":
-                        fText.MaxTextWidth = imageWidth - finalPoint.X - rMargin;
+                        fText.MaxTextWidth = this.imageWidth - finalPoint.X - rMargin;
                         fText.TextAlignment = TextAlignment.Left;
                         break;
                     case "4":
-                        fText.MaxTextWidth = imageWidth - finalPoint.X - rMargin;
+                        fText.MaxTextWidth = this.imageWidth - finalPoint.X - rMargin;
                         finalPoint.Y = finalPoint.Y - fText.Height / 2;
                         fText.TextAlignment = TextAlignment.Left;
                         break;
                     case "1":
-                        fText.MaxTextWidth = imageWidth - finalPoint.X - rMargin;
+                        fText.MaxTextWidth = this.imageWidth - finalPoint.X - rMargin;
                         finalPoint.Y = finalPoint.Y - fText.Height;
                         fText.TextAlignment = TextAlignment.Left;
                         break;
                     case "2":
                     default:
-                        fText.MaxTextWidth = Math.Min(imageWidth - finalPoint.X - rMargin + leftTopCorner.X,
+                        fText.MaxTextWidth = Math.Min(this.imageWidth - finalPoint.X - rMargin + leftTopCorner.X,
                                                  finalPoint.X - lMargin - leftTopCorner.X) * 2;
                         finalPoint.X -= fText.MaxTextWidth / 2;
                         finalPoint.Y = finalPoint.Y - fText.Height;
@@ -340,7 +341,7 @@ namespace Imp.DirectShow.Element
                 {
                     case "9":
                         fText.TextAlignment = TextAlignment.Right;
-                        PreventCollisionTop(fText, paragraph, ref finalPoint);
+                        PreventCollisionTop(fText, paragraph, ref finalPoint, h);
                         break;
                     case "6":
                         fText.TextAlignment = TextAlignment.Right;
@@ -352,7 +353,7 @@ namespace Imp.DirectShow.Element
                         break;
                     case "8":
                         fText.TextAlignment = TextAlignment.Center;
-                        PreventCollisionTop(fText, paragraph, ref finalPoint);
+                        PreventCollisionTop(fText, paragraph, ref finalPoint, h);
                         break;
                     case "5":
                         finalPoint.Y += h / 2 - vMargin;
@@ -364,7 +365,7 @@ namespace Imp.DirectShow.Element
                         break;
                     case "7":
                         fText.TextAlignment = TextAlignment.Left;
-                        PreventCollisionTop(fText, paragraph, ref finalPoint);
+                        PreventCollisionTop(fText, paragraph, ref finalPoint, h);
                         break;
                     case "4":
                         fText.TextAlignment = TextAlignment.Left;
@@ -391,29 +392,74 @@ namespace Imp.DirectShow.Element
             double h,
             double vMargin)
         {
-            if (addedTexts.ContainsKey(paragraph.Text))
+            if (this.addedTexts.ContainsKey(paragraph.Text))
             {
-                finalPoint.Y += h - vMargin * 2 - addedTexts[paragraph.Text];
+                // Same text already added, probably should not collide with anything,
+                finalPoint.Y += h - vMargin * 2;
             }
             else
             {
-                finalPoint.Y += h - vMargin * 2 - bottomReserved;
-                addedTexts.Add(paragraph.Text, topReserved);
-                bottomReserved += fText.Height;
+                finalPoint.Y += h - vMargin * 2;
+                while (MoveUpOnCollision(fText, ref finalPoint, h, vMargin)) { }
+
+                this.addedTexts.Add(paragraph.Text, new Rect(new Point(finalPoint.X, finalPoint.Y), new Size(fText.Width, fText.Height)));
+                //bottomReserved += fText.Height;
             }
         }
 
-        private void PreventCollisionTop(FormattedText fText, EnhancedParagraph paragraph, ref Point finalPoint)
+        private bool MoveUpOnCollision(FormattedText fText, ref Point finalPoint, double h, double vMargin)
         {
-            if (addedTexts.ContainsKey(paragraph.Text))
+            if (this.addedTexts.Count == 0) return false;
+
+            var collRect = new Rect(new Point(finalPoint.X, finalPoint.Y), new Size(fText.Width, fText.Height));
+
+            foreach (var addedText in this.addedTexts)
             {
-                finalPoint.Y += addedTexts[paragraph.Text];
+                if (collRect.IntersectsWith(addedText.Value) )
+                {
+                    var endH = collRect.Top - fText.Height;
+                    if (endH < finalPoint.Y)
+                    {
+                        finalPoint.Y = endH;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool MoveDownOnCollision(FormattedText fText, ref Point finalPoint, double h)
+        {
+            if (this.addedTexts.Count == 0) return false;
+
+            var collRect = new Rect(new Point(finalPoint.X, finalPoint.Y), new Size(fText.Width,fText.Height));
+
+            foreach (var addedText in this.addedTexts)
+            {
+                if (collRect.IntersectsWith(addedText.Value) && collRect.Bottom > finalPoint.Y)
+                {
+                    finalPoint.Y = collRect.Bottom;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void PreventCollisionTop(FormattedText fText, EnhancedParagraph paragraph, ref Point finalPoint, double h)
+        {
+            if (this.addedTexts.ContainsKey(paragraph.Text))
+            {
+                // Same text already added, probably should not collide with anything,
             }
             else
             {
-                finalPoint.Y += topReserved;
-                addedTexts.Add(paragraph.Text, topReserved);
-                topReserved += fText.Height;
+                while (MoveDownOnCollision(fText, ref finalPoint, h)) { }
+
+                //finalPoint.Y += h - vMargin * 2;
+                this.addedTexts.Add(paragraph.Text, new Rect(new Point(finalPoint.X, finalPoint.Y), new Size(fText.Width, fText.Height)));
+                //bottomReserved += fText.Height;
             }
         }
 
@@ -438,8 +484,8 @@ namespace Imp.DirectShow.Element
 
 
 
-            var top = (ActualHeight - imageHeight) / 2;
-            var left = (ActualWidth - imageWidth) / 2;
+            var top = (this.ActualHeight - this.imageHeight) / 2;
+            var left = (this.ActualWidth - this.imageWidth) / 2;
             var leftTopCorner = new Point(left, top);
             var lt = (Vector) leftTopCorner;
             var shadowColor = style.Background.ColorConvert();

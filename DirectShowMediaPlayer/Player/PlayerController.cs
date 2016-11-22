@@ -20,6 +20,7 @@ using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4.Boxes;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
 using Imp.Base.Libraries;
+using Imp.DirectShow.Element;
 
 #endregion
 
@@ -91,15 +92,36 @@ namespace Imp.DirectShow.Player
 
         public SubtitleTrack SelectedSubtitleTrack { get; private set; }
 
+        public int SubtitleTrackIndex
+        {
+            get { return this.subtitleTrackIndex; }
+            set
+            {
+                this.subtitleTrackIndex = value;
+
+                if (this.SubtitleTracks.Count <= value || value < 0)
+                {
+                    this.subtitleTrackIndex = -1;
+                    this.SelectedSubtitleTrack = null;
+                }
+                else
+                {
+                    this.SelectedSubtitleTrack = this.SubtitleTracks[value];
+                }
+
+                this.Player.ResetSubtitles();
+            }
+        }
+
         #endregion
 
         public List<SubtitleTrack> SubtitleTracks = new List<SubtitleTrack>();
 
         public Dictionary<string, FontFamily> Fonts { get; } = new Dictionary<string, FontFamily>();
+        public MediaUriPlayer Player { get; set; }
 
-        private List<int> lastSubtitleIndices = new List<int>();
-        private List<int> nextSubtitleIndices = new List<int>();
         private readonly bool subtitles;
+        private int subtitleTrackIndex;
 
         #region Events
 
@@ -149,6 +171,7 @@ namespace Imp.DirectShow.Player
                         //graphs.MediaControl.Stop();
                         break;
                     case MediaCommand.Close:
+                        
                         fader.Pause();
                         break;
                         
@@ -164,6 +187,7 @@ namespace Imp.DirectShow.Player
             {
                 if (fadingVolume <= 0)
                 {
+                    Player?.SubtitleElement?.ClearContent();
                     graphPollTimer.Enabled = false;
                     FreeResources();
                     return;

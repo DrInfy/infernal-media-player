@@ -329,10 +329,15 @@ namespace Imp.Base.Controllers
                 case ImpCommand.Shuffle:
                     Shuffle();
                     break;
+                case ImpCommand.ChangeSubtitles:
+                    ChangeSubtitles(argument);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("cmd");
             }
         }
+
+        protected abstract void ChangeSubtitles(object argument);
 
         protected abstract void Shuffle();
         protected abstract void ClearPlayers();

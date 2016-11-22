@@ -34,6 +34,7 @@ namespace Imp.Player.Panels
             styleLib.SetStyle(ButtonLoop, BtnNumber.Loop);
             styleLib.SetStyle(ButtonNext, BtnNumber.Next);
             styleLib.SetStyle(ButtonMute, BtnNumber.Mute);
+            styleLib.SetStyle(this.ButtonSettings, BtnNumber.Settings);
             styleLib.SetStyle(LabelPosition, false);
         }
 
@@ -93,6 +94,11 @@ namespace Imp.Player.Panels
         private void ButtonNext_Clicked(object sender)
         {
             mainC.Exec(ImpCommand.OpenNext);
+        }
+
+        private void ButtonSettings_OnClicked(object sender)
+        {
+            this.mainC.Exec(ImpCommand.ChangeSubtitles, 1);
         }
     }
 }

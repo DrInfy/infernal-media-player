@@ -128,6 +128,7 @@ namespace Imp.DirectShow.Element
 
         protected virtual void InitializeMediaPlayer()
         {
+            this.controller.Player = this;
             this.SubtitleElement.Clear();
             this.SubtitleElement.Visibility = this.controller.SelectedSubtitleTrack != null ? Visibility.Visible : Visibility.Hidden;
             this.SubtitleElement.CopyFonts(this.controller.Fonts);
@@ -146,13 +147,23 @@ namespace Imp.DirectShow.Element
             controller.Activate();
         }
 
+        public void ResetSubtitles()
+        {
+            this.lastSubtitleIndices.Clear();
+            this.nextSubtitleIndices.Clear();
+            //if (!this.Dispatcher.CheckAccess())
+            {
+                this.Dispatcher.Invoke(UpdateSubtitles);
+                return;
+            }
+        }
+
         private void Controller_NewAllocatorFrame()
         {
             var position = this.Position;
 
             if (this.controller.SelectedSubtitleTrack != null)
             {
-
                 /* Ensure we run on the correct Dispatcher */
                 
 
@@ -199,8 +210,11 @@ namespace Imp.DirectShow.Element
             }
 
             this.SubtitleElement.Visibility = this.nextSubtitleIndices.Count > 0 ? Visibility.Visible : Visibility.Hidden;
-
-            this.SubtitleElement.InvalidateVisual();
+            //this.SubtitleElement.Visibility = Visibility.Visible ;
+            //if (this.SubtitleElement.Visibility == Visibility.Visible)
+            {
+                this.SubtitleElement.InvalidateVisual();
+            }
         }
 
         private void OnMediaPlayerEnded()

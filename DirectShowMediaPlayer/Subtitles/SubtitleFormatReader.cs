@@ -35,7 +35,16 @@ namespace Imp.DirectShow.Subtitles
             finalSubs.Header.IsAss = true;
 
             //ReadAdvancedSubStationAlpha(subtitle);
-            finalSubs.Header.SubtitleStyles = AdvancedSubStationAlpha.GetSsaStyle(subtitle.Header).ToDictionary(x => x.Name);
+            var styles = AdvancedSubStationAlpha.GetSsaStyle(subtitle.Header);
+            finalSubs.Header.SubtitleStyles = new Dictionary<string, SsaStyle>();
+
+            foreach (var ssaStyle in styles)
+            {
+                if (!finalSubs.Header.SubtitleStyles.ContainsKey(ssaStyle.Name))
+                {
+                    finalSubs.Header.SubtitleStyles.Add(ssaStyle.Name, ssaStyle);
+                }
+            }
 
             finalSubs.Header.PlayResX = ReadDefinitionInt(subtitle.Header, "PlayResX");
             finalSubs.Header.PlayResY = ReadDefinitionInt(subtitle.Header, "PlayResY");
