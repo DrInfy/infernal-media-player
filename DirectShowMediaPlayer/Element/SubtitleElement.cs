@@ -228,6 +228,7 @@ namespace Imp.DirectShow.Element
                     //mainControl.Draw();
                     if (outlinePen.Thickness > 0)
                     {
+                        //outLineControl.FormattedText = fText;
                         outLineControl.Geometry = fText.BuildGeometry(finalPoint);
                         outLineControl.InvalidateVisual();
                         outLineControl.Visibility = Visibility.Visible;
@@ -877,15 +878,16 @@ namespace Imp.DirectShow.Element
                 if (outlinePen.Thickness > 0) //|| shadowSet)
                 {
                     outlineControl.BlurEffect.Radius = r;
-                    outlineControl.BlurEffect.RenderingBias = RenderingBias.Quality;
+                    outlineControl.BlurEffect.RenderingBias = RenderingBias.Performance;
                     outlineControl.Effect = outlineControl.BlurEffect;
                 }
                 else
                 {
                     mainControl.BlurEffect.Radius = r;
-                    outlineControl.BlurEffect.RenderingBias = RenderingBias.Quality;
+                    outlineControl.BlurEffect.RenderingBias = RenderingBias.Performance;
                     mainControl.Effect = mainControl.BlurEffect;
                 }
+                outlineControl.Effect = null; 
             }
             //outlinePen.Thickness *= 2;
 

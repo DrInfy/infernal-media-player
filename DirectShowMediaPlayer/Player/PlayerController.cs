@@ -187,7 +187,6 @@ namespace Imp.DirectShow.Player
             {
                 if (fadingVolume <= 0)
                 {
-                    Player?.SubtitleElement?.ClearContent();
                     graphPollTimer.Enabled = false;
                     FreeResources();
                     return;
@@ -205,6 +204,11 @@ namespace Imp.DirectShow.Player
             // prevent any commands if the player is determined to be closed
             if (queuedCommand != MediaCommand.Close && currentCommand != MediaCommand.Close)
                 queuedCommand = command;
+
+            if (command == MediaCommand.Close)
+            {
+                Player?.SubtitleElement?.ClearContent();
+            }
         }
 
         private void UpdateFade()
@@ -345,8 +349,6 @@ namespace Imp.DirectShow.Player
                 //}
             }
         }
-
-
 
         private void LoadFonts(MatroskaFile matroska)
         {
