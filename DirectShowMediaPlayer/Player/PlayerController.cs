@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
@@ -21,6 +22,7 @@ using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4.Boxes;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
 using Imp.Base.Libraries;
 using Imp.DirectShow.Element;
+using Timer = System.Timers.Timer;
 
 #endregion
 
@@ -232,8 +234,18 @@ namespace Imp.DirectShow.Player
             {
                 if (!reallyPlaying && currentCommand == MediaCommand.Play)
                 {
-                    graphs.MediaControl.Run();
-                    reallyPlaying = true;
+                    for (int i = 0; i < 100; i++)
+                    {
+                        var result = graphs.MediaControl.Run();
+                        if (result == 0)
+                        {
+                            reallyPlaying = true;
+                            break;
+                        }
+                        Thread.Sleep(1);
+                    }
+
+                    
                 }
             }
 

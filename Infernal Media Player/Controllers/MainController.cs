@@ -151,12 +151,19 @@ namespace Imp.Player.Controllers
             {
                 window.UriPlayer.Controller.Command(MediaCommand.Close);
                 MediaC.MediaClosed();
+                this.playingItem = null;
             }
 
             EventC.SetTitle("Loading...");
             window.Title = "Loading...";
 
             window.PanelPlaylist.ListPlaylist.PlayingThis(item);
+
+            if (this.loadingItem != null)
+            {
+                this.imageLoader.Abort();
+                this.mediaLoader.Abort();
+            }
 
             loadingItem = item;
 
@@ -193,6 +200,7 @@ namespace Imp.Player.Controllers
         private void ImageLoaded(BitmapSource bitmap)
         {
             playingItem = loadingItem;
+            //loadingItem = null;
             itemOnPlayer = playingItem;
             window.PanelPlaylist.ListPlaylist.PlayingThis(playingItem);
             window.ImageViewer.Visibility = Visibility.Visible;
@@ -224,6 +232,7 @@ namespace Imp.Player.Controllers
             //}
 
             playingItem = loadingItem;
+            //loadingItem = null;
             itemOnPlayer = playingItem;
 
             window.UriPlayer.Controller = playerController;

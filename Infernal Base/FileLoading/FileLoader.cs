@@ -2,6 +2,7 @@
 
 using System.Threading;
 using System.Windows.Threading;
+using Edge.Tools.Threading;
 
 #endregion
 
@@ -11,7 +12,7 @@ namespace Imp.Base.FileLoading
     {
         #region Helpers
 
-        public delegate void LoadedBitmapEventHandler(T loadedFile);
+        //public delegate void LoadedBitmapEventHandler(T loadedFile);
 
         public delegate void LoadedEventHandler(T loadedFile);
 
@@ -24,18 +25,19 @@ namespace Imp.Base.FileLoading
         #region Fields
 
         protected readonly Dispatcher dispatcher;
-        protected LoadedBitmapEventHandler LoadedMainEvent;
+        protected LoadedEventHandler LoadedMainEvent;
         protected LoadFailedMainEventHandler loadFailedMainEvent;
         private readonly object loadLock = new object();
         private volatile bool currentlyLoading;
         private string fileInQueue;
         private string fileInLoading;
+        private AbortableTask abortableTask;
 
         #endregion
 
         #region Properties
 
-        public bool IsLoading => currentlyLoading;
+        public bool IsLoading => this.currentlyLoading;
 
         #endregion
 
@@ -49,8 +51,8 @@ namespace Imp.Base.FileLoading
         protected FileLoader(Dispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
-            LoadedMainEvent = RaiseLoadedMainThread;
-            loadFailedMainEvent = RaiseLoadFailedMainThread;
+            this.LoadedMainEvent = RaiseLoadedMainThread;
+            this.loadFailedMainEvent = RaiseLoadFailedMainThread;
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace Imp.Base.FileLoading
         {
             if (Loaded != null)
             {
-                dispatcher.BeginInvoke(LoadedMainEvent, DispatcherPriority.Normal, loadedFile);
+                this.dispatcher.BeginInvoke(this.LoadedMainEvent, DispatcherPriority.Normal, loadedFile);
             }
         }
 
@@ -81,7 +83,7 @@ namespace Imp.Base.FileLoading
         public void RaiseLoadFailed(ImpError errorMessage)
         {
             if (LoadFailed != null)
-                dispatcher.BeginInvoke(loadFailedMainEvent, DispatcherPriority.Normal, errorMessage);
+                this.dispatcher.BeginInvoke(this.loadFailedMainEvent, DispatcherPriority.Normal, errorMessage);
         }
 
         /// <summary>
@@ -95,45 +97,55 @@ namespace Imp.Base.FileLoading
 
         public void OpenFile(string path)
         {
-            lock (loadLock)
+            lock (this.loadLock)
             {
-                if (currentlyLoading && string.Equals(fileInLoading, path))
+                if (this.currentlyLoading && string.Equals(this.fileInLoading, path))
                 {
                     return;
                 }
 
-                fileInQueue = path;
+                this.fileInQueue = path;
             }
         }
 
         public void Update()
         {
-            if (currentlyLoading) return;
+            if (this.currentlyLoading) return;
 
-            lock (loadLock)
+            lock (this.loadLock)
             {
-                if (currentlyLoading || string.IsNullOrEmpty(fileInQueue)) return;
+                if (this.currentlyLoading || string.IsNullOrEmpty(this.fileInQueue)) return;
 
-                fileInLoading = fileInQueue;
-                fileInQueue = string.Empty;
+                this.fileInLoading = this.fileInQueue;
+                this.fileInQueue = string.Empty;
 
-                var thread = new Thread(StartLoad);
-                thread.Name = "file loader";
-                thread.Start();
+                this.abortableTask = new AbortableTask();
+                this.abortableTask.Start(() => StartLoad(), (x) => RaiseLoadFailed(new ImpError(ErrorType.FailedToOpenFile, x.Message)), "FileLoad");
             }
         }
 
         private void StartLoad()
         {
             ImpError error;
-            var file = Load(fileInLoading, out error);
+            var file = Load(this.fileInLoading, out error);
             if (error == null)
                 RaiseLoaded(file);
             else
             {
                 RaiseLoadFailed(error);
             }
-            currentlyLoading = false;
+            this.currentlyLoading = false;
+        }
+
+        public void Abort()
+        {
+            if (this.abortableTask != null && !this.abortableTask.WasAborted && !this.abortableTask.IsCompleted)
+            {
+                lock (this.abortableTask)
+                {
+                    this.abortableTask.Abort();
+                }
+            }
         }
 
         protected abstract T Load(string path, out ImpError error);
