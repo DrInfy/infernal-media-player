@@ -120,7 +120,11 @@ namespace Imp.Base.FileLoading
                 this.fileInQueue = string.Empty;
 
                 this.abortableTask = new AbortableTask();
-                this.abortableTask.Start(() => StartLoad(), (x) => RaiseLoadFailed(new ImpError(ErrorType.FailedToOpenFile, x.Message)), "FileLoad");
+                this.abortableTask.Start(StartLoad, (x) => RaiseLoadFailed(new ImpError(ErrorType.FailedToOpenFile, x.Message)), "FileLoad");
+                //var thread = new Thread(StartLoad);
+                //thread.Name = "file loader";
+                //thread.Start();
+
             }
         }
 

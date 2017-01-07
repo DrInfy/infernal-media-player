@@ -2950,12 +2950,6 @@
             Task that can be forcibly aborted.
             </summary>
         </member>
-        <member name="M:Edge.Tools.Threading.AbortableTask.StartNew(System.Action,System.Threading.CancellationToken,System.Action{System.Exception},System.String)">
-            <summary>Creates and starts a Task with given error handler. Default usage of ErrorManager is optional.</summary>
-        </member>
-        <member name="M:Edge.Tools.Threading.AbortableTask`1.StartNew``1(System.Func{``0},System.Threading.CancellationToken,System.Action{System.Exception},System.String)">
-            <summary>Creates and starts a Task with given error handler. Default usage of ErrorManager is optional.</summary>
-        </member>
         <member name="T:Edge.Tools.Time.TimeZonePeriod">
             <summary>
             Initialize this class with either contructor using UTC times
