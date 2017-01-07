@@ -5,7 +5,7 @@ using System.IO;
 using System.Security;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Hjg.Pngcs;
+using Edge.Tools.Images.Png;
 
 #endregion
 
