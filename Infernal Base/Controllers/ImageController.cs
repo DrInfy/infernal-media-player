@@ -10,22 +10,24 @@ namespace Imp.Base.Controllers
     public abstract class ImageController
     {
         protected bool scalingToSpace = true;
-        protected double zoom = 1;
-        protected double minZoom = 0.1;
-        protected double maxZoom = 10;
+        private double zoom = 1;
+        protected double minZoom = 0;
+        protected double maxZoom = 2;
         protected double moveX = 0;
         protected double moveY = 0;
 
+        public double Zoom => Math.Pow(this.zoom > 1 ? this.zoom : 0.5 + this.zoom * 0.5, 3);
+
         public void SetZoom(double value)
         {
-            zoom = value;
+            this.zoom = value;
             this.zoom = MathHelper.Clamp(this.zoom, this.minZoom, this.maxZoom);
             ManipulateImage();
         }
 
         public void ChangeZoom(double value)
         {
-            zoom += value;
+            this.zoom += value;
             this.zoom = MathHelper.Clamp(this.zoom, this.minZoom, this.maxZoom);
             ManipulateImage();
         }

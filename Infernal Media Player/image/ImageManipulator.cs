@@ -28,18 +28,18 @@ namespace Imp.Player.Image
 
         protected override void ManipulateImage()
         {
-            if (this.zoom == 1 && this.scalingToSpace)
+            if (this.Zoom == 1 && this.scalingToSpace)
             {
                 this.image.RenderTransform = null;
             }
             else
             {
-                this.scaleTransform.ScaleX = this.zoom;
-                this.scaleTransform.ScaleY = this.zoom;
+                this.scaleTransform.ScaleX = this.Zoom;
+                this.scaleTransform.ScaleY = this.Zoom;
                 this.image.RenderTransform = this.transformGroup;
                 this.image.RenderTransformOrigin = new Point(0.5, 0.5);
 
-                var mult = MathHelper.Clamp(this.zoom - 1, 0, this.maxZoom) * 0.5;
+                var mult = MathHelper.Clamp(this.Zoom - 1, 0, this.maxZoom) * 0.5;
                 var x = MathHelper.Clamp(this.moveX * this.image.ActualWidth * mult, -this.image.ActualWidth * mult, this.image.ActualWidth * mult);
                 var y = MathHelper.Clamp(this.moveY * this.image.ActualHeight * mult, -this.image.ActualHeight * mult, this.image.ActualHeight * mult);
                 this.translateTransform.X = x;

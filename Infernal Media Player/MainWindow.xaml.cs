@@ -41,6 +41,7 @@ namespace Imp.Player
         private Rect backupRect;
         private bool allowStateChange; // prevents screen sizing when required
         private MouseStates mouseState = MouseStates.None;
+        private Point lastMove;
 
         #endregion
 
@@ -48,23 +49,23 @@ namespace Imp.Player
 
         public ExtWindowState ExtWindowState
         {
-            get { return extWindowState; }
+            get { return this.extWindowState; }
             set
             {
-                if (ExtWindowState == value) return;
+                if (this.ExtWindowState == value) return;
 
-                allowStateChange = true;
+                this.allowStateChange = true;
                 if ((int) value < 2)
                 {
-                    ResizeMode = ResizeMode.CanResize;
-                    WindowState = (WindowState) value;
-                    if (ExtWindowState > ExtWindowState.Minimized)
+                    this.ResizeMode = ResizeMode.CanResize;
+                    this.WindowState = (WindowState) value;
+                    if (this.ExtWindowState > ExtWindowState.Minimized)
                     {
-                        SetRect(this, backupRect);
+                        SetRect(this, this.backupRect);
                     }
 
-                    Topmost = false;
-                    ButtonMax.CurrentState = 0;
+                    this.Topmost = false;
+                    this.ButtonMax.CurrentState = 0;
                     //If value = IMP4.ExtWindowState.Minimized Then
                     //    _ExtWindowState = value
                     //    Exit Property
@@ -75,45 +76,39 @@ namespace Imp.Player
                     if (value == ExtWindowState.Fullscreen)
                     {
                         //Me.Topmost = True
-                        backupRect = ImpNativeMethods.GetWindowRect(this);
-                        ResizeMode = ResizeMode.CanMinimize;
-                        WindowState = WindowState.Maximized;
+                        this.backupRect = ImpNativeMethods.GetWindowRect(this);
+                        this.ResizeMode = ResizeMode.CanMinimize;
+                        this.WindowState = WindowState.Maximized;
                     }
                     else
                     {
                         //Me.Topmost = False
-                        backupRect = ImpNativeMethods.GetWindowRect(this);
-                        ResizeMode = ResizeMode.CanMinimize;
-                        WindowState = WindowState.Normal;
+                        this.backupRect = ImpNativeMethods.GetWindowRect(this);
+                        this.ResizeMode = ResizeMode.CanMinimize;
+                        this.WindowState = WindowState.Normal;
                         var area = ImpNativeMethods.GetWorkArea(this);
 
                         SetRect(this, area);
                         //Me.SizeToContent = Windows.SizeToContent.WidthAndHeight ' =SystemParameters.WorkArea 
                     }
-                    ButtonMax.CurrentState = 1;
+                    this.ButtonMax.CurrentState = 1;
                 }
 
-                extWindowState = value;
-                if (ExtWindowState > ExtWindowState.Minimized)
+                this.extWindowState = value;
+                if (this.ExtWindowState > ExtWindowState.Minimized)
                 {
                     Focus();
                 }
-                allowStateChange = false;
+                this.allowStateChange = false;
             }
         }
 
-        private bool MouseOverGrid => grid.IsMouseDirectlyOver ||
-                                      LabelTopic.IsMouseOver ||
-                                      BarBottom.IsMouseDirectlyOver ||
-                                      BarTop.IsMouseDirectlyOver ||
-                                      BarTop2.IsMouseDirectlyOver ||
-                                      ImageViewer.IsMouseDirectlyOver ||
-                                      UriPlayer.IsMouseOver ||
-                                      LogoViewer.IsMouseDirectlyOver ||
+        private bool MouseOverGrid => this.grid.IsMouseDirectlyOver || this.LabelTopic.IsMouseOver || this.BarBottom.IsMouseDirectlyOver || this.BarTop.IsMouseDirectlyOver || this.BarTop2.IsMouseDirectlyOver ||
+                                      //ImageViewer.IsMouseDirectlyOver ||
+                                      this.UriPlayer.IsMouseOver || this.LogoViewer.IsMouseDirectlyOver ||
                                       //PanelOpen.LabelTopic.IsMouseOver ||
                                       //PanelPlaylist.LabelTopic.IsMouseOver ||
-                                      PlayerBottom.LabelPosition.IsMouseOver ||
-                                      ViewerBottom.IsMouseOver;
+                                      this.PlayerBottom.LabelPosition.IsMouseOver || this.ViewerBottom.IsMouseOver;
 
         #endregion
 
@@ -121,7 +116,7 @@ namespace Imp.Player
         {
             InitializeComponent();
 
-            mainC = new MainController(this);
+            this.mainC = new MainController(this);
 
             SetStyles();
             SetButtonEvents();
@@ -132,11 +127,11 @@ namespace Imp.Player
         /// </summary>
         private void SetButtonEvents()
         {
-            ButtonOpen.Clicked += ToggleOpenPanel;
-            ButtonPlayList.Clicked += ToggleOpenPlaylist;
-            ButtonMin.Clicked += Minimize;
-            ButtonMax.Clicked += Maximize;
-            ButtonExit.Clicked += Exit;
+            this.ButtonOpen.Clicked += ToggleOpenPanel;
+            this.ButtonPlayList.Clicked += ToggleOpenPlaylist;
+            this.ButtonMin.Clicked += Minimize;
+            this.ButtonMax.Clicked += Maximize;
+            this.ButtonExit.Clicked += Exit;
         }
 
         /// <summary>
@@ -144,62 +139,62 @@ namespace Imp.Player
         /// </summary>
         public void SetStyles()
         {
-            Styling.LoadStyles();
+            this.Styling.LoadStyles();
 
-            PanelOpen.SetStyles(Styling, mainC);
-            PanelPlaylist.SetStyles(Styling, mainC);
-            PlayerBottom.SetStyles(Styling, mainC);
-            ViewerBottom.SetStyles(Styling, mainC);
-
-
-            Styling.SetStyle(ButtonOpen, BtnNumber.Open);
-            Styling.SetStyle(ButtonPlayList, BtnNumber.Playlist);
-
-            Styling.SetStyle(ButtonMin, BtnNumber.Minimize);
-            Styling.SetStyle(ButtonMax, BtnNumber.Maximize);
-            Styling.SetStyle(ButtonExit, BtnNumber.Close);
-
-            Styling.SetStyle(MenuList);
-            Styling.SetStyle(LabelTopic, false);
-            Styling.SetStyle(LabelEvent, false);
+            this.PanelOpen.SetStyles(this.Styling, this.mainC);
+            this.PanelPlaylist.SetStyles(this.Styling, this.mainC);
+            this.PlayerBottom.SetStyles(this.Styling, this.mainC);
+            this.ViewerBottom.SetStyles(this.Styling, this.mainC);
 
 
-            BarBottom.Fill = Styling.GetGridBrush(true);
-            BarTop.Fill = Styling.GetGridBrush(true);
-            BarTop2.Fill = Styling.GetGridBrush(true);
+            this.Styling.SetStyle(this.ButtonOpen, BtnNumber.Open);
+            this.Styling.SetStyle(this.ButtonPlayList, BtnNumber.Playlist);
 
-            SplitterLeft.Fill = Styling.GetForeground();
-            SplitterRight.Fill = Styling.GetForeground();
+            this.Styling.SetStyle(this.ButtonMin, BtnNumber.Minimize);
+            this.Styling.SetStyle(this.ButtonMax, BtnNumber.Maximize);
+            this.Styling.SetStyle(this.ButtonExit, BtnNumber.Close);
+
+            this.Styling.SetStyle(this.MenuList);
+            this.Styling.SetStyle(this.LabelTopic, false);
+            this.Styling.SetStyle(this.LabelEvent, false);
+
+
+            this.BarBottom.Fill = this.Styling.GetGridBrush(true);
+            this.BarTop.Fill = this.Styling.GetGridBrush(true);
+            this.BarTop2.Fill = this.Styling.GetGridBrush(true);
+
+            this.SplitterLeft.Fill = this.Styling.GetForeground();
+            this.SplitterRight.Fill = this.Styling.GetForeground();
         }
 
         public void PlayPause(object sender)
         {
-            mainC.Exec(ImpCommand.Playpause);
+            this.mainC.Exec(ImpCommand.Playpause);
         }
 
         private void ToggleOpenPanel(object sender)
         {
-            mainC.Exec(ImpCommand.PanelOpen);
+            this.mainC.Exec(ImpCommand.PanelOpen);
         }
 
         private void ToggleOpenPlaylist(object sender)
         {
-            mainC.Exec(ImpCommand.PanelPlaylist);
+            this.mainC.Exec(ImpCommand.PanelPlaylist);
         }
 
         public void Minimize(object sender)
         {
-            mainC.Exec(ImpCommand.PlayerMinimize);
+            this.mainC.Exec(ImpCommand.PlayerMinimize);
         }
 
         public void Maximize(object sender)
         {
-            mainC.Exec(ImpCommand.ToggleFullscreen);
+            this.mainC.Exec(ImpCommand.ToggleFullscreen);
         }
 
         public void Exit(object sender)
         {
-            mainC.Exec(ImpCommand.Exit);
+            this.mainC.Exec(ImpCommand.Exit);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -219,8 +214,8 @@ namespace Imp.Player
                 var dpiY = source.CompositionTarget.TransformToDevice.M22;
 
                 var rect = ImpNativeMethods.GetWorkArea(this);
-                Width = Math.Min(1200, rect.Width * dpiX);
-                Height = Math.Min(800, rect.Height * dpiY);
+                this.Width = Math.Min(1200, rect.Width * dpiX);
+                this.Height = Math.Min(800, rect.Height * dpiY);
             }
         }
 
@@ -230,76 +225,92 @@ namespace Imp.Player
             {
                 Thread.Sleep(15);
 
-                if (Updating) continue;
-                Updating = true;
-                Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Update(mainC.Update));
-            } while (!WindowClosed);
+                if (this.Updating) continue;
+                this.Updating = true;
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Update(this.mainC.Update));
+            } while (!this.WindowClosed);
         }
 
         private void grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (SplitterLeft.IsMouseOver && e.LeftButton == MouseButtonState.Pressed)
+            this.lastMove = e.MouseDevice.GetPosition(this);
+            if (this.ImageViewer.IsMouseDirectlyOver)
             {
-                mouseState = MouseStates.PanLeftPressed;
-                mainC.PanelC.RememberThisPanelPosition(e.GetPosition(this), e.GetPosition(SplitterLeft));
-                grid.CaptureMouse();
+                this.ImageViewer.CaptureMouse();
+            }
+            
+            if (this.SplitterLeft.IsMouseOver && e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.mouseState = MouseStates.PanLeftPressed;
+                this.mainC.PanelC.RememberThisPanelPosition(e.GetPosition(this), e.GetPosition(this.SplitterLeft));
+                this.grid.CaptureMouse();
                 return;
             }
 
-            if (SplitterRight.IsMouseOver && e.LeftButton == MouseButtonState.Pressed)
+            if (this.SplitterRight.IsMouseOver && e.LeftButton == MouseButtonState.Pressed)
             {
-                mouseState = MouseStates.PanRightPressed;
-                mainC.PanelC.RememberThisPanelPosition(e.GetPosition(this), e.GetPosition(SplitterRight));
-                grid.CaptureMouse();
+                this.mouseState = MouseStates.PanRightPressed;
+                this.mainC.PanelC.RememberThisPanelPosition(e.GetPosition(this), e.GetPosition(this.SplitterRight));
+                this.grid.CaptureMouse();
                 return;
             }
             // set focus to "something", when clicking away from text boxes
             if (!IsMouseOverList() && !IsMouseOverTextbox())
-                ButtonExit.Focus();
+                this.ButtonExit.Focus();
         }
 
         private void grid_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (mouseState == MouseStates.PanLeftPressed)
+                if (this.mouseState == MouseStates.PanLeftPressed)
                 {
-                    mainC.PanelC.PanelPanLeft(e.GetPosition(this));
+                    this.mainC.PanelC.PanelPanLeft(e.GetPosition(this));
                     return;
                 }
 
-                if (mouseState == MouseStates.PanRightPressed)
+                if (this.mouseState == MouseStates.PanRightPressed)
                 {
-                    mainC.PanelC.PanelPanRight(e.GetPosition(this));
+                    this.mainC.PanelC.PanelPanRight(e.GetPosition(this));
                     return;
                 }
 
 
-                if (MouseOverGrid && extWindowState == ExtWindowState.Normal)
+                if (this.MouseOverGrid && this.extWindowState == ExtWindowState.Normal)
+                {
                     DragMove();
+                }
+                else if (this.ImageViewer.IsMouseDirectlyOver)
+                {
+                    var move = e.MouseDevice.GetPosition(this) - this.lastMove;
+                    this.lastMove = e.MouseDevice.GetPosition(this);
+
+                    this.mainC.Exec(ImpCommand.PanLeftup, new[] {move.X / this.ImageViewer.ActualWidth * 2, move.Y / this.ImageViewer.ActualHeight * 2});
+                }
             }
             else
             {
-                if (SplitterLeft.IsMouseOver || SplitterRight.IsMouseOver)
+                if (this.SplitterLeft.IsMouseOver || this.SplitterRight.IsMouseOver)
                 {
-                    Cursor = Cursors.SizeWE;
+                    this.Cursor = Cursors.SizeWE;
                 }
                 else
                 {
-                    Cursor = null;
+                    this.Cursor = null;
                 }
             }
         }
 
         private void grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            grid.ReleaseMouseCapture();
-            mouseState = MouseStates.None;
+            this.grid.ReleaseMouseCapture();
+            this.ImageViewer.ReleaseMouseCapture();
+            this.mouseState = MouseStates.None;
             if (e.ChangedButton == MouseButton.Right)
             {
                 if (this.MouseOverGrid)
                 {
-                    mainC.ContextMenu(mainC.CursorPositionInDesktop(e), ContextMenuEnum.None);
+                    this.mainC.ContextMenu(this.mainC.CursorPositionInDesktop(e), ContextMenuEnum.None);
                 }
                 //if (PanelPlaylist.ListPlaylist.IsMouseDirectlyOver)
                 //    mainC.ContextMenu(CursorPositionInDesktop(e), ContextMenuEnum.Playlist);
@@ -321,10 +332,10 @@ namespace Imp.Player
         /// </summary>
         protected override void OnStateChanged(EventArgs e)
         {
-            if (allowStateChange)
+            if (this.allowStateChange)
                 base.OnStateChanged(e);
             else
-                ExtWindowState = (ExtWindowState) WindowState;
+                this.ExtWindowState = (ExtWindowState) this.WindowState;
         }
 
         private static void SetRect(Window o, Rect r)
@@ -337,25 +348,25 @@ namespace Imp.Player
 
         private void Panel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            mainC.PanelC.CheckMainGrid();
+            this.mainC.PanelC.CheckMainGrid();
         }
 
         private void Window_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (mainC.ContentMenu.IsMouseOver) return;
-            mouseState = MouseStates.None;
-            mainC.PanelC.CheckPanelHide(new Point(double.MaxValue, double.MaxValue));
+            if (this.mainC.ContentMenu.IsMouseOver) return;
+            this.mouseState = MouseStates.None;
+            this.mainC.PanelC.CheckPanelHide(new Point(double.MaxValue, double.MaxValue));
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
-            mainC.PanelC.CheckPanelHide(e.GetPosition(this));
+            this.mainC.PanelC.CheckPanelHide(e.GetPosition(this));
         }
 
         private void UriPlayer_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
-                mainC.Exec(ImpCommand.Playpause);
+                this.mainC.Exec(ImpCommand.Playpause);
         }
 
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -364,37 +375,31 @@ namespace Imp.Player
 
             if (this.mainC.AllowedStyles == PlayerStyle.PictureViewer)
             {
-                mainC.Exec(ImpCommand.ChangeZoom, Math.Sign(e.Delta) * 0.03);
+                this.mainC.Exec(ImpCommand.ChangeZoom, Math.Sign(e.Delta) * 0.03);
             }
             else
             {
-                mainC.Exec(ImpCommand.VolumeChange, Math.Sign(e.Delta) * 0.03);
+                this.mainC.Exec(ImpCommand.VolumeChange, Math.Sign(e.Delta) * 0.03);
             }
         }
 
         private bool IsMouseOverList()
         {
-            return PanelOpen.ListPlaces.IsMouseOver ||
-                   PanelOpen.ListDirectories.IsMouseOver ||
-                   PanelOpen.ListFiles.IsMouseOver ||
-                   PanelPlaylist.ListPlaylist.IsMouseOver;
+            return this.PanelOpen.ListPlaces.IsMouseOver || this.PanelOpen.ListDirectories.IsMouseOver || this.PanelOpen.ListFiles.IsMouseOver || this.PanelPlaylist.ListPlaylist.IsMouseOver;
         }
 
         private bool IsMouseOverTextbox()
         {
-            return PanelOpen.TextBoxFind.IsMouseOver ||
-                   PanelOpen.TextBoxFindFolder.IsMouseOver ||
-                   PanelPlaylist.TextBoxFind.IsMouseOver;
+            return this.PanelOpen.TextBoxFind.IsMouseOver || this.PanelOpen.TextBoxFindFolder.IsMouseOver || this.PanelPlaylist.TextBoxFind.IsMouseOver;
         }
 
         private void UriPlayer_MediaPlayerEnded()
         {
-            mainC.MediaEnded();
+            this.mainC.MediaEnded();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            
             this.mainC.Resize();
         }
 
@@ -428,7 +433,7 @@ namespace Imp.Player
                     {
                         // doesn't matter why path choosing failed, no files available in this folder
                         var error = new ImpError(ErrorType.FailedToOpenFolder, e.Message);
-                        mainC.EventC.ShowError(error);
+                        this.mainC.EventC.ShowError(error);
                         return true;
                     }
 
@@ -446,16 +451,16 @@ namespace Imp.Player
                 {
                     // File or folder could not be identified
                     var error = new ImpError(path, ErrorType.FileNotFound);
-                    mainC.EventC.ShowError(error);
+                    this.mainC.EventC.ShowError(error);
                 }
             }
             if (files.Count == 1)
-                mainC.Exec(ImpCommand.OpenFile, files[0]);
+                this.mainC.Exec(ImpCommand.OpenFile, files[0]);
             else
             {
                 foreach (var fileInfo in files)
                 {
-                    mainC.Exec(ImpCommand.AddFile, fileInfo);
+                    this.mainC.Exec(ImpCommand.AddFile, fileInfo);
                 }
             }
             return false;
@@ -463,15 +468,9 @@ namespace Imp.Player
 
         private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (BarTop.IsMouseOver ||
-                BarTop2.IsMouseOver ||
-                LabelTopic.IsMouseOver ||
-                LabelEvent.IsMouseOver ||
-                grid.IsMouseDirectlyOver ||
-                LogoViewer.IsMouseDirectlyOver ||
-                UriPlayer.IsMouseOver)
+            if (this.BarTop.IsMouseOver || this.BarTop2.IsMouseOver || this.LabelTopic.IsMouseOver || this.LabelEvent.IsMouseOver || this.grid.IsMouseDirectlyOver || this.LogoViewer.IsMouseDirectlyOver || this.UriPlayer.IsMouseOver)
             {
-                mainC.Exec(ImpCommand.ToggleFullscreen);
+                this.mainC.Exec(ImpCommand.ToggleFullscreen);
             }
         }
 
@@ -491,23 +490,23 @@ namespace Imp.Player
         private void MenuList_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Pressed) return;
-            var textAndCommand = MenuList.GetSelected();
+            var textAndCommand = this.MenuList.GetSelected();
             if (textAndCommand != null)
-                mainC.Exec(textAndCommand.Command, textAndCommand.Argument);
-            ContentMenu.IsOpen = false;
+                this.mainC.Exec(textAndCommand.Command, textAndCommand.Argument);
+            this.ContentMenu.IsOpen = false;
         }
 
         private void ContentMenu_MouseLeave(object sender, MouseEventArgs e)
         {
-            ContentMenu.IsOpen = false;
+            this.ContentMenu.IsOpen = false;
         }
 
         private void MenuList_OnTouchTap(object sender, TouchEventArgs e)
         {
-            var textAndCommand = MenuList.GetSelected();
+            var textAndCommand = this.MenuList.GetSelected();
             if (textAndCommand != null)
-                mainC.Exec(textAndCommand.Command, textAndCommand.Argument);
-            ContentMenu.IsOpen = false;
+                this.mainC.Exec(textAndCommand.Command, textAndCommand.Argument);
+            this.ContentMenu.IsOpen = false;
         }
     }
 }

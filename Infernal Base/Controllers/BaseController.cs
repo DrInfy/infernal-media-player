@@ -252,7 +252,11 @@ namespace Imp.Base.Controllers
                     this.imageController.MoveTranslation(0, -(double)argument);
                     break;
                 case ImpCommand.PanLeftup:
+                {
+                    var move = (double[]) argument;
+                    this.imageController.MoveTranslation(move[0], move[1]);
                     break;
+                }
                 case ImpCommand.PanRightup:
                     break;
                 case ImpCommand.PanRightdown:
