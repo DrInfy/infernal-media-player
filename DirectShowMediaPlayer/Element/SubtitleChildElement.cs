@@ -17,18 +17,12 @@ namespace Imp.DirectShow.Element
         public Pen GeometryPen { get; set; }
         public Point FormattedTextPos { get; set; }
 
-        VisualCollection visuals;
-        DrawingVisual visual;
-
         public SubtitleChildElement()
         {
             VerticalAlignment = VerticalAlignment.Stretch;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             Margin = new Thickness(0);
-
-            visuals = new VisualCollection(this);
-            visual = new DrawingVisual();
-            visuals.Add(visual);
+            
             GeometryPen = new Pen(Brushes.Black, 1);
             this.SnapsToDevicePixels = false;
             this.VisualTextRenderingMode = TextRenderingMode.Aliased;
@@ -52,6 +46,7 @@ namespace Imp.DirectShow.Element
 
         protected override void OnRender(DrawingContext drawingContext)
         {
+            this.Effect = null;
             if (FormattedText != null)
             {
                 drawingContext.DrawText(FormattedText, FormattedTextPos);
@@ -59,7 +54,6 @@ namespace Imp.DirectShow.Element
 
             if (Geometry != null)
             {
-                GeometryPen.LineJoin = PenLineJoin.Miter;
                 GeometryPen.DashCap = PenLineCap.Round;
                 GeometryPen.EndLineCap = PenLineCap.Round;
                 GeometryPen.LineJoin = PenLineJoin.Round;

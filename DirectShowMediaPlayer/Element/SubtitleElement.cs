@@ -266,7 +266,7 @@ namespace Imp.DirectShow.Element
             var vMargin = style.MarginVertical * scale.Width;
 
 
-            fText.MaxTextWidth = this.imageWidth - lMargin - rMargin;
+            fText.MaxTextWidth = Math.Max(0, this.imageWidth - lMargin - rMargin);
 
             var h = Math.Max(0, this.imageHeight - fText.Height);
             Point finalPoint;
@@ -872,7 +872,7 @@ namespace Imp.DirectShow.Element
             blur = blur ?? (style.BorderStyle == "1" ? 1 : 0);
             if (blur > 0)
             {
-                var r = blur.Value * scale.Height * 2;
+                var r = blur.Value * scale.Height;// * 2;
 
                 // TODO: Implement blur and drop shadow when no border defined
                 if (outlinePen.Thickness > 0) //|| shadowSet)
@@ -887,7 +887,7 @@ namespace Imp.DirectShow.Element
                     outlineControl.BlurEffect.RenderingBias = RenderingBias.Performance;
                     mainControl.Effect = mainControl.BlurEffect;
                 }
-                outlineControl.Effect = null; 
+                //outlineControl.Effect = null; 
             }
             //outlinePen.Thickness *= 2;
 
