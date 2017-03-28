@@ -52,6 +52,7 @@ namespace Imp.Base.Controllers
         {
             this.moveY = 1;
             this.moveX = 0;
+            ManipulateImage();
         }
 
         public void ScreenSizeChanged()

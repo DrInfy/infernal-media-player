@@ -39,7 +39,7 @@ namespace Imp.Player.Image
                 this.image.RenderTransform = this.transformGroup;
                 this.image.RenderTransformOrigin = new Point(0.5, 0.5);
 
-                var mult = MathHelper.Clamp(this.Zoom - 1, 0, this.maxZoom) * 0.5;
+                var mult = MathHelper.Clamp(this.Zoom - 1, 0, 100) * 0.5;
                 var x = MathHelper.Clamp(this.moveX * this.image.ActualWidth * mult, -this.image.ActualWidth * mult, this.image.ActualWidth * mult);
                 var y = MathHelper.Clamp(this.moveY * this.image.ActualHeight * mult, -this.image.ActualHeight * mult, this.image.ActualHeight * mult);
                 this.translateTransform.X = x;
