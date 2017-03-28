@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -29,6 +30,7 @@ namespace Imp.Base.Controllers
         protected PlaylistItem itemOnPlayer;
         private readonly string settingsPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\settings.xml";
         private long lastExitAttempt = 0;
+        protected ImageController imageController;
 
         #endregion
 
@@ -42,21 +44,20 @@ namespace Imp.Base.Controllers
         {
             try
             {
-                Settings = (Settings) ImpSerializer.ReadFile(settingsPath, typeof (Settings));
+                this.Settings = (Settings) ImpSerializer.ReadFile(this.settingsPath, typeof (Settings));
             }
             catch // (Exception e)
             {
-
-                Settings = new Settings();
+                this.Settings = new Settings();
             }
         }
 
-        protected void Initialize(IEventController eventC, IPanelController panelC, MediaController mediaC)
+        protected void Initialize(IEventController eventC, IPanelController panelC, MediaController mediaC, ImageController imageController)
         {
-            EventC = eventC;
-            MediaC = mediaC;
-            PanelC = panelC;
-
+            this.EventC = eventC;
+            this.MediaC = mediaC;
+            this.PanelC = panelC;
+            this.imageController = imageController;
             Initialize(true);
         }
 
@@ -114,35 +115,37 @@ namespace Imp.Base.Controllers
 
         protected abstract void CreateContextMenu(Point cursorPositionInDesktop, List<ImpTextAndCommand> cmdList);
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public override void Exec(ImpCommand cmd, object argument = null)
         {
+            
             switch (cmd)
             {
                 case ImpCommand.None:
                     break;
                 case ImpCommand.Rewind:
-                    MediaC.Rewind();
+                    this.MediaC.Rewind();
                     break;
                 case ImpCommand.Fastforward:
-                    MediaC.Fastforward();
+                    this.MediaC.Fastforward();
                     break;
                 case ImpCommand.Play:
-                    MediaC.Play();
+                    this.MediaC.Play();
                     break;
                 case ImpCommand.GlobalPlaypause:
-                    if (IsMostRecentInstance)
-                        MediaC.PlayPause();
+                    if (this.IsMostRecentInstance)
+                        this.MediaC.PlayPause();
                     else
-                        MediaC.Pause();
+                        this.MediaC.Pause();
                     break;
                 case ImpCommand.Playpause:
-                    MediaC.PlayPause();
+                    this.MediaC.PlayPause();
                     break;
                 case ImpCommand.Pause:
-                    MediaC.Pause();
+                    this.MediaC.Pause();
                     break;
                 case ImpCommand.StopFile:
-                    MediaC.Stop();
+                    this.MediaC.Stop();
                     break;
                 case ImpCommand.AddFile:
                     AddFile(argument as FileImpInfo);
@@ -160,7 +163,7 @@ namespace Imp.Base.Controllers
                     OpenPrev();
                     break;
                 case ImpCommand.SetPosition:
-                    MediaC.SetPosition((double) argument);
+                    this.MediaC.SetPosition((double) argument);
                     break;
                 case ImpCommand.ChangePosition:
                     break;
@@ -171,38 +174,40 @@ namespace Imp.Base.Controllers
                 case ImpCommand.TimescaleDown:
                     break;
                 case ImpCommand.VolumeMute:
-                    MediaC.ToggleMute();
+                    this.MediaC.ToggleMute();
                     break;
                 case ImpCommand.SetVolume:
-                    MediaC.SetVolume((double) argument);
+                    this.MediaC.SetVolume((double) argument);
                     break;
                 case ImpCommand.VolumeChange:
-                    MediaC.SetVolume(MediaC.Volume + (double) argument);
+                    this.MediaC.SetVolume(this.MediaC.Volume + (double) argument);
                     break;
                 case ImpCommand.LoopChange:
-                    MediaC.ToggleLoop();
+                    this.MediaC.ToggleLoop();
                     break;
                 case ImpCommand.SetZoom:
+                    this.imageController.SetZoom((double)argument);
                     break;
                 case ImpCommand.ChangeZoom:
+                    this.imageController.ChangeZoom((double) argument);
                     break;
                 case ImpCommand.ToggleZoom:
                     break;
                 case ImpCommand.AlwaysOnTop:
                     break;
                 case ImpCommand.CopyName:
-                    if (playingItem != null)
-                        Clipboard.SetText(playingItem.Name);
+                    if (this.playingItem != null)
+                        Clipboard.SetText(this.playingItem.Name);
                     break;
                 case ImpCommand.PanelOpen:
-                    PanelC.CommandPanelOpen(argument as PanelCommand?);
+                    this.PanelC.CommandPanelOpen(argument as PanelCommand?);
                     break;
                 case ImpCommand.PanelSettings:
                     break;
                 case ImpCommand.PanelHelp:
                     break;
                 case ImpCommand.PanelPlaylist:
-                    PanelC.CommandPanelPlaylist(argument as PanelCommand?);
+                    this.PanelC.CommandPanelPlaylist(argument as PanelCommand?);
                     break;
                 case ImpCommand.PlayerMinimize:
                     Minimize();
@@ -230,16 +235,21 @@ namespace Imp.Base.Controllers
                 case ImpCommand.Pankeys:
                     break;
                 case ImpCommand.PanReset:
+                    this.imageController.SetTranslation(0, 0);
                     break;
                 case ImpCommand.ResizeReset:
                     break;
                 case ImpCommand.PanLeft:
+                    this.imageController.MoveTranslation((double) argument, 0);
                     break;
                 case ImpCommand.PanUp:
+                    this.imageController.MoveTranslation(0, (double)argument);
                     break;
                 case ImpCommand.PanRight:
+                    this.imageController.MoveTranslation(-(double)argument, 0);
                     break;
                 case ImpCommand.PanDown:
+                    this.imageController.MoveTranslation(0, -(double)argument);
                     break;
                 case ImpCommand.PanLeftup:
                     break;
@@ -366,18 +376,18 @@ namespace Imp.Base.Controllers
 
         protected void Exit()
         {
-            if (lastExitAttempt < DateTime.Now.Ticks - 2 * LibImp.SecondToTicks)
+            if (this.lastExitAttempt < DateTime.Now.Ticks - 2 * LibImp.SecondToTicks)
             {
                 // more than 2 seconds have passed since exit was last pressed
-                EventC.SetEvent(new EventText("Press again to exit"));
-                lastExitAttempt = DateTime.Now.Ticks;
+                this.EventC.SetEvent(new EventText("Press again to exit"));
+                this.lastExitAttempt = DateTime.Now.Ticks;
             }
             else
             {
                 // double pressed, time to quit
-                MediaC.FreePlayer();
+                this.MediaC.FreePlayer();
                 UpdateSettings();
-                WriteSettings(settingsPath, Settings);
+                WriteSettings(this.settingsPath, this.Settings);
                 CloseWindows();
                 Application.Current.Shutdown();
             }

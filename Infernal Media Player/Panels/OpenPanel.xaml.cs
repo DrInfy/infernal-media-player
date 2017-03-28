@@ -87,6 +87,9 @@ namespace Imp.Player.Panels
             styleLib.SetStyle(TextBoxFindFolder);
             ButtonClearFindFolder.GeometryMargin = 4;
             //styleLib.SetStyle(LabelTopic);
+
+            LoadPlaces();
+            ListPlaces.Select(0);
         }
 
         private void ListFiles_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -101,8 +104,6 @@ namespace Imp.Player.Panels
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadPlaces();
-            ListPlaces.Select(0);
         }
 
         private void LoadPlaces()

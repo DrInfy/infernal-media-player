@@ -32,6 +32,8 @@
             <RowDefinition x:Name="PanelLow" Height="40"/>
         </Grid.RowDefinitions>
 
+        <Image x:Name="ImageViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Stretch="None" Visibility="Hidden"  />
+
         <Rectangle x:Name="BarBottom" Grid.ColumnSpan="5" Fill="#FFF4F4F5" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Row="2" VerticalAlignment="Stretch" />
 
         <Rectangle x:Name="BarTop" Grid.ColumnSpan="5" Fill="#FFF4F4F5" HorizontalAlignment="Stretch"  Margin="0,0,0,20" Grid.Row="0" VerticalAlignment="Stretch" />
@@ -49,7 +51,6 @@
         <Rectangle Name="SplitterLeft" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
         <element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded"  />
         <Image x:Name="LogoViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Source="/Infernal Media Player;component/Images/imp-logo.png" Stretch="None" />
-        <Image x:Name="ImageViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Stretch="None" Visibility="Hidden" />
         <element:SubtitleElement x:Name="Subtitles" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden"/>
 
         <Rectangle Name="SplitterRight" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>

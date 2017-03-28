@@ -49,115 +49,113 @@ namespace Imp.Player.Controllers
 
         #region Properties
 
-        public override bool Focused => !window.PanelOpen.TextBoxFindFolder.IsFocused
-                                        && !window.PanelOpen.TextBoxFind.IsFocused
-                                        && !window.PanelPlaylist.TextBoxFind.IsFocused;
+        public override bool Focused => !this.window.PanelOpen.TextBoxFindFolder.IsFocused
+                                        && !this.window.PanelOpen.TextBoxFind.IsFocused
+                                        && !this.window.PanelPlaylist.TextBoxFind.IsFocused;
 
-        public override bool Selected => window.IsActive && window.ExtWindowState != ExtWindowState.Minimized;
+        public override bool Selected => this.window.IsActive && this.window.ExtWindowState != ExtWindowState.Minimized;
         public override bool IsMostRecentInstance => ImpMessaging.LastActive;
 
         #endregion
 
         public MainController(MainWindow window)
         {
-            AllowedStyles = PlayerStyle.MediaPlayer;
+            this.AllowedStyles = PlayerStyle.MediaPlayer;
+            window.ViewerBottom.Visibility = Visibility.Hidden;
 
             ToolTipService.ShowDurationProperty.OverrideMetadata(
                 typeof (DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
-            EventC = new EventController(window.Dispatcher, window.LabelEvent, window.LabelTopic);
-            PanelC = new PanelController(window);
+            this.EventC = new EventController(window.Dispatcher, window.LabelEvent, window.LabelTopic);
+            this.PanelC = new PanelController(window);
 
             var mediaController = new MediaController(
                 window.UriPlayer,
                 window.PlayerBottom.ButtonPlay,
                 window.PlayerBottom.ButtonMute,
-                window.PlayerBottom.ButtonLoop,
-                EventC);
+                window.PlayerBottom.ButtonLoop, this.EventC);
 
             window.UriPlayer.SubtitleElement = window.Subtitles;
             //subtitleController = new SubtitleController(window);
 
-            Initialize(EventC, PanelC, mediaController);
+            Initialize(this.EventC, this.PanelC, mediaController, new ImageManipulator(window.ImageViewer));
 
             this.window = window;
-            imageLoader = new ImageLoader(window.Dispatcher);
-            imageLoader.Loaded += ImageLoaded;
-            imageLoader.LoadFailed += LoadFailed;
+            this.imageLoader = new ImageLoader(window.Dispatcher);
+            this.imageLoader.Loaded += ImageLoaded;
+            this.imageLoader.LoadFailed += LoadFailed;
 
-            mediaLoader = new MediaLoader(window.Dispatcher) { Subtitles = Settings.Subtitles };
-            mediaLoader.Loaded += MediaLoaded;
-            mediaLoader.LoadFailed += LoadFailed;
+            this.mediaLoader = new MediaLoader(window.Dispatcher) { Subtitles = this.Settings.Subtitles };
+            this.mediaLoader.Loaded += MediaLoaded;
+            this.mediaLoader.LoadFailed += LoadFailed;
 
-            ContentMenu = window.ContentMenu;
+            this.ContentMenu = window.ContentMenu;
 
             ApplySettings();
         }
 
         protected void ApplySettings()
         {
-            MediaC.SetVolume(Settings.Volume);
-            MediaC.LoopMode = Settings.LastLoopMode;
-            if (MediaC.LoopMode == LoopMode.LoopAll)
-                window.PlayerBottom.ButtonLoop.CurrentState = 1;
-            window.PanelOpen.ButtonFilterVideo.CurrentState =
-                (Settings.LastFileTypes & FileTypes.Videos) == FileTypes.Videos ? 1 : 0;
-            window.PanelOpen.ButtonFilterMusic.CurrentState =
-                (Settings.LastFileTypes & FileTypes.Music) == FileTypes.Music ? 1 : 0;
-            window.PanelOpen.ButtonFilterPictures.CurrentState =
-                Settings.LastFileTypes.HasFlag(FileTypes.Pictures) ? 1 : 0;
+            this.MediaC.SetVolume(this.Settings.Volume);
+            this.MediaC.LoopMode = this.Settings.LastLoopMode;
+            if (this.MediaC.LoopMode == LoopMode.LoopAll)
+                this.window.PlayerBottom.ButtonLoop.CurrentState = 1;
+            this.window.PanelOpen.ButtonFilterVideo.CurrentState =
+                (this.Settings.LastFileTypes & FileTypes.Videos) == FileTypes.Videos ? 1 : 0;
+            this.window.PanelOpen.ButtonFilterMusic.CurrentState =
+                (this.Settings.LastFileTypes & FileTypes.Music) == FileTypes.Music ? 1 : 0;
+            this.window.PanelOpen.ButtonFilterPictures.CurrentState = this.Settings.LastFileTypes.HasFlag(FileTypes.Pictures) ? 1 : 0;
             //window.PanelOpen.ButtonFilterPlaylist.CurrentState =
             //    (Settings.LastFileTypes & FileTypes.Playlist) == FileTypes.Playlist ? 1 : 0;
 
-            window.PanelOpen.GetFilters();
+            this.window.PanelOpen.GetFilters();
         }
 
         protected override void UpdateSettings()
         {
-            Settings.Volume = MediaC.Volume;
-            Settings.LastLoopMode = MediaC.LoopMode;
-            if (Settings.LastLoopMode == LoopMode.LoopOne)
-                Settings.LastLoopMode = LoopMode.LoopAll;
-            Settings.LastFileTypes = window.PanelOpen.GetFileTypes();
+            this.Settings.Volume = this.MediaC.Volume;
+            this.Settings.LastLoopMode = this.MediaC.LoopMode;
+            if (this.Settings.LastLoopMode == LoopMode.LoopOne)
+                this.Settings.LastLoopMode = LoopMode.LoopAll;
+            this.Settings.LastFileTypes = this.window.PanelOpen.GetFileTypes();
         }
 
         protected override void CloseWindows()
         {
-            window.Close();
-            window.WindowClosed = true;
+            this.window.Close();
+            this.window.WindowClosed = true;
         }
 
         protected override void OpenFile(PlaylistItem item)
         {
-            if (item == null ||
-                loadingItem != null && loadingItem.FullPath == item.FullPath
-                || playingItem != null && playingItem.FullPath == item.FullPath)
+            if (item == null || this.loadingItem != null && this.loadingItem.FullPath == item.FullPath
+                || this.playingItem != null && this.playingItem.FullPath == item.FullPath)
             {
                 if (item == null)
                 {
-                    EventC.SetEvent(new EventText("Cannot play item that doesn't exist"));
+                    this.EventC.SetEvent(new EventText("Cannot play item that doesn't exist"));
                     return;
                 }
-                if (mediaLoader.IsLoading || mediaLoader.IsLoading)
+                if (this.mediaLoader.IsLoading || this.mediaLoader.IsLoading)
                 {
-                    EventC.SetEvent(new EventText("Already loading that item"));
+                    this.EventC.SetEvent(new EventText("Already loading that item"));
                     return;
                 }
-                EventC.SetEvent(new EventText("Already playing that item"));
+                this.EventC.SetEvent(new EventText("Already playing that item"));
                 return;
             }
 
-            if (window.UriPlayer.Controller != null)
+            if (this.window.UriPlayer.Controller != null)
             {
-                window.UriPlayer.Controller.Command(MediaCommand.Close);
-                MediaC.MediaClosed();
+                this.window.UriPlayer.Controller.Command(MediaCommand.Close);
+                this.MediaC.MediaClosed();
                 this.playingItem = null;
             }
 
-            EventC.SetTitle("Loading...");
-            window.Title = "Loading...";
+            this.EventC.SetTitle("Loading...");
+            this.window.Title = "Loading...";
 
-            window.PanelPlaylist.ListPlaylist.PlayingThis(item);
+            this.window.PanelPlaylist.ListPlaylist.PlayingThis(item);
 
             if (this.loadingItem != null)
             {
@@ -165,26 +163,26 @@ namespace Imp.Player.Controllers
                 this.mediaLoader.Abort();
             }
 
-            loadingItem = item;
+            this.loadingItem = item;
 
             if (item.FileType == FileTypes.Pictures)
             {
-                imageLoader.OpenFile(item.FullPath);
+                this.imageLoader.OpenFile(item.FullPath);
             }
             else
             {
-                mediaLoader.OpenFile(item.FullPath);
+                this.mediaLoader.OpenFile(item.FullPath);
             }
         }
 
         private void LoadFailed(ImpError error)
         {
-            AllowedStyles = PlayerStyle.MediaPlayer;
-            EventC.ShowError(error);
-            MediaC.MediaClosed();
+            this.AllowedStyles = PlayerStyle.MediaPlayer;
+            this.EventC.ShowError(error);
+            this.MediaC.MediaClosed();
 
-            playingItem = null;
-            loadingItem = null;
+            this.playingItem = null;
+            this.loadingItem = null;
 
             ClearPlayers();
 
@@ -193,35 +191,38 @@ namespace Imp.Player.Controllers
 
         private void ResetTitle()
         {
-            EventC.SetTitle("");
-            window.Title = "Infernal Media Player";
+            this.EventC.SetTitle("");
+            this.window.Title = "Infernal Media Player";
         }
 
         private void ImageLoaded(BitmapSource bitmap)
         {
-            playingItem = loadingItem;
+            this.playingItem = this.loadingItem;
             //loadingItem = null;
-            itemOnPlayer = playingItem;
-            window.PanelPlaylist.ListPlaylist.PlayingThis(playingItem);
-            window.ImageViewer.Visibility = Visibility.Visible;
-            window.UriPlayer.Visibility = Visibility.Hidden;
-            window.LogoViewer.Visibility = Visibility.Hidden;
-            window.UriPlayer.Clear();
-            currentImage = bitmap;
+            this.itemOnPlayer = this.playingItem;
+            this.window.PanelPlaylist.ListPlaylist.PlayingThis(this.playingItem);
+            this.window.ImageViewer.Visibility = Visibility.Visible;
+            this.window.UriPlayer.Visibility = Visibility.Hidden;
+            this.window.LogoViewer.Visibility = Visibility.Hidden;
+            this.window.UriPlayer.Clear();
+            this.currentImage = bitmap;
 
-            window.ImageViewer.Source = bitmap;
-            window.ImageViewer.Stretch = Stretch.Uniform;
-            window.ImageViewer.StretchDirection = StretchDirection.Both;
+            this.window.ImageViewer.Source = bitmap;
+            this.window.ImageViewer.Stretch = Stretch.Uniform;
+            this.window.ImageViewer.StretchDirection = StretchDirection.Both;
 
-            AllowedStyles = PlayerStyle.PictureViewer;
+            this.AllowedStyles = PlayerStyle.PictureViewer;
+            this.window.ViewerBottom.Visibility = Visibility.Visible;
+            this.window.PlayerBottom.Visibility = Visibility.Hidden;
+            this.imageController.ImageChanged();
 
             SetPlayingTitle();
         }
 
         private void SetPlayingTitle()
         {
-            EventC.SetTitle(playingItem.Name);
-            window.Title = playingItem.Name;
+            this.EventC.SetTitle(this.playingItem.Name);
+            this.window.Title = this.playingItem.Name;
         }
 
         private void MediaLoaded(PlayerController playerController)
@@ -231,37 +232,40 @@ namespace Imp.Player.Controllers
             //    subtitleController.LoadSubtitles(loadingItem.FullPath, Path.GetExtension(loadingItem.FullPath), playerController.VideoSize);
             //}
 
-            playingItem = loadingItem;
+            this.playingItem = this.loadingItem;
             //loadingItem = null;
-            itemOnPlayer = playingItem;
+            this.itemOnPlayer = this.playingItem;
 
-            window.UriPlayer.Controller = playerController;
-            if (window.UriPlayer.HasVideo)
+            this.window.UriPlayer.Controller = playerController;
+            if (this.window.UriPlayer.HasVideo)
             {
-                window.ImageViewer.Visibility = Visibility.Hidden;
-                window.UriPlayer.Visibility = Visibility.Visible;
-                window.LogoViewer.Visibility = Visibility.Hidden;
-                AllowedStyles = PlayerStyle.VideoPlayer;
+                this.window.ImageViewer.Visibility = Visibility.Hidden;
+                this.window.UriPlayer.Visibility = Visibility.Visible;
+                this.window.LogoViewer.Visibility = Visibility.Hidden;
+                this.AllowedStyles = PlayerStyle.VideoPlayer;
             }
             else
             {
-                window.ImageViewer.Visibility = Visibility.Hidden;
-                window.UriPlayer.Visibility = Visibility.Hidden;
-                window.LogoViewer.Visibility = Visibility.Visible;
-                AllowedStyles = PlayerStyle.MusicPlayer;
+                this.window.ImageViewer.Visibility = Visibility.Hidden;
+                this.window.UriPlayer.Visibility = Visibility.Hidden;
+                this.window.LogoViewer.Visibility = Visibility.Visible;
+                this.AllowedStyles = PlayerStyle.MusicPlayer;
             }
 
-            window.PanelPlaylist.ListPlaylist.PlayingThis(playingItem);
+            this.window.PanelPlaylist.ListPlaylist.PlayingThis(this.playingItem);
 
             SetPlayingTitle();
-            EventC.SetEvent(new EventText(">" + playingItem.Name));
-            MediaC.MediaOpened();
+            this.EventC.SetEvent(new EventText(">" + this.playingItem.Name));
+            this.MediaC.MediaOpened();
+
+            this.window.ViewerBottom.Visibility = Visibility.Hidden;
+            this.window.PlayerBottom.Visibility = Visibility.Visible;
         }
 
         protected override void OpenFile(FileImpInfo fileInfo)
         {
             var item = new PlaylistItem(fileInfo);
-            window.PanelPlaylist.ListPlaylist.AddToList(item);
+            this.window.PanelPlaylist.ListPlaylist.AddToList(item);
 
             OpenFile(item);
         }
@@ -270,29 +274,29 @@ namespace Imp.Player.Controllers
         {
             Rect area;
 
-            if (window.ExtWindowState == ExtWindowState.Fullscreen)
+            if (this.window.ExtWindowState == ExtWindowState.Fullscreen)
             {
-                area = ImpNativeMethods.GetMonitorArea(window);
+                area = ImpNativeMethods.GetMonitorArea(this.window);
             }
             else
             {
-                area = ImpNativeMethods.GetWorkArea(window);
+                area = ImpNativeMethods.GetWorkArea(this.window);
             }
 
-            window.MenuList.SetList(cmdList);
+            this.window.MenuList.SetList(cmdList);
 
-            var size = window.MenuList.DesiredSize();
-            ContentMenu.Height = size.Height;
-            ContentMenu.Width = size.Width;
+            var size = this.window.MenuList.DesiredSize();
+            this.ContentMenu.Height = size.Height;
+            this.ContentMenu.Width = size.Width;
 
             //ContentMenu.HorizontalOffset = -20;
             //ContentMenu.VerticalOffset = -5;
-            ContentMenu.HorizontalOffset = Math.Max(Math.Min(cursorPositionInDesktop.X - 20, area.Right - size.Width),
+            this.ContentMenu.HorizontalOffset = Math.Max(Math.Min(cursorPositionInDesktop.X - 20, area.Right - size.Width),
                 area.Left);
-            ContentMenu.VerticalOffset = Math.Max(Math.Min(cursorPositionInDesktop.Y - 5, area.Bottom - size.Height),
+            this.ContentMenu.VerticalOffset = Math.Max(Math.Min(cursorPositionInDesktop.Y - 5, area.Bottom - size.Height),
                 area.Top);
-            ContentMenu.IsOpen = true;
-            window.MenuList.CaptureMouse();
+            this.ContentMenu.IsOpen = true;
+            this.window.MenuList.CaptureMouse();
         }
 
         protected override void ChangeSubtitles(object argument)
@@ -301,40 +305,40 @@ namespace Imp.Player.Controllers
             if (this.window.UriPlayer?.Controller != null)
             {
                 this.window.UriPlayer.Controller.SubtitleTrackIndex++;
-                EventC.SetEvent(new EventText("Subtitle " + (this.window.UriPlayer.Controller.SubtitleTrackIndex + 1).ToString() + "!"));
+                this.EventC.SetEvent(new EventText("Subtitle " + (this.window.UriPlayer.Controller.SubtitleTrackIndex + 1).ToString() + "!"));
             }
             else
             {
-                EventC.SetEvent(new EventText("Not playing!"));
+                this.EventC.SetEvent(new EventText("Not playing!"));
             }
         }
 
         protected override void Shuffle()
         {
             ClearPlayers();
-            playingItem = null;
-            window.PanelPlaylist.ListPlaylist.SelectNone();
-            window.PanelPlaylist.ListPlaylist.PlayingThis(null);
+            this.playingItem = null;
+            this.window.PanelPlaylist.ListPlaylist.SelectNone();
+            this.window.PanelPlaylist.ListPlaylist.PlayingThis(null);
             Exec(ImpCommand.Sort, FileSortMode.Random);
-            EventC.SetEvent(new EventText("Shuffled!"));
+            this.EventC.SetEvent(new EventText("Shuffled!"));
         }
 
         protected override void ClearPlayers()
         {
-            window.ImageViewer.Source = null;
-            window.UriPlayer.Controller?.Command(MediaCommand.Close);
+            this.window.ImageViewer.Source = null;
+            this.window.UriPlayer.Controller?.Command(MediaCommand.Close);
         }
 
         protected override void RemoveSelectedPath()
         {
-            var path = window.PanelOpen.ListPlaces.GetSelected().Value;
-            if (!Settings.CustomPaths.Contains(path))
+            var path = this.window.PanelOpen.ListPlaces.GetSelected().Value;
+            if (!this.Settings.CustomPaths.Contains(path))
             {
-                EventC.SetEvent(new EventText("Path cannot be removed", 1, EventType.Delayed));
+                this.EventC.SetEvent(new EventText("Path cannot be removed", 1, EventType.Delayed));
                 return;
             }
-            Settings.CustomPaths.Remove(path);
-            window.PanelOpen.Refresh(this);
+            this.Settings.CustomPaths.Remove(path);
+            this.window.PanelOpen.Refresh(this);
         }
 
         protected override void DeleteOpenFolder()
@@ -344,55 +348,52 @@ namespace Imp.Player.Controllers
 
         protected override void AddSelectedFolderToPaths()
         {
-            var item = window.PanelOpen.ListDirectories.GetSelected();
+            var item = this.window.PanelOpen.ListDirectories.GetSelected();
 
-            var path = window.PanelOpen.ListDirectories.GetSelected()?.Value;
+            var path = this.window.PanelOpen.ListDirectories.GetSelected()?.Value;
 
-            if (path == null || StringHandler.IsSpecialFolder(path) || Settings.CustomPaths.Contains(path) ||
+            if (path == null || StringHandler.IsSpecialFolder(path) || this.Settings.CustomPaths.Contains(path) ||
                 path.Length < 4)
             {
-                EventC.SetEvent(new EventText("Path cannot be added", 1d, EventType.Delayed));
+                this.EventC.SetEvent(new EventText("Path cannot be added", 1d, EventType.Delayed));
                 return;
             }
 
-            Settings.CustomPaths.Add(path);
-            window.PanelOpen.Refresh(this);
+            this.Settings.CustomPaths.Add(path);
+            this.window.PanelOpen.Refresh(this);
         }
 
         protected override void AddSelectedFolderFolders()
         {
-            window.PanelOpen.PrepareFolderLoader(
-                new DirectoryLoadOptions(window.PanelOpen.ListDirectories.GetSelected().Value,
-                    SearchOption.AllDirectories,
-                    window.PanelOpen.GetFileTypes()));
+            this.window.PanelOpen.PrepareFolderLoader(
+                new DirectoryLoadOptions(this.window.PanelOpen.ListDirectories.GetSelected().Value,
+                    SearchOption.AllDirectories, this.window.PanelOpen.GetFileTypes()));
         }
 
         protected override void AddSelectedFolderFiles()
         {
-            window.PanelOpen.PrepareFolderLoader(
-                new DirectoryLoadOptions(window.PanelOpen.ListDirectories.GetSelected().Value,
-                    SearchOption.TopDirectoryOnly,
-                    window.PanelOpen.GetFileTypes()));
+            this.window.PanelOpen.PrepareFolderLoader(
+                new DirectoryLoadOptions(this.window.PanelOpen.ListDirectories.GetSelected().Value,
+                    SearchOption.TopDirectoryOnly, this.window.PanelOpen.GetFileTypes()));
         }
 
         protected override void PlaySelectedFolderFiles()
         {
-            var selected = window.PanelOpen.ListDirectories.GetSelected();
+            var selected = this.window.PanelOpen.ListDirectories.GetSelected();
 
             if (selected != null)
             {
                 Exec(ImpCommand.ClearPlaylist);
-                window.PanelOpen.PrepareFolderLoader(
+                this.window.PanelOpen.PrepareFolderLoader(
                     new DirectoryLoadOptions(selected.Value,
-                        SearchOption.AllDirectories,
-                        window.PanelOpen.GetFileTypes())
+                        SearchOption.AllDirectories, this.window.PanelOpen.GetFileTypes())
                     { PlayFirstFile = true });
             }
         }
 
         protected override void RequestDeleteOpenFiles()
         {
-            var items = window.PanelOpen.ListFiles.GetSelectedList();
+            var items = this.window.PanelOpen.ListFiles.GetSelectedList();
             var playlistItems = new List<PlaylistItem>(items.Count);
             var paths = new List<string>(items.Count);
 
@@ -403,17 +404,17 @@ namespace Imp.Player.Controllers
             }
 
             if (PopupDeleteWindow(paths, playlistItems))
-                window.PanelOpen.ListFiles.Refresh();
+                this.window.PanelOpen.ListFiles.Refresh();
         }
 
         protected override void AddSelectedOpenFiles()
         {
-            window.PanelOpen.ButtonAddSelected_Clicked(this);
+            this.window.PanelOpen.ButtonAddSelected_Clicked(this);
         }
 
         protected override void PlaySelectedOpenFiles()
         {
-            var list = window.PanelOpen.ListFiles.GetSelectedList();
+            var list = this.window.PanelOpen.ListFiles.GetSelectedList();
             for (var i = 0; i < list.Count; i++)
             {
                 if (i == 0)
@@ -425,7 +426,7 @@ namespace Imp.Player.Controllers
 
         protected override void RequestPlaylistFileDeletion()
         {
-            var items = window.PanelPlaylist.ListPlaylist.GetSelectedList();
+            var items = this.window.PanelPlaylist.ListPlaylist.GetSelectedList();
 
             var paths = new List<string>(items.Count);
 
@@ -438,9 +439,9 @@ namespace Imp.Player.Controllers
         private bool PopupDeleteWindow(List<string> paths, List<PlaylistItem> items)
         {
             var deleteWindow = new DeleteItemsWindow(this, paths);
-            deleteWindow.Owner = window;
+            deleteWindow.Owner = this.window;
 
-            deleteWindow.SetStyles(window.Styling);
+            deleteWindow.SetStyles(this.window.Styling);
             if (deleteWindow.ShowDialog() == true)
             {
                 PermanentlyDeleteFiles(items);
@@ -451,7 +452,7 @@ namespace Imp.Player.Controllers
 
         protected override void OpenSelectedInExplorer()
         {
-            var item = window.PanelPlaylist.ListPlaylist.GetSelected();
+            var item = this.window.PanelPlaylist.ListPlaylist.GetSelected();
             if (item != null)
             {
                 Process.Start("explorer.exe", string.Format("/select,\"{0}\"", item.FullPath));
@@ -460,131 +461,131 @@ namespace Imp.Player.Controllers
 
         protected override void OpenSelectedInPlayList()
         {
-            OpenFile(window.PanelPlaylist.ListPlaylist.GetSelected());
+            OpenFile(this.window.PanelPlaylist.ListPlaylist.GetSelected());
         }
 
         protected override void PlaylistSort(FileSortMode fileSortMode)
         {
-            window.PanelPlaylist.ListPlaylist.Sort(fileSortMode);
+            this.window.PanelPlaylist.ListPlaylist.Sort(fileSortMode);
         }
 
         protected override void RemoveSelectedFromPlaylist()
         {
-            window.PanelPlaylist.ListPlaylist.RemoveSelected();
+            this.window.PanelPlaylist.ListPlaylist.RemoveSelected();
         }
 
         protected override void OpenRandom()
         {
-            window.PanelPlaylist.ListPlaylist.OpenRandom();
+            this.window.PanelPlaylist.ListPlaylist.OpenRandom();
         }
 
         public override void MediaEnded()
         {
-            if (MediaC.LoopMode == LoopMode.LoopOne)
+            if (this.MediaC.LoopMode == LoopMode.LoopOne)
             {
-                MediaC.SetPosition(0);
-                MediaC.Play();
+                this.MediaC.SetPosition(0);
+                this.MediaC.Play();
             }
             else
             {
-                window.PanelPlaylist.ListPlaylist.OpenNext(MediaC.LoopMode);
+                this.window.PanelPlaylist.ListPlaylist.OpenNext(this.MediaC.LoopMode);
             }
         }
 
         protected override void OpenPrev()
         {
-            if (MediaC.LoopMode == LoopMode.LoopOne)
+            if (this.MediaC.LoopMode == LoopMode.LoopOne)
             {
-                window.PanelPlaylist.ListPlaylist.OpenPrev(LoopMode.NoLoop);
+                this.window.PanelPlaylist.ListPlaylist.OpenPrev(LoopMode.NoLoop);
             }
             else
             {
-                window.PanelPlaylist.ListPlaylist.OpenPrev(MediaC.LoopMode);
+                this.window.PanelPlaylist.ListPlaylist.OpenPrev(this.MediaC.LoopMode);
             }
         }
 
         protected override void OpenNext()
         {
-            if (MediaC.LoopMode == LoopMode.LoopOne)
+            if (this.MediaC.LoopMode == LoopMode.LoopOne)
             {
-                window.PanelPlaylist.ListPlaylist.OpenNext(LoopMode.NoLoop);
+                this.window.PanelPlaylist.ListPlaylist.OpenNext(LoopMode.NoLoop);
             }
             else
             {
-                window.PanelPlaylist.ListPlaylist.OpenNext(MediaC.LoopMode);
+                this.window.PanelPlaylist.ListPlaylist.OpenNext(this.MediaC.LoopMode);
             }
         }
 
         protected override void ClearPlayList()
         {
-            window.PanelPlaylist.ListPlaylist.ClearList();
+            this.window.PanelPlaylist.ListPlaylist.ClearList();
         }
 
         protected override void AddFile(FileImpInfo fileInfo)
         {
-            window.PanelPlaylist.ListPlaylist.AddToList(new PlaylistItem(fileInfo));
+            this.window.PanelPlaylist.ListPlaylist.AddToList(new PlaylistItem(fileInfo));
         }
 
         protected override void ToggleMaximize()
         {
-            if (window.ExtWindowState >= ExtWindowState.Maximized) window.ExtWindowState = ExtWindowState.Normal;
-            else window.ExtWindowState = ExtWindowState.Maximized;
+            if (this.window.ExtWindowState >= ExtWindowState.Maximized) this.window.ExtWindowState = ExtWindowState.Normal;
+            else this.window.ExtWindowState = ExtWindowState.Maximized;
         }
 
         protected override void ToggleFullscreen()
         {
-            if (window.ExtWindowState >= ExtWindowState.Maximized) window.ExtWindowState = ExtWindowState.Normal;
+            if (this.window.ExtWindowState >= ExtWindowState.Maximized) this.window.ExtWindowState = ExtWindowState.Normal;
             else
             {
-                window.ExtWindowState = ExtWindowState.Fullscreen;
-                PanelC.HideLeftPanel();
-                PanelC.HideRightPanel();
+                this.window.ExtWindowState = ExtWindowState.Fullscreen;
+                this.PanelC.HideLeftPanel();
+                this.PanelC.HideRightPanel();
             }
         }
 
         protected override void Minimize()
         {
-            window.ExtWindowState = ExtWindowState.Minimized;
+            this.window.ExtWindowState = ExtWindowState.Minimized;
         }
 
         public override void Update()
         {
-            MediaC.MoveTemp = false;
+            this.MediaC.MoveTemp = false;
 
             base.Update();
 
-            MediaC.LastMoved = MediaC.MoveTemp;
+            this.MediaC.LastMoved = this.MediaC.MoveTemp;
 
-            imageLoader.Update();
-            mediaLoader.Update();
+            this.imageLoader.Update();
+            this.mediaLoader.Update();
 
-            window.Updating = false;
+            this.window.Updating = false;
 
-            window.PlayerBottom.SliderVolume.Value = MediaC.Volume;
+            this.window.PlayerBottom.SliderVolume.Value = this.MediaC.Volume;
 
             // TODO: update position only when it has changed
-            if (window.UriPlayer.IsPlaying)
+            if (this.window.UriPlayer.IsPlaying)
             {
-                var duration = window.UriPlayer.Duration;
-                var position = window.UriPlayer.Position;
-                window.PlayerBottom.SliderTime.Maximum = duration;
-                window.PlayerBottom.SliderTime.Value = position;
+                var duration = this.window.UriPlayer.Duration;
+                var position = this.window.UriPlayer.Position;
+                this.window.PlayerBottom.SliderTime.Maximum = duration;
+                this.window.PlayerBottom.SliderTime.Value = position;
 
                 //if (subtitleController.Active)
                 //{
                 //    this.subtitleController.Update(position);
                 //}
 
-                if (window.Width > 400)
+                if (this.window.Width > 400)
                 {
-                    window.PlayerBottom.LabelPosition.Content =
+                    this.window.PlayerBottom.LabelPosition.Content =
                         string.Format("{0} / {1}",
                             StringHandler.SecondsToTimeText((int) Math.Round(position)),
                             StringHandler.SecondsToTimeText((int) Math.Round(duration)));
                 }
                 else
                 {
-                    window.PlayerBottom.LabelPosition.Content =
+                    this.window.PlayerBottom.LabelPosition.Content =
                         StringHandler.SecondsToTimeText((int) Math.Round(position));
                 }
 
@@ -592,7 +593,7 @@ namespace Imp.Player.Controllers
                 if (osInfo.Version.Major >= 6)
                 {
                     TaskbarManager.Instance.SetProgressValue((int) position, (int) duration);
-                    if (MediaC.Paused)
+                    if (this.MediaC.Paused)
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Paused);
                     else
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
@@ -600,9 +601,9 @@ namespace Imp.Player.Controllers
             }
             else
             {
-                window.PlayerBottom.SliderTime.Value = 0;
-                window.PlayerBottom.SliderTime.Maximum = 1;
-                window.PlayerBottom.LabelPosition.Content = null; // "-:--:--";
+                this.window.PlayerBottom.SliderTime.Value = 0;
+                this.window.PlayerBottom.SliderTime.Maximum = 1;
+                this.window.PlayerBottom.LabelPosition.Content = null; // "-:--:--";
 
                 if (osInfo.Version.Major >= 6)
                 {
@@ -613,7 +614,7 @@ namespace Imp.Player.Controllers
 
         public override List<PlaylistItem> GetSelectedPlaylistItems()
         {
-            return window.PanelPlaylist.ListPlaylist.GetSelectedList();
+            return this.window.PanelPlaylist.ListPlaylist.GetSelectedList();
         }
 
         public void PermanentlyDeleteFiles(List<PlaylistItem> playlistItemsToDelete)
@@ -621,25 +622,25 @@ namespace Imp.Player.Controllers
             var fileDeleteCount = 0;
             foreach (var playlistItem in playlistItemsToDelete)
             {
-                if (playingItem != null && playingItem.FullPath.Equals(playlistItem.FullPath))
+                if (this.playingItem != null && this.playingItem.FullPath.Equals(playlistItem.FullPath))
                 {
                     if (playlistItem.FileType == FileTypes.Pictures)
                     {
-                        window.ImageViewer.Source = null;
+                        this.window.ImageViewer.Source = null;
 
-                        currentImage = null;
+                        this.currentImage = null;
                         GC.Collect();
                     }
                     else
                     {
-                        window.UriPlayer.Clear();
-                        while (window.UriPlayer.IsPlaying)
+                        this.window.UriPlayer.Clear();
+                        while (this.window.UriPlayer.IsPlaying)
                         {
                             Thread.Sleep(5);
                         }
                     }
 
-                    playingItem = null;
+                    this.playingItem = null;
                     ResetTitle();
                 }
                 try
@@ -649,17 +650,17 @@ namespace Imp.Player.Controllers
                 }
                 catch (Exception)
                 {
-                    EventC.SetEvent(new EventText("File could not be deleted: " + playlistItem.FullPath, 3,
+                    this.EventC.SetEvent(new EventText("File could not be deleted: " + playlistItem.FullPath, 3,
                         EventType.Delayed));
                 }
             }
-            EventC.SetEvent(new EventText(fileDeleteCount + " files permanently deleted", 3, EventType.Delayed));
-            window.PanelPlaylist.ListPlaylist.RemoveSelected();
+            this.EventC.SetEvent(new EventText(fileDeleteCount + " files permanently deleted", 3, EventType.Delayed));
+            this.window.PanelPlaylist.ListPlaylist.RemoveSelected();
         }
 
         public Point CursorPositionInDesktop(MouseButtonEventArgs e)
         {
-            var location = window.PointToScreen(e.GetPosition(this.window));
+            var location = this.window.PointToScreen(e.GetPosition(this.window));
             var source = PresentationSource.FromVisual(Application.Current.MainWindow);
             if (source == null) return location;
 
@@ -670,6 +671,12 @@ namespace Imp.Player.Controllers
             //    return e.GetPosition(null) + new Vector(Left, Top);
             //else
             //    return e.GetPosition(null);
+        }
+
+        public void Resize()
+        {
+            this.PanelC.CheckResize();
+            this.imageController.ScreenSizeChanged();
         }
     }
 }

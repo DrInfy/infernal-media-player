@@ -78,6 +78,7 @@
     <Compile Include="Commands\GlobalKeyboard.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\IBaseController.cs" />
+    <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\ImpFader.cs" />
     <Compile Include="Controllers\KeyboardController.cs" />
     <Compile Include="FileLoading\DirectoryLoadOptions.cs" />

@@ -20,7 +20,6 @@
         <controls:ImpButton Name="ButtonPrev"  HorizontalAlignment="Stretch" Grid.Column="{controls:GridDefinition previous}" Margin="0,0,0,0" VerticalAlignment="Stretch" Clicked="ButtonPrev_Clicked" IsTabStop="False"/>
         <controls:ImpButton Name="ButtonLoop"  HorizontalAlignment="Stretch" Grid.Column="{controls:GridDefinition loop}" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="3" Clicked="ButtonLoop_Clicked" IsTabStop="False"/>
         <controls:ImpButton Name="ButtonNext"  HorizontalAlignment="Stretch" Grid.Column="{controls:GridDefinition next}" Margin="0,0,0,0" VerticalAlignment="Stretch" Clicked="ButtonNext_Clicked" IsTabStop="False"/>
-        <!--<Label Name="LabelPosition" Grid.Column="{controls:GridDefinition time}" Grid.ColumnSpan="2" HorizontalAlignment="center" Margin="20,15,20,-5" FontSize="14" FontWeight="Bold" IsTabStop="False">"-:--:--"</Label>-->
 
     </Grid>
 </UserControl>

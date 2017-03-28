@@ -159,6 +159,7 @@
     <Compile Include="DeleteItemsWindow.xaml.cs">
       <DependentUpon>DeleteItemsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Image\ImageManipulator.cs" />
     <Compile Include="Image\ImpJpgDecoder.cs" />
     <Compile Include="Image\ImpPngDecoder.cs" />
     <Compile Include="Libraries\ConverterUtility.cs" />

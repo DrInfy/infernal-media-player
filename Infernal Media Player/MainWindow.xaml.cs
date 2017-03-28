@@ -362,7 +362,14 @@ namespace Imp.Player
         {
             if (IsMouseOverList()) return;
 
-            mainC.Exec(ImpCommand.VolumeChange, Math.Sign(e.Delta) * 0.03);
+            if (this.mainC.AllowedStyles == PlayerStyle.PictureViewer)
+            {
+                mainC.Exec(ImpCommand.ChangeZoom, Math.Sign(e.Delta) * 0.03);
+            }
+            else
+            {
+                mainC.Exec(ImpCommand.VolumeChange, Math.Sign(e.Delta) * 0.03);
+            }
         }
 
         private bool IsMouseOverList()
@@ -387,7 +394,8 @@ namespace Imp.Player
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            mainC.PanelC.CheckResize();
+            
+            this.mainC.Resize();
         }
 
         public void OpenFileLinesFromMessaging()
