@@ -112,7 +112,8 @@ namespace Imp.Player
                                       LogoViewer.IsMouseDirectlyOver ||
                                       //PanelOpen.LabelTopic.IsMouseOver ||
                                       //PanelPlaylist.LabelTopic.IsMouseOver ||
-                                      PlayerBottom.LabelPosition.IsMouseOver;
+                                      PlayerBottom.LabelPosition.IsMouseOver ||
+                                      ViewerBottom.IsMouseOver;
 
         #endregion
 
@@ -148,6 +149,7 @@ namespace Imp.Player
             PanelOpen.SetStyles(Styling, mainC);
             PanelPlaylist.SetStyles(Styling, mainC);
             PlayerBottom.SetStyles(Styling, mainC);
+            ViewerBottom.SetStyles(Styling, mainC);
 
 
             Styling.SetStyle(ButtonOpen, BtnNumber.Open);

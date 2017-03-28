@@ -42,7 +42,8 @@ namespace Imp.Controls.Gui
         Picture,
 
         RememberPath,
-        ForgetPath
+        ForgetPath,
+        Previous
     }
 
 
@@ -122,6 +123,8 @@ namespace Imp.Controls.Gui
                     return EnlargeDown(pFc, pG);
                 case BtnNumber.Next:
                     return Next(pFc, pG);
+                case BtnNumber.Previous:
+                    return Prev(pFc, pG);
                 case BtnNumber.SortByName:
                     return SortByName(pFc, pG);
                 case BtnNumber.Sort:
@@ -281,6 +284,21 @@ namespace Imp.Controls.Gui
             AddHLine(new Point(d, 50), 100 - d * 2, pFc);
             AddHLine(new Point(d, 100), 100 - d * 2, pFc);
 
+
+            pG.Figures = pFc;
+            return pG;
+        }
+
+        private static Geometry Prev(PathFigureCollection pFc, PathGeometry pG)
+        {
+            AddLine(new Point(100 - 80, 100 - 0), new Point(100 - 80, 100 - 100), pFc);
+            AddLine(new Point(100 - 80, 100 - 0), new Point(100 - 100, 100 - 0), pFc);
+            AddLine(new Point(100 - 80, 100 - 100), new Point(100 - 100, 100 - 100), pFc);
+            AddLine(new Point(100 - 100, 100 - 0), new Point(100 - 100, 100 - 100), pFc);
+
+            AddLine(new Point(100 - 0, 100 - 0), new Point(100 - 80, 100 - 40), pFc);
+            AddLine(new Point(100 - 0, 100 - 0), new Point(100 - 0, 100 - 100), pFc);
+            AddLine(new Point(100 - 0, 100 - 100), new Point(100 - 80, 100 - 60), pFc);
 
             pG.Figures = pFc;
             return pG;

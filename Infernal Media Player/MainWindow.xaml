@@ -61,6 +61,7 @@
 
 
         <panels:MediaPlayerBottom x:Name="PlayerBottom" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" IsTabStop="False"/>
+        <panels:ImageViewerBottom x:Name="ViewerBottom" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" IsTabStop="False"/>
         <Label x:Name="LabelEvent" Style="{StaticResource ShadowStyle}" Grid.Row="1" Grid.Column="2" Content="Titleeeeeeeeeeee" HorizontalAlignment="Left" Margin="0,0,200,0" VerticalAlignment="Top" FontSize="18" Height="35" Width="500" IsTabStop="False"/>
 
 

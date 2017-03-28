@@ -139,6 +139,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Panels\ImageViewerBottom.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Panels\ImpResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -182,6 +186,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Panels\ImageViewerBottom.xaml.cs">
+      <DependentUpon>ImageViewerBottom.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Panels\MediaPlayerBottom.xaml.cs">
       <DependentUpon>MediaPlayerBottom.xaml</DependentUpon>
     </Compile>
