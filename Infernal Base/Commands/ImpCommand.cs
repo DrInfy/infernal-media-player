@@ -81,7 +81,7 @@
 
         SavePlaylist,
 
-        OpenPl,
+        OpenPlaylst,
 
         ShowInExplorer,
 
@@ -105,6 +105,8 @@
         PanUp,
         PanRight,
         PanDown,
+        PanLeftOrPrev,
+        PanRightOrNext,
 
         PanLeftup,
         PanRightup,

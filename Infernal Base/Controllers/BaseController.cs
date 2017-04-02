@@ -76,7 +76,7 @@ namespace Imp.Base.Controllers
                     cmdList.Add(new ImpTextAndCommand("Shuffle playlist", ImpCommand.Shuffle));
                     break;
                 case ContextMenuEnum.Playlist:
-                    cmdList.Add(new ImpTextAndCommand("Play this", ImpCommand.OpenPl));
+                    cmdList.Add(new ImpTextAndCommand("Play this", ImpCommand.OpenPlaylst));
                     cmdList.Add(new ImpTextAndCommand("Remove selected", ImpCommand.RemoveSelected));
                     cmdList.Add(new ImpTextAndCommand("Sort files", ImpCommand.Sort));
                     cmdList.Add(new ImpTextAndCommand("Sort files by dates", ImpCommand.Sort, FileSortMode.Date));
@@ -242,11 +242,19 @@ namespace Imp.Base.Controllers
                 case ImpCommand.PanLeft:
                     this.imageController.MoveTranslation((double) argument, 0);
                     break;
+                case ImpCommand.PanLeftOrPrev:
+                    if (this.imageController.Zoom <= 1) { this.Exec(ImpCommand.OpenPrev); }
+                    else { this.Exec(ImpCommand.PanLeft, argument); }
+                    break;
                 case ImpCommand.PanUp:
                     this.imageController.MoveTranslation(0, (double)argument);
                     break;
                 case ImpCommand.PanRight:
                     this.imageController.MoveTranslation(-(double)argument, 0);
+                    break;
+                case ImpCommand.PanRightOrNext:
+                    if (this.imageController.Zoom <= 1) { this.Exec(ImpCommand.OpenNext); }
+                    else { this.Exec(ImpCommand.PanRight, argument); }
                     break;
                 case ImpCommand.PanDown:
                     this.imageController.MoveTranslation(0, -(double)argument);
@@ -292,7 +300,7 @@ namespace Imp.Base.Controllers
                     break;
                 case ImpCommand.SavePlaylist:
                     break;
-                case ImpCommand.OpenPl:
+                case ImpCommand.OpenPlaylst:
                     OpenSelectedInPlayList();
                     break;
                 case ImpCommand.ShowInExplorer:
