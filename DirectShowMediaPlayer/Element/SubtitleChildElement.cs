@@ -1,10 +1,11 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 
 namespace Imp.DirectShow.Element
 {
-    public class SubtitleChildElement // : Control // System.Windows.Controls.Image
+    public class SubtitleChildElement// : Control // System.Windows.Controls.Image
     {
         #region  Public Fields and Properties
 
@@ -56,12 +57,13 @@ namespace Imp.DirectShow.Element
             this.RenderTransform = null;
         }
 
-        public void TranslatePoint(Point translatePoint, SubtitleChildElement control)
-        {
-        }
+        //public void TranslatePoint(Point translatePoint, SubtitleChildElement control)
+        //{
+        //}
 
         public void Render(DrawingContext drawingContext)
         {
+            
             if (this.FormattedText != null)
             {
                 drawingContext.DrawText(this.FormattedText, this.FormattedTextPos);
@@ -73,7 +75,7 @@ namespace Imp.DirectShow.Element
                 this.GeometryPen.EndLineCap = PenLineCap.Round;
                 this.GeometryPen.LineJoin = PenLineJoin.Round;
                 this.GeometryPen.StartLineCap = PenLineCap.Round;
-                drawingContext.DrawGeometry(null, this.GeometryPen, this.Geometry.GetAsFrozen() as Geometry);
+                drawingContext.DrawGeometry(null, this.GeometryPen, this.Geometry);
             }
         }
 
