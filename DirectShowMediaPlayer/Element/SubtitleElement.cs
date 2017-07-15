@@ -1,18 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+//using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using Imp.Base.Libraries;
+using Imp.DirectShow.DirectX;
 using Imp.DirectShow.Helpers;
 using Imp.DirectShow.Subtitles;
 using Nikse.SubtitleEdit.Core;
 using SEdge.Core;
+using Brush = System.Windows.Media.Brush;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
+using ColorConverter = System.Windows.Media.ColorConverter;
+using FontFamily = System.Windows.Media.FontFamily;
+using Image = System.Windows.Controls.Image;
+using Pen = System.Windows.Media.Pen;
+using Point = System.Windows.Point;
+using Size = System.Windows.Size;
 
 namespace Imp.DirectShow.Element
 {
@@ -37,6 +49,8 @@ namespace Imp.DirectShow.Element
         //private double bottomReserved;
         //private double topReserved;
 
+        Image SubtitleImage = new Image();
+        private RenderTargetBitmap bmp;
         /// <summary> 
         /// Store added texts so that duplicate entries will properly collide with each other.
         /// Contains used reserved value.
@@ -80,19 +94,21 @@ namespace Imp.DirectShow.Element
             //RenderOptions.SetBitmapScalingMode(drawingVisual, BitmapScalingMode.HighQuality);
             //RenderOptions.SetEdgeMode(drawingVisual, EdgeMode.Aliased);
             //TextOptions.SetTextRenderingMode(drawingVisual, TextRenderingMode.Aliased);
-
+            this.HorizontalAlignment = HorizontalAlignment.Stretch;
+            this.VerticalAlignment = VerticalAlignment.Stretch;
             for (int i = 0; i < 100; i++)
             {
                 var child = new SubtitleChildElement
                 {
-
                     Name = "childSubs" + i
                 };
-                //this.AddChild(child);
-                this.Children.Add(child);
+                ////this.AddChild(child);
+                ////this.Children.Add(child);
                 this.controls.Add(child);
             }
 
+            this.Children.Add(this.SubtitleImage);
+            //SubtitleImage.Opacity = 0.5;
             this.defaultStyle = new SsaStyle();
         }
 
@@ -116,7 +132,7 @@ namespace Imp.DirectShow.Element
             //this.InvalidateArrange();
             InvalidateVisual();
             //this.UpdateLayout();
-            Visibility = Visibility.Hidden;
+            this.Visibility = Visibility.Hidden;
         }
 
         public void Add(EnhancedParagraph p)
@@ -224,17 +240,19 @@ namespace Imp.DirectShow.Element
 
                     mainControl.FormattedText = fText; // drawingContext.DrawText(fText, finalPoint);
                     mainControl.FormattedTextPos = finalPoint;
-                    mainControl.InvalidateVisual();
+                    //mainControl.InvalidateVisual();
                     mainControl.Visibility = Visibility.Visible;
                     //mainControl.Draw();
                     if (outlinePen.Thickness > 0)
                     {
                         //outLineControl.FormattedText = fText;
                         outLineControl.Geometry = fText.BuildGeometry(finalPoint);
-                        outLineControl.InvalidateVisual();
+                        //outLineControl.InvalidateVisual();
                         outLineControl.Visibility = Visibility.Visible;
                         //outLineControl.Draw();
                     }
+
+                    this.SubtitleImage.InvalidateVisual();
                     //Geometry textGeometry = fText.BuildGeometry(finalPoint);
                     //
                     //drawingContext.DrawGeometry(null, outlinePen, textGeometry);
@@ -256,9 +274,44 @@ namespace Imp.DirectShow.Element
                     //drawingContext.DrawImage(renderTargetBitmap, new Rect(new Size(this.ActualWidth, ActualHeight)));
                 }
             }
+
+
+            drawToImage();
             base.OnRender(drawingContext);
         }
 
+        private void drawToImage()
+        {
+            DrawingVisual drawingVisual = new DrawingVisual();
+            DrawingContext drawingContext = drawingVisual.RenderOpen();
+
+            for (int i = 0; i < this.controls.Count; i++)
+            {
+                var control = this.controls[i];
+
+                if (control.Visibility == Visibility.Hidden)
+                {
+                    break;
+                }
+
+                control.Render(drawingContext);
+
+            }
+            //drawingContext.DrawRectangle(Brushes.Aqua, new Pen(Brushes.Aqua, 1), new Rect(0, 0, this.ActualWidth, this.ActualHeight));
+            drawingContext.Close();
+            //RenderTargetBitmap bmp = new RenderTargetBitmap((int), (int)this.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            this.bmp?.Clear();
+
+            if (this.bmp == null || this.bmp.Width != this.ActualWidth || this.bmp.Height != this.ActualHeight)
+            {
+                this.bmp = new RenderTargetBitmap((int)this.ActualWidth, (int)this.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                
+            }
+            
+            this.bmp.Render(drawingVisual);
+            this.SubtitleImage.Source = this.bmp;
+            //this.InvalidateVisual();
+        }
 
         private Point SetStylePosition(Point? point, SsaStyle style, Size scale, FormattedText fText, string alignment, Point leftTopCorner, EnhancedParagraph paragraph)
         {

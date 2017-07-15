@@ -129,12 +129,7 @@ namespace Imp.DirectShow.Element
         protected virtual void InitializeMediaPlayer()
         {
             this.controller.Player = this;
-            this.SubtitleElement.Clear();
-            this.SubtitleElement.Visibility = this.controller.SelectedSubtitleTrack != null ? Visibility.Visible : Visibility.Hidden;
-            this.SubtitleElement.CopyFonts(this.controller.Fonts);
-            this.SubtitleElement.ImageWidthFunc = () => this.VideoImage?.ActualWidth ?? 0;
-            this.SubtitleElement.ImageHeightFunc = () => this.VideoImage?.ActualHeight ?? 0;
-
+            
             /* Hook into the normal .NET events */
             controller.MediaEnded += OnMediaPlayerEnded;
 
@@ -145,6 +140,12 @@ namespace Imp.DirectShow.Element
 
             controller.Volume = Volume;
             controller.Activate();
+
+            this.SubtitleElement.Clear();
+            this.SubtitleElement.Visibility = this.controller.SelectedSubtitleTrack != null ? Visibility.Visible : Visibility.Hidden;
+            this.SubtitleElement.CopyFonts(this.controller.Fonts);
+            this.SubtitleElement.ImageWidthFunc = () => this.VideoImage?.ActualWidth ?? 0;
+            this.SubtitleElement.ImageHeightFunc = () => this.VideoImage?.ActualHeight ?? 0;
         }
 
         public void ResetSubtitles()

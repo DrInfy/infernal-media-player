@@ -60,7 +60,7 @@ namespace Imp.DirectShow.Subtitles
                 typeface.TryGetGlyphTypeface(out glyphs);
                 var family = glyphs.FamilyNames[CultureInfo.GetCultureInfo("en-US")];
 
-                if (!fontFamilies.ContainsKey(family))
+                if (family != null && !fontFamilies.ContainsKey(family))
                 {
                     fontFamilies.Add(family, fontFamily2);
                 }
