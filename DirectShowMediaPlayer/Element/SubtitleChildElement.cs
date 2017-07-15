@@ -58,7 +58,8 @@ namespace Imp.DirectShow.Element
                 GeometryPen.EndLineCap = PenLineCap.Round;
                 GeometryPen.LineJoin = PenLineJoin.Round;
                 GeometryPen.StartLineCap = PenLineCap.Round;
-                drawingContext.DrawGeometry(null, GeometryPen, Geometry);
+                drawingContext.DrawGeometry(null, GeometryPen, Geometry.GetAsFrozen() as Geometry);
+                
             }
 
             base.OnRender(drawingContext);

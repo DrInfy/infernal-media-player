@@ -158,15 +158,16 @@ namespace Imp.DirectShow.Element
 
                     var mainControl = this.controls[controlIndex * 2 + 1];
                     var outLineControl = this.controls[controlIndex * 2];
-
                     controlIndex++;
-                    if (controlIndex > this.controls.Count)
+
+                    if (controlIndex*2 >= this.controls.Count)
                     {
                         // No can do.
-                        Debugger.Break();
+                        //Debugger.Break();
                         base.OnRender(drawingContext);
                         return;
                     }
+
 
                     FormattedText fText;
                     Pen outlinePen;
@@ -880,6 +881,7 @@ namespace Imp.DirectShow.Element
                     outlineControl.BlurEffect.Radius = r;
                     outlineControl.BlurEffect.RenderingBias = RenderingBias.Performance;
                     outlineControl.Effect = outlineControl.BlurEffect;
+                    
                 }
                 else
                 {

@@ -473,18 +473,18 @@ namespace Imp.DirectShow.Player
             try
             {
                 var finalSubs = SubtitleFormatReader.ParseHeader(selectedSubs, format);
-                if (finalSubs.Header.PlayResX == null && finalSubs.Header.PlayResY == null)
+                if (!ValidSize(finalSubs.Header.PlayResX) && !ValidSize( finalSubs.Header.PlayResY))
                 {
                     finalSubs.Header.PlayResX = (int)playerControllerVideoSize.Width;
                     finalSubs.Header.PlayResY = (int)playerControllerVideoSize.Height;
                 }
-                else if (finalSubs.Header.PlayResY == null)
+                else if (!ValidSize(finalSubs.Header.PlayResY ))
                 {
                     finalSubs.Header.PlayResY = (int)(finalSubs.Header.PlayResX * playerControllerVideoSize.Height / playerControllerVideoSize.Width);
                 }
-                else if (finalSubs.Header.PlayResX == null)
+                else if (!ValidSize(finalSubs.Header.PlayResX ))
                 {
-                    finalSubs.Header.PlayResY = (int)(finalSubs.Header.PlayResY * playerControllerVideoSize.Width / playerControllerVideoSize.Height);
+                    finalSubs.Header.PlayResX = (int)(finalSubs.Header.PlayResY * playerControllerVideoSize.Width / playerControllerVideoSize.Height);
                 }
 
                 finalSubs.Paragraphs = new List<EnhancedParagraph>();
@@ -503,6 +503,11 @@ namespace Imp.DirectShow.Player
             }
 
             return null;
+        }
+
+        private bool ValidSize(int? size)
+        {
+            return size > 0;
         }
 
 

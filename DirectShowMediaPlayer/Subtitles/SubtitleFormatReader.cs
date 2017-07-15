@@ -106,6 +106,7 @@ namespace Imp.DirectShow.Subtitles
             if (isChar(index, text, '<') && !isChar(index - 1, text, '\\'))
             {
                 var end = text.IndexOf('>');
+                if (end < index) { return false; }
                 var key = CutOff(index, ref text, end);
                 var closingTag = "</" + key.Split(new[] {' '}, 2, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() + ">";
                 var startAnother = text.IndexOf(closingTag, StringComparison.Ordinal);
