@@ -18,11 +18,14 @@ using Imp.Base.FileData;
 using Imp.Base.FileLoading;
 using Imp.Base.Libraries;
 using Imp.Base.ListLogic;
+using Imp.Base.Player;
 using Imp.Controls.Controllers;
 using Imp.DirectShow.Player;
+using Imp.MpvPlayer;
 using Imp.Player.Image;
 using Imp.Player.Libraries;
 using Microsoft.WindowsAPICodePack.Taskbar;
+using PlayerController = Imp.MpvPlayer.PlayerController;
 
 #endregion
 
@@ -40,7 +43,7 @@ namespace Imp.Player.Controllers
 
         public readonly Popup ContentMenu;
         private readonly ImageLoader imageLoader;
-        private readonly MediaLoader mediaLoader;
+        private readonly MpvLoader mediaLoader;
         private readonly MainWindow window;
         private BitmapSource currentImage;
         //private readonly SubtitleController subtitleController;
@@ -75,7 +78,7 @@ namespace Imp.Player.Controllers
                 window.PlayerBottom.ButtonMute,
                 window.PlayerBottom.ButtonLoop, this.EventC);
 
-            window.UriPlayer.SubtitleElement = window.Subtitles;
+            //window.UriPlayer.SubtitleElement = window.Subtitles;
             //subtitleController = new SubtitleController(window);
 
             Initialize(this.EventC, this.PanelC, mediaController, new ImageManipulator(window.ImageViewer));
@@ -85,7 +88,7 @@ namespace Imp.Player.Controllers
             this.imageLoader.Loaded += ImageLoaded;
             this.imageLoader.LoadFailed += LoadFailed;
 
-            this.mediaLoader = new MediaLoader(window.Dispatcher) { Subtitles = this.Settings.Subtitles };
+            this.mediaLoader = new MpvLoader(window.Dispatcher, this.window.UriPlayer);
             this.mediaLoader.Loaded += MediaLoaded;
             this.mediaLoader.LoadFailed += LoadFailed;
 
@@ -145,9 +148,9 @@ namespace Imp.Player.Controllers
                 return;
             }
 
-            if (this.window.UriPlayer.Controller != null)
+            if (this.window.UriPlayer.IsPlaying)
             {
-                this.window.UriPlayer.Controller.Command(MediaCommand.Close);
+                this.window.UriPlayer.Close();
                 this.MediaC.MediaClosed();
                 this.playingItem = null;
             }
@@ -236,7 +239,7 @@ namespace Imp.Player.Controllers
             //loadingItem = null;
             this.itemOnPlayer = this.playingItem;
 
-            this.window.UriPlayer.Controller = playerController;
+            //this.window.UriPlayer.Controller = playerController; // TODO:
             if (this.window.UriPlayer.HasVideo)
             {
                 this.window.ImageViewer.Visibility = Visibility.Hidden;
@@ -301,16 +304,16 @@ namespace Imp.Player.Controllers
 
         protected override void ChangeSubtitles(object argument)
         {
-
-            if (this.window.UriPlayer?.Controller != null)
-            {
-                this.window.UriPlayer.Controller.SubtitleTrackIndex++;
-                this.EventC.SetEvent(new EventText("Subtitle " + (this.window.UriPlayer.Controller.SubtitleTrackIndex + 1).ToString() + "!"));
-            }
-            else
-            {
-                this.EventC.SetEvent(new EventText("Not playing!"));
-            }
+            // Todo
+            //if (this.window.UriPlayer?.Controller != null)
+            //{
+            //    this.window.UriPlayer.Controller.SubtitleTrackIndex++;
+            //    this.EventC.SetEvent(new EventText("Subtitle " + (this.window.UriPlayer.Controller.SubtitleTrackIndex + 1).ToString() + "!"));
+            //}
+            //else
+            //{
+            //    this.EventC.SetEvent(new EventText("Not playing!"));
+            //}
         }
 
         protected override void Shuffle()
@@ -326,7 +329,7 @@ namespace Imp.Player.Controllers
         protected override void ClearPlayers()
         {
             this.window.ImageViewer.Source = null;
-            this.window.UriPlayer.Controller?.Command(MediaCommand.Close);
+            this.window.UriPlayer.Close();
         }
 
         protected override void RemoveSelectedPath()

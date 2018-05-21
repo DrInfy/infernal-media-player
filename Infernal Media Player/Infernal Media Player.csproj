@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Imp.Player</RootNamespace>
     <AssemblyName>Infernal Media Player</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -235,6 +235,10 @@
       <Project>{898c26c5-f2e9-4516-88f1-4c555681c278}</Project>
       <Name>Imp Controls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Imp.MpvPlayer\Imp.MpvPlayer.csproj">
+      <Project>{4183d70d-9ed7-4521-9815-0fc8c8299fb0}</Project>
+      <Name>Imp.MpvPlayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Infernal Base\Infernal Base.csproj">
       <Project>{432c12b3-4f8c-4bea-91dd-50562a8383d6}</Project>
       <Name>Infernal Base</Name>
@@ -266,6 +270,14 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="mpv-1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="youtube-dl.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -80,6 +80,7 @@
     <Compile Include="Controllers\IBaseController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\ImpFader.cs" />
+    <Compile Include="Player\IPlayerController.cs" />
     <Compile Include="Controllers\KeyboardController.cs" />
     <Compile Include="FileLoading\DirectoryLoadOptions.cs" />
     <Compile Include="EventText.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="ListLogic\SelectionMode.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="ListLogic\ImpTextAndCommand.cs" />
+    <Compile Include="Player\MediaCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

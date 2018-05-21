@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Imp.Base.Interfaces;
 using Imp.Base.Libraries;
+using Imp.Base.Player;
 using Imp.DirectShow.Player;
 
 namespace Imp.DirectShow.Element

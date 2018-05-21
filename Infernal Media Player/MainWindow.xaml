@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
     xmlns:element="clr-namespace:Imp.DirectShow.Element;assembly=MediaPlayer"
+    xmlns:mpv="clr-namespace:Imp.MpvPlayer;assembly=Imp.MpvPlayer"
     xmlns:controls="clr-namespace:Imp.Controls;assembly=ImpControls"
     xmlns:lists="clr-namespace:Imp.Controls.Lists;assembly=ImpControls"
     xmlns:panels="clr-namespace:Imp.Player.Panels"
@@ -49,9 +50,11 @@
         <controls:ImpButton x:Name="ButtonOpen" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"  Margin="0,0,160,0" VerticalAlignment="Stretch" Width="40" Grid.ColumnSpan="5" IsTabStop="False"/>
 
         <Rectangle Name="SplitterLeft" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
-        <element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded"  />
+
+        <mpv:Player x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" />
+        <!--<element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded"  />-->
         <Image x:Name="LogoViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Source="/Infernal Media Player;component/Images/imp-logo.png" Stretch="None" />
-        <element:SubtitleElement x:Name="Subtitles" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden"/>
+        <!--<element:SubtitleElement x:Name="Subtitles" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden"/>-->
 
         <Rectangle Name="SplitterRight" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
 
@@ -63,7 +66,7 @@
 
         <panels:MediaPlayerBottom x:Name="PlayerBottom" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" IsTabStop="False"/>
         <panels:ImageViewerBottom x:Name="ViewerBottom" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" IsTabStop="False"/>
-        <Label x:Name="LabelEvent" Style="{StaticResource ShadowStyle}" Grid.Row="1" Grid.Column="2" Content="Titleeeeeeeeeeee" HorizontalAlignment="Left" Margin="0,0,200,0" VerticalAlignment="Top" FontSize="18" Height="35" Width="500" IsTabStop="False"/>
+        <Label x:Name="LabelEvent" Style="{StaticResource ShadowStyle}" Grid.Row="1" Grid.Column="2" Content="Titleeeeeeeeeeee" HorizontalAlignment="Left" Margin="0,0,200,0" VerticalAlignment="Top" FontSize="18" Height="35" Width="500"  IsTabStop="False"/>
 
 
         <Popup Name="ContentMenu" Placement="Absolute" MouseLeave="ContentMenu_MouseLeave">

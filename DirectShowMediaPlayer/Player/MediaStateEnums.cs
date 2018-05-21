@@ -1,13 +1,5 @@
 ﻿namespace Imp.DirectShow.Player
 {
-    public enum MediaCommand
-    {
-        Stop,
-        Play,
-        Pause,
-        Close
-    }
-
     public enum MediaStatus
     {
         NoFile,

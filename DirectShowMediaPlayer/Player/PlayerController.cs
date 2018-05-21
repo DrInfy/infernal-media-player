@@ -21,6 +21,7 @@ using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Mp4.Boxes;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
 using Imp.Base.Libraries;
+using Imp.Base.Player;
 using Imp.DirectShow.Element;
 using Timer = System.Timers.Timer;
 
@@ -28,7 +29,7 @@ using Timer = System.Timers.Timer;
 
 namespace Imp.DirectShow.Player
 {
-    public class PlayerController
+    public class PlayerController : IPlayerController
     {
         #region Fields
 
