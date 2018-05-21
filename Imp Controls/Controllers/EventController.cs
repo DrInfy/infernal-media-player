@@ -3,7 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 using Imp.Base;
 using Imp.Base.Interfaces;
@@ -18,6 +20,7 @@ namespace Imp.Controls.Controllers
         #region Fields
 
         private readonly Dispatcher dispatcher;
+        private readonly Popup windowLabelPopup;
         private readonly Label eventLabel;
         private readonly Label titleLabel;
         private readonly object eventLock = new object();
@@ -29,9 +32,10 @@ namespace Imp.Controls.Controllers
 
         #endregion
 
-        public EventController(Dispatcher dispatcher, Label eventLabel, Label titleLabel)
+        public EventController(Dispatcher dispatcher, Popup windowLabelPopup, Label eventLabel, Label titleLabel)
         {
             this.dispatcher = dispatcher;
+            this.windowLabelPopup = windowLabelPopup;
             this.eventLabel = eventLabel;
             this.titleLabel = titleLabel;
 
@@ -79,6 +83,12 @@ namespace Imp.Controls.Controllers
             }
         }
 
+        public void RefreshPosition()
+        {
+            this.windowLabelPopup.IsOpen = false;
+            this.windowLabelPopup.IsOpen = true;
+        }
+
         private void SetEventText(EventText eventText)
         {
             if (EnsureMainThread())
@@ -89,6 +99,7 @@ namespace Imp.Controls.Controllers
 
             titleLabel.Content = eventText.Text;
             eventLabel.Content = eventText.Text;
+            RefreshPosition();
         }
 
         private bool EnsureMainThread()
@@ -131,6 +142,7 @@ namespace Imp.Controls.Controllers
         {
             titleLabel.Content = TitleText;
             eventLabel.Content = "";
+            this.windowLabelPopup.IsOpen = false;
         }
     }
 }

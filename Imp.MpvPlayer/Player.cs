@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using Imp.Base.Interfaces;
 using Mpv.WPF;
 
@@ -88,13 +89,12 @@ namespace Imp.MpvPlayer
             };
             this.Children.Add(this.player);
 
-            
+            this.player.KeepOpen = KeepOpen.Always;
             this.player.MediaLoaded += PlayerOnMediaLoaded;
             this.player.MediaUnloaded += PlayerOnMediaUnloaded;
             this.player.PositionChanged += PlayerOnPositionChanged;
-            
         }
-
+        
         private void PlayerOnMediaLoaded(object sender, EventArgs e)
         {
             this.controller.IsMediaLoaded = true;
@@ -111,6 +111,11 @@ namespace Imp.MpvPlayer
         private void PlayerOnPositionChanged(object sender, PositionChangedEventArgs e)
         {
             this.controller.Position = TimeSpan.FromSeconds(e.Position);
+
+            if (this.IsPlaying && this.controller.Position == this.controller.Duration)
+            {
+                this.Dispatcher.Invoke(() => this.MediaPlayerEnded?.Invoke());
+            }
         }
 
         #endregion

@@ -20,6 +20,8 @@
     
     <Grid x:Name="grid" Background="Black" MouseDown="grid_MouseDown" MouseMove="grid_MouseMove" MouseUp="grid_MouseUp" ScrollViewer.VerticalScrollBarVisibility="Disabled">
 
+        
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" x:Name="panelLeft"/>
             <ColumnDefinition Width="5" x:Name="resizeLeft"/>
@@ -51,7 +53,7 @@
 
         <Rectangle Name="SplitterLeft" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Focusable="False"/>
 
-        <mpv:Player x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" />
+        <mpv:Player x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Background="Black" Visibility="Hidden" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded" />
         <!--<element:MediaUriPlayer x:Name="UriPlayer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" MouseDown="UriPlayer_MouseDown" MediaPlayerEnded="UriPlayer_MediaPlayerEnded"  />-->
         <Image x:Name="LogoViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Source="/Infernal Media Player;component/Images/imp-logo.png" Stretch="None" />
         <!--<element:SubtitleElement x:Name="Subtitles" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" Visibility="Hidden"/>-->
@@ -66,8 +68,10 @@
 
         <panels:MediaPlayerBottom x:Name="PlayerBottom" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" IsTabStop="False"/>
         <panels:ImageViewerBottom x:Name="ViewerBottom" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" IsTabStop="False"/>
-        <Label x:Name="LabelEvent" Style="{StaticResource ShadowStyle}" Grid.Row="1" Grid.Column="2" Content="Titleeeeeeeeeeee" HorizontalAlignment="Left" Margin="0,0,200,0" VerticalAlignment="Top" FontSize="18" Height="35" Width="500"  IsTabStop="False"/>
-
+        <!--<Label x:Name="LabelEvent" Style="{StaticResource ShadowStyle}" Panel.ZIndex="1000" Grid.Row="1" Grid.Column="2" Content="Titleeeeeeeeeeee" HorizontalAlignment="Left" Margin="0,0,200,0" VerticalAlignment="Top" FontSize="18" Height="35" Width="500"  IsTabStop="False"/>-->
+        <Popup x:Name="LabelPopup" Grid.ColumnSpan="5" Grid.RowSpan="3" Height="35" Width="500" Placement="Relative" AllowsTransparency="True" PlacementTarget="{Binding ElementName=grid}">
+            <Label x:Name="LabelEvent" Content="Titlee" Style="{StaticResource ShadowStyle}"  FontSize="18"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Label>
+        </Popup>
 
         <Popup Name="ContentMenu" Placement="Absolute" MouseLeave="ContentMenu_MouseLeave">
             <lists:ContextMenuList Name="MenuList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" MouseDown="MenuList_MouseDown" TouchTap="MenuList_OnTouchTap" />

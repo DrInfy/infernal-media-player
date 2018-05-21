@@ -69,7 +69,7 @@ namespace Imp.Player.Controllers
             ToolTipService.ShowDurationProperty.OverrideMetadata(
                 typeof (DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
-            this.EventC = new EventController(window.Dispatcher, window.LabelEvent, window.LabelTopic);
+            this.EventC = new EventController(window.Dispatcher, window.LabelPopup, window.LabelEvent, window.LabelTopic);
             this.PanelC = new PanelController(window);
 
             var mediaController = new MediaController(
@@ -678,6 +678,7 @@ namespace Imp.Player.Controllers
 
         public void Resize()
         {
+            this.EventC.RefreshPosition();
             this.PanelC.CheckResize();
             this.imageController.ScreenSizeChanged();
         }

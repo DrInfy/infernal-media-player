@@ -11,5 +11,6 @@ namespace Imp.Base.Interfaces
         void ShowError(ImpError error);
         void SetEvent(EventText eventText);
         void SetTitle(string title);
+        void RefreshPosition();
     }
 }
