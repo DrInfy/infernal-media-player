@@ -51,6 +51,7 @@ namespace Imp.Player.Controllers
             cmds.Add(new KeyCommand<ImpCommand>() {Command = ImpCommand.VolumeChange, Key = Key.Down, NeedRelease = false, ModifierKeys = ModifierKeys.Control, Argument = -0.01, AllowedStyle = PlayerStyle.MediaPlayer });
             cmds.Add(new KeyCommand<ImpCommand>() {Command = ImpCommand.VolumeMute, Key = Key.M, NeedRelease = true, AllowedStyle = PlayerStyle.MediaPlayer });
             cmds.Add(new KeyCommand<ImpCommand>() {Command = ImpCommand.ChangeSubtitles, Key = Key.X, NeedRelease = true, AllowedStyle = PlayerStyle.MediaPlayer });
+            cmds.Add(new KeyCommand<ImpCommand>() {Command = ImpCommand.ChangeAudioTrack, Key = Key.C, NeedRelease = true, AllowedStyle = PlayerStyle.MediaPlayer });
 
 
             // Open previous / next keycommands

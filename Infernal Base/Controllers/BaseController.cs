@@ -354,10 +354,15 @@ namespace Imp.Base.Controllers
                 case ImpCommand.ChangeSubtitles:
                     ChangeSubtitles(argument);
                     break;
+                case ImpCommand.ChangeAudioTrack:
+                    ChangeAudioTrack(argument);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("cmd");
             }
         }
+
+        protected abstract void ChangeAudioTrack(object argument);
 
         protected abstract void ChangeSubtitles(object argument);
 

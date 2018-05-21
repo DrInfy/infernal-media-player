@@ -302,18 +302,65 @@ namespace Imp.Player.Controllers
             this.window.MenuList.CaptureMouse();
         }
 
+        protected override void ChangeAudioTrack(object argument)
+        {
+            if (this.window.UriPlayer.IsPlaying)
+            {
+                if (EnsureMainThread())
+                {
+                    this.window.Dispatcher.Invoke(() => ChangeAudioTrack(argument));
+                    return;
+                }
+
+                if (argument != null)
+                {
+                    var trackId = (int)argument;
+                    this.window.UriPlayer.SetAudioTrack(trackId);
+                    this.EventC.SetEvent(new EventText("Subtitle " + trackId + "!"));
+                }
+                else
+                {
+                    var trackId = this.window.UriPlayer.NextAudioTrack();
+                    this.EventC.SetEvent(new EventText("Subtitle " + trackId + "!"));
+                }
+            }
+            else
+            {
+                this.EventC.SetEvent(new EventText("Not playing!"));
+            }
+        }
+
+        private bool EnsureMainThread()
+        {
+            return Thread.CurrentThread != this.window.Dispatcher.Thread;
+        }
+
         protected override void ChangeSubtitles(object argument)
         {
-            // Todo
-            //if (this.window.UriPlayer?.Controller != null)
-            //{
-            //    this.window.UriPlayer.Controller.SubtitleTrackIndex++;
-            //    this.EventC.SetEvent(new EventText("Subtitle " + (this.window.UriPlayer.Controller.SubtitleTrackIndex + 1).ToString() + "!"));
-            //}
-            //else
-            //{
-            //    this.EventC.SetEvent(new EventText("Not playing!"));
-            //}
+            if (this.window.UriPlayer.IsPlaying)
+            {
+                if (EnsureMainThread())
+                {
+                    this.window.Dispatcher.Invoke(() => ChangeSubtitles(argument));
+                    return;
+                }
+
+                if (argument != null)
+                {
+                    var trackId = (int) argument;
+                    this.window.UriPlayer.SetSubtitle(trackId);
+                    this.EventC.SetEvent(new EventText("Subtitle " + trackId + "!"));
+                }
+                else
+                {
+                    var trackId = this.window.UriPlayer.NextSubtitle();
+                    this.EventC.SetEvent(new EventText("Subtitle " + trackId + "!"));
+                }
+            }
+            else
+            {
+                this.EventC.SetEvent(new EventText("Not playing!"));
+            }
         }
 
         protected override void Shuffle()

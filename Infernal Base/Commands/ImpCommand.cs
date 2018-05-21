@@ -135,6 +135,7 @@
 
         RemoveSelectedPath,
         Shuffle,
-        ChangeSubtitles
+        ChangeSubtitles,
+        ChangeAudioTrack
     }
 }

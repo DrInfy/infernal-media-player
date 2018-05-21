@@ -1,11 +1,15 @@
 ﻿#region Usings
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using Imp.Base.Interfaces;
+using Imp.MpvPlayer.Containers;
 using Mpv.WPF;
+using Newtonsoft.Json;
 
 #endregion
 
@@ -48,6 +52,10 @@ namespace Imp.MpvPlayer
 
         public bool HasVideo => this.player.IsMediaLoaded;
 
+        public List<BaseTrack> Tracks { get; set; } = new List<BaseTrack>();
+        public List<BaseTrack> AudioTracks { get; set; } = new List<BaseTrack>();
+        public List<BaseTrack> SubtitleTracks { get; set; } = new List<BaseTrack>();
+
         #endregion
 
         #region Local Fields
@@ -77,8 +85,13 @@ namespace Imp.MpvPlayer
 
         public void Clear()
         {
+            Close();
+        }
+
+        public void Close()
+        {
+            Tracks = new List<BaseTrack>();
             this.player.Stop();
-            //this.player.Load(null);
         }
 
         public void Init()
@@ -118,11 +131,113 @@ namespace Imp.MpvPlayer
             }
         }
 
+        public void NoSubtitle()
+        {
+            this.player.API.SetPropertyString("sid", "no");
+        }
+
+        public void AutoSubtitle()
+        {
+            this.player.API.SetPropertyString("sid", "auto");
+        }
+
+        public void SetSubtitle(int srcId)
+        {
+            this.player.API.SetPropertyString("sid", srcId.ToString());
+        }
+
+        /// <summary>
+        /// Rotates subtitle tracks and no subtitle
+        /// </summary>
+        public int NextSubtitle()
+        {
+            var id = 0;
+            ReadTracks();
+
+            var selected = this.SubtitleTracks.FirstOrDefault(x => x.IsSelected);
+
+            if (selected != null)
+            {
+                var nextTrack = this.SubtitleTracks.Where(x => x.Id > selected.Id).OrderBy(x => x.Id).FirstOrDefault();
+
+                if (nextTrack != null)
+                {
+                    id = nextTrack.Id;
+                }
+                else
+                {
+                    id = 0;
+                }
+            }
+            else
+            {
+                id = 1;
+            }
+
+            if (id == 0)
+            {
+                NoSubtitle();
+            }
+            else
+            {
+                this.player.API.SetPropertyString("sid", id.ToString());
+            }
+
+            return id;
+        }
+
+        public void SetAudioTrack(int srcId)
+        {
+            this.player.API.SetPropertyString("aid", srcId.ToString());
+        }
+
+        /// <summary>
+        /// Rotates audio tracks
+        /// </summary>
+        public int NextAudioTrack()
+        {
+            var id = 0;
+            ReadTracks();
+
+            var selected = this.AudioTracks.FirstOrDefault(x => x.IsSelected);
+
+            if (selected != null)
+            {
+                var nextTrack = this.AudioTracks.Where(x => x.Id > selected.Id).OrderBy(x => x.Id).FirstOrDefault();
+
+                if (nextTrack != null)
+                {
+                    id = nextTrack.Id;
+                }
+                else
+                {
+                    id = 1;
+                }
+            }
+            else
+            {
+                id = 1;
+            }
+
+            this.player.API.SetPropertyString("aid", id.ToString());
+
+            return id;
+        }
+
+        private void ReadTracks()
+        {
+            var tracksJson = this.player.API.GetPropertyString("track-list");
+            if (tracksJson != null)
+            {
+                this.Tracks = JsonConvert.DeserializeObject<List<BaseTrack>>(tracksJson);
+            }
+
+            this.AudioTracks = this.Tracks.Where(x => x.Type == "audio").ToList();
+            this.SubtitleTracks = this.Tracks.Where(x => x.Type == "sub").ToList();
+        }
+
         #endregion
 
-        public void Close()
-        {
-            //throw new NotImplementedException();
-        }
+
     }
 }
