@@ -2,7 +2,6 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
-    xmlns:element="clr-namespace:Imp.DirectShow.Element;assembly=MediaPlayer"
     xmlns:mpv="clr-namespace:Imp.MpvPlayer;assembly=Imp.MpvPlayer"
     xmlns:controls="clr-namespace:Imp.Controls;assembly=ImpControls"
     xmlns:lists="clr-namespace:Imp.Controls.Lists;assembly=ImpControls"

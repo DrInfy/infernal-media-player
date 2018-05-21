@@ -155,7 +155,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controllers\SubtitleController.cs" />
     <Compile Include="DeleteItemsWindow.xaml.cs">
       <DependentUpon>DeleteItemsWindow.xaml</DependentUpon>
     </Compile>
@@ -227,10 +226,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectShowMediaPlayer\DirectShowMediaPlayer.csproj">
-      <Project>{85b2d6c8-5d46-4083-823c-9fb4cc52f19e}</Project>
-      <Name>DirectShowMediaPlayer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Imp Controls\Imp Controls.csproj">
       <Project>{898c26c5-f2e9-4516-88f1-4c555681c278}</Project>
       <Name>Imp Controls</Name>
@@ -242,10 +237,6 @@
     <ProjectReference Include="..\Infernal Base\Infernal Base.csproj">
       <Project>{432c12b3-4f8c-4bea-91dd-50562a8383d6}</Project>
       <Name>Infernal Base</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\libse\LibSE.csproj">
-      <Project>{3e3cb28f-3a7b-430f-9eb3-0d6c1e53b753}</Project>
-      <Name>LibSE</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

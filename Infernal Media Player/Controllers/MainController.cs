@@ -20,7 +20,6 @@ using Imp.Base.Libraries;
 using Imp.Base.ListLogic;
 using Imp.Base.Player;
 using Imp.Controls.Controllers;
-using Imp.DirectShow.Player;
 using Imp.MpvPlayer;
 using Imp.Player.Image;
 using Imp.Player.Libraries;
