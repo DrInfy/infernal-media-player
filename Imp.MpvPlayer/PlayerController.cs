@@ -26,12 +26,12 @@ namespace Imp.MpvPlayer
 
         public TimeSpan Position
         {
-            get => this.position;
+            get => this.targetPosition ?? this.currentPosition;
             set
             {
-                if (value != this.position)
+                if (value != this.currentPosition)
                 {
-                    this.position = value;
+                    this.currentPosition = value;
                     NotifyPropertyChanged(nameof(this.Position));
                 }
             }
@@ -50,13 +50,21 @@ namespace Imp.MpvPlayer
             }
         }
 
+        public double Volume
+        {
+            get => this.targetVolume;
+            set => this.targetVolume = (int)value;
+        }
+
         #endregion
 
         #region Local Fields
 
         private TimeSpan duration;
-        private TimeSpan position;
-
+        private TimeSpan? targetPosition;
+        private TimeSpan currentPosition;
+        
+        private int targetVolume;
         private bool isMediaLoaded;
 
         #endregion
@@ -69,6 +77,17 @@ namespace Imp.MpvPlayer
         {
             var eventArgs = new PropertyChangedEventArgs(propertyName);
             PropertyChanged?.Invoke(this, eventArgs);
+        }
+
+        public void SetTargetPosition(Mpv.WPF.MpvPlayer player, TimeSpan position)
+        {
+            this.targetPosition = position;
+            player.Position = position;
+        }
+
+        public void ClearTarget()
+        {
+            this.targetPosition = null;
         }
 
         #endregion

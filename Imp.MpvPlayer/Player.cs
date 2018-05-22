@@ -38,7 +38,7 @@ namespace Imp.MpvPlayer
             {
                 if (this.player.IsMediaLoaded)
                 {
-                    this.player.Position = TimeSpan.FromSeconds(value);
+                    this.controller.SetTargetPosition(this.player, TimeSpan.FromSeconds(value));
                 }
             } 
            
@@ -100,19 +100,32 @@ namespace Imp.MpvPlayer
             {
                 AutoPlay = true
             };
+
+
             this.Children.Add(this.player);
 
             this.player.KeepOpen = KeepOpen.Always;
             this.player.MediaLoaded += PlayerOnMediaLoaded;
             this.player.MediaUnloaded += PlayerOnMediaUnloaded;
             this.player.PositionChanged += PlayerOnPositionChanged;
+            this.player.MediaEndedSeeking += Player_MediaEndedSeeking;
         }
-        
+
+        private void Player_MediaEndedSeeking(object sender, EventArgs e)
+        {
+            this.controller.ClearTarget();
+        }
+
         private void PlayerOnMediaLoaded(object sender, EventArgs e)
         {
             this.controller.IsMediaLoaded = true;
 
             this.controller.Duration = this.player.Duration;
+            this.player.API.SetPropertyString("hr-seek", "yes");
+            this.player.API.SetPropertyString("hr-seek-framedrop", "yes");
+            //this.player.API.SetPropertyDouble("hr-seek-demuxer-offset", -1);
+            
+            
         }
 
         private void PlayerOnMediaUnloaded(object sender, EventArgs e)
