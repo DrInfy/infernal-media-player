@@ -24,7 +24,6 @@ using Imp.MpvPlayer;
 using Imp.Player.Image;
 using Imp.Player.Libraries;
 using Microsoft.WindowsAPICodePack.Taskbar;
-using PlayerController = Imp.MpvPlayer.PlayerController;
 
 #endregion
 
@@ -227,18 +226,11 @@ namespace Imp.Player.Controllers
             this.window.Title = this.playingItem.Name;
         }
 
-        private void MediaLoaded(PlayerController playerController)
+        private void MediaLoaded(bool success)
         {
-            //if (loadingItem.FileType.HasFlag(FileTypes.Videos))
-            //{
-            //    subtitleController.LoadSubtitles(loadingItem.FullPath, Path.GetExtension(loadingItem.FullPath), playerController.VideoSize);
-            //}
-
             this.playingItem = this.loadingItem;
-            //loadingItem = null;
             this.itemOnPlayer = this.playingItem;
-
-            //this.window.UriPlayer.Controller = playerController; // TODO:
+            
             if (this.window.UriPlayer.HasVideo)
             {
                 this.window.ImageViewer.Visibility = Visibility.Hidden;

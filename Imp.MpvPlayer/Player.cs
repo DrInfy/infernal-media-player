@@ -2,57 +2,88 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Controls;
-using System.Windows.Documents;
+using System.Windows.Media;
 using Imp.Base.Interfaces;
 using Imp.MpvPlayer.Containers;
-using Mpv.WPF;
+using Mpv.NET;
 using Newtonsoft.Json;
+using SEdge;
 
 #endregion
 
 namespace Imp.MpvPlayer
 {
-    public class Player : Grid, IMediaUriPlayer
+    public class Player : UserControl, IMediaUriPlayer
     {
-        public event Action MediaPlayerEnded;
+        #region Static Fields and Constants
 
-        public Player()
-        {
-            Init();
-        }
+        private const int timePosUserData = 10;
+
+        #endregion
 
         #region  Public Fields and Properties
 
-        public bool IsPlaying => this.player.IsMediaLoaded;
-        public double Duration => this.controller.Duration.TotalSeconds;
+        public bool IsPlaying { get; private set; }
+
+        public double Duration { get; private set; }
 
         public double Position
         {
-            get => this.controller.Position.TotalSeconds;
-            // TODO: Imp Fader
+            get
+            {
+                if (this.IsPlaying)
+                {
+                    if (this.seekTarget.HasValue)
+                    {
+                        return this.seekTarget.Value;
+                    }
 
+                    return this.cachedPosition;
+                }
+
+                return 0;
+            }
             set
             {
-                if (this.player.IsMediaLoaded)
+                if (this.IsPlaying)
                 {
-                    this.controller.SetTargetPosition(this.player, TimeSpan.FromSeconds(value));
+                    var totalSecondsString = value.ToString(CultureInfo.InvariantCulture);
+
+                    lock (this.mpv)
+                    {
+                        this.mpv.Command("seek", totalSecondsString, "absolute+exact");
+                    }
+
+                    this.seekTarget = value;
                 }
-            } 
-           
+            }
         }
 
         public double Volume
         {
-            get => 0; // TODO: Imp Fader
-            set => this.player.Volume = (int)(value * 100);
+            get
+            {
+                lock (this.mpv)
+                {
+                    return this.mpv.GetPropertyDouble("volume") * 0.01;
+                }
+            }
+            set
+            {
+                lock (this.mpv)
+                {
+                    this.mpv.SetPropertyDouble("volume", value * 100);
+                }
+            }
         }
 
-        public bool HasVideo => this.player.IsMediaLoaded;
+        public bool HasVideo { get; private set; }
 
         public List<BaseTrack> Tracks { get; set; } = new List<BaseTrack>();
+        public List<BaseTrack> VideoTracks { get; set; } = new List<BaseTrack>();
         public List<BaseTrack> AudioTracks { get; set; } = new List<BaseTrack>();
         public List<BaseTrack> SubtitleTracks { get; set; } = new List<BaseTrack>();
 
@@ -60,27 +91,41 @@ namespace Imp.MpvPlayer
 
         #region Local Fields
 
-        private PlayerController controller = new PlayerController();
+        private Mpv.NET.Mpv mpv;
+        private double? seekTarget;
+        private double cachedPosition;
 
-        internal Mpv.WPF.MpvPlayer player;
+        private MpvPlayerHwndHost playerHwndHost;
 
         #endregion
 
         #region Common
 
+        public Player()
+        {
+            Init();
+        }
+
         public void Play()
         {
-            this.player.Resume();
+            lock (this.mpv)
+            {
+                this.mpv.SetPropertyString("pause", "no");
+            }
         }
 
         public void Pause()
         {
-            this.player.Pause();
+            lock (this.mpv)
+            {
+                this.mpv.SetPropertyString("pause", "yes");
+            }
         }
 
         public void Stop()
         {
-            this.player.Position = TimeSpan.Zero;
+            Pause();
+            this.Position = 0;
         }
 
         public void Clear()
@@ -88,79 +133,174 @@ namespace Imp.MpvPlayer
             Close();
         }
 
+        public event Action MediaPlayerEnded;
+
+        public LoadingResult StartLoad([NotNull] string path)
+        {
+            LoadingResult result = new LoadingResult();
+
+            lock (this.mpv)
+            {
+                this.mpv.FileLoaded += result.MpvOnFileLoaded;
+                this.mpv.EndFile += result.MpvOnEndFile;
+                this.mpv.SetPropertyString("pause", "yes");
+                this.mpv.Command("loadfile", path, "replace");
+            }
+
+            return result;
+        }
+
+        public void FinalizeLoad(LoadingResult result)
+        {
+            if (result.Success)
+            {
+                this.IsPlaying = true;
+                ReadTracks();
+
+                lock (this.mpv)
+                {
+                    var durationSeconds = this.mpv.GetPropertyDouble("duration");
+                    this.Duration = durationSeconds;
+                    this.mpv.FileLoaded -= result.MpvOnFileLoaded;
+                    this.mpv.EndFile -= result.MpvOnEndFile;
+
+                    this.HasVideo = this.VideoTracks.Any();
+                }
+            }
+            else
+            {
+                this.HasVideo = false;
+            }
+        }
+
         public void Close()
         {
-            Tracks = new List<BaseTrack>();
-            this.player.Stop();
+            Stop();
+            this.Tracks.Clear();
         }
 
         public void Init()
         {
-            this.player = new Mpv.WPF.MpvPlayer("mpv-1.dll")
+            this.mpv = new Mpv.NET.Mpv("mpv-1.dll");
+
+            SetMpvHost();
+
+            this.Background = Brushes.Black;
+
+            this.mpv.SetPropertyString("keep-open", "always");
+
+            this.mpv.PlaybackRestart += MpvOnPlaybackRestart;
+            this.mpv.Seek += MpvOnSeek;
+
+            this.mpv.EndFile += MpvOnEndFile;
+
+            this.mpv.PropertyChange += MpvOnPropertyChange;
+
+            this.mpv.ObserveProperty("time-pos", MpvFormat.Double, timePosUserData);
+        }
+
+        private void MpvOnSeek(object sender, EventArgs e)
+        {
+            // TODO: Confirm: do nothing?
+        }
+
+        private void MpvOnPlaybackRestart(object sender, EventArgs e)
+        {
+            // Started playing again, i.e. no longer seeking.
+            this.seekTarget = null;
+        }
+
+        private void MpvOnPropertyChange(object sender, MpvPropertyChangeEventArgs e)
+        {
+            var eventProperty = e.EventProperty;
+
+            switch (e.ReplyUserData)
             {
-                AutoPlay = true
-            };
+                case timePosUserData:
+                    var newPosition = PointerReader.ReadDouble(eventProperty.Data);
 
-
-            this.Children.Add(this.player);
-
-            this.player.KeepOpen = KeepOpen.Always;
-            this.player.MediaLoaded += PlayerOnMediaLoaded;
-            this.player.MediaUnloaded += PlayerOnMediaUnloaded;
-            this.player.PositionChanged += PlayerOnPositionChanged;
-            this.player.MediaEndedSeeking += Player_MediaEndedSeeking;
+                    PlayerOnPositionChanged(newPosition);
+                    break;
+            }
         }
 
-        private void Player_MediaEndedSeeking(object sender, EventArgs e)
+        private void MpvOnEndFile(object sender, MpvEndFileEventArgs e)
         {
-            this.controller.ClearTarget();
-        }
+            bool shouldInvoke = !this.IsPlaying;
 
-        private void PlayerOnMediaLoaded(object sender, EventArgs e)
-        {
-            this.controller.IsMediaLoaded = true;
+            // File died
+            this.IsPlaying = false;
+            this.Position = 0;
 
-            this.controller.Duration = this.player.Duration;
-            this.player.API.SetPropertyString("hr-seek", "yes");
-            this.player.API.SetPropertyString("hr-seek-framedrop", "yes");
-            //this.player.API.SetPropertyDouble("hr-seek-demuxer-offset", -1);
-            
-            
-        }
-
-        private void PlayerOnMediaUnloaded(object sender, EventArgs e)
-        {
-            this.controller.IsMediaLoaded = false;
-            this.controller.Position = TimeSpan.Zero;
-        }
-
-        private void PlayerOnPositionChanged(object sender, PositionChangedEventArgs e)
-        {
-            this.controller.Position = TimeSpan.FromSeconds(e.Position);
-
-            if (this.IsPlaying && this.controller.Position == this.controller.Duration)
+            if (shouldInvoke)
             {
-                this.Dispatcher.Invoke(() => this.MediaPlayerEnded?.Invoke());
+                this.Dispatcher.Invoke(() => MediaPlayerEnded?.Invoke());
+            }
+        }
+
+        private void SetMpvHost()
+        {
+            // Create the HwndHost and add it to the user control.
+            this.playerHwndHost = new MpvPlayerHwndHost(this.mpv);
+            AddChild(this.playerHwndHost);
+        }
+
+        private void PlayerOnPositionChanged(double position)
+        {
+            if (this.IsPlaying)
+            {
+                this.cachedPosition = position;
+                string eof;
+
+                lock (this.mpv)
+                {
+                    try
+                    {
+                        eof = this.mpv.GetPropertyString("eof-reached");
+                    }
+                    catch
+                    {
+                        eof = null;
+                    }
+                }
+
+                if (eof == "yes")
+                {
+                    this.Dispatcher.Invoke(() => MediaPlayerEnded?.Invoke());
+                }
+            }
+            else
+            {
+                this.cachedPosition = 0;
             }
         }
 
         public void NoSubtitle()
         {
-            this.player.API.SetPropertyString("sid", "no");
+            lock (this.mpv)
+            {
+                this.mpv.SetPropertyString("sid", "no");
+            }
         }
 
         public void AutoSubtitle()
         {
-            this.player.API.SetPropertyString("sid", "auto");
+            lock (this.mpv)
+            {
+                this.mpv.SetPropertyString("sid", "auto");
+            }
         }
 
         public void SetSubtitle(int srcId)
         {
-            this.player.API.SetPropertyString("sid", srcId.ToString());
+            lock (this.mpv)
+            {
+                this.mpv.SetPropertyString("sid", srcId.ToString());
+            }
         }
 
         /// <summary>
-        /// Rotates subtitle tracks and no subtitle
+        ///     Rotates subtitle tracks and no subtitle
         /// </summary>
         public int NextSubtitle()
         {
@@ -193,7 +333,10 @@ namespace Imp.MpvPlayer
             }
             else
             {
-                this.player.API.SetPropertyString("sid", id.ToString());
+                lock (this.mpv)
+                {
+                    this.mpv.SetPropertyString("sid", id.ToString());
+                }
             }
 
             return id;
@@ -201,11 +344,14 @@ namespace Imp.MpvPlayer
 
         public void SetAudioTrack(int srcId)
         {
-            this.player.API.SetPropertyString("aid", srcId.ToString());
+            lock (this.mpv)
+            {
+                this.mpv.SetPropertyString("aid", srcId.ToString());
+            }
         }
 
         /// <summary>
-        /// Rotates audio tracks
+        ///     Rotates audio tracks
         /// </summary>
         public int NextAudioTrack()
         {
@@ -232,25 +378,33 @@ namespace Imp.MpvPlayer
                 id = 1;
             }
 
-            this.player.API.SetPropertyString("aid", id.ToString());
+            lock (this.mpv)
+            {
+                this.mpv.SetPropertyString("aid", id.ToString());
+            }
 
             return id;
         }
 
         private void ReadTracks()
         {
-            var tracksJson = this.player.API.GetPropertyString("track-list");
+            string tracksJson;
+
+            lock (this.mpv)
+            {
+                tracksJson = this.mpv.GetPropertyString("track-list");
+            }
+
             if (tracksJson != null)
             {
                 this.Tracks = JsonConvert.DeserializeObject<List<BaseTrack>>(tracksJson);
             }
 
+            this.VideoTracks = this.Tracks.Where(x => x.Type == "video").ToList();
             this.AudioTracks = this.Tracks.Where(x => x.Type == "audio").ToList();
             this.SubtitleTracks = this.Tracks.Where(x => x.Type == "sub").ToList();
         }
 
         #endregion
-
-
     }
 }
