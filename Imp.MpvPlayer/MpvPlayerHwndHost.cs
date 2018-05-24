@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Interop;
 using SEdge;
 
@@ -13,6 +14,8 @@ namespace Imp.MpvPlayer
         private const int WS_CHILD = 0x40000000;
         private const int WS_VISIBLE = 0x10000000;
         private const int HOST_ID = 0x00000002;
+        private const int WS_CLIPCHILDREN = 0x02000000;
+        
 
         public MpvPlayerHwndHost([NotNull]Mpv.NET.Mpv mpv)
         {
@@ -26,7 +29,7 @@ namespace Imp.MpvPlayer
             var playerHostPtr = WinFunctions.CreateWindowEx(0,
                 "static",
                 "",
-                WS_CHILD | WS_VISIBLE,
+                WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN,
                 0,
                 0,
                 100,
@@ -43,9 +46,21 @@ namespace Imp.MpvPlayer
             return new HandleRef(this, playerHostPtr);
         }
 
+        protected override void OnWindowPositionChanged(Rect rcBoundingBox)
+        {
+            base.OnWindowPositionChanged(rcBoundingBox);
+        }
+
+        
+
         protected override void DestroyWindowCore(HandleRef hwnd)
         {
             WinFunctions.DestroyWindow(hwnd.Handle);
+        }
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
         }
     }
 }

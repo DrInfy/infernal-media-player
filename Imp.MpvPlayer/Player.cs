@@ -181,7 +181,7 @@ namespace Imp.MpvPlayer
 
         public void Init()
         {
-            this.mpv = new Mpv.NET.Mpv("mpv-1.dll");
+            this.mpv = new Mpv.NET.Mpv("lib\\mpv-1.dll");
 
             SetMpvHost();
 
