@@ -21,6 +21,7 @@ using Imp.Base.ListLogic;
 using Imp.Base.Player;
 using Imp.Controls.Controllers;
 using Imp.MpvPlayer;
+using Imp.MpvPlayer.Containers;
 using Imp.Player.Image;
 using Imp.Player.Libraries;
 using Microsoft.WindowsAPICodePack.Taskbar;
@@ -57,6 +58,9 @@ namespace Imp.Player.Controllers
         public override bool Selected => this.window.IsActive && this.window.ExtWindowState != ExtWindowState.Minimized;
         public override bool IsMostRecentInstance => ImpMessaging.LastActive;
 
+        public IReadOnlyList<BaseTrack> AudioTracks => this.window.UriPlayer?.AudioTracks;
+        public IReadOnlyList<BaseTrack> SubtitleTracks => this.window.UriPlayer?.SubtitleTracks;
+
         #endregion
 
         public MainController(MainWindow window)
@@ -69,13 +73,13 @@ namespace Imp.Player.Controllers
 
             this.EventC = new EventController(window.Dispatcher, window.LabelPopup, window.LabelEvent, window.LabelTopic);
             this.PanelC = new PanelController(window);
-
+            
             var mediaController = new MediaController(
                 window.UriPlayer,
                 window.PlayerBottom.ButtonPlay,
                 window.PlayerBottom.ButtonMute,
                 window.PlayerBottom.ButtonLoop, this.EventC);
-
+            
             //window.UriPlayer.SubtitleElement = window.Subtitles;
             //subtitleController = new SubtitleController(window);
 
@@ -307,12 +311,12 @@ namespace Imp.Player.Controllers
                 {
                     var trackId = (int)argument;
                     this.window.UriPlayer.SetAudioTrack(trackId);
-                    this.EventC.SetEvent(new EventText("Subtitle " + trackId + "!"));
+                    this.EventC.SetEvent(new EventText("Audio Track " + trackId + "!"));
                 }
                 else
                 {
                     var trackId = this.window.UriPlayer.NextAudioTrack();
-                    this.EventC.SetEvent(new EventText("Subtitle " + trackId + "!"));
+                    this.EventC.SetEvent(new EventText("Audio Track " + trackId + "!"));
                 }
             }
             else
@@ -339,8 +343,16 @@ namespace Imp.Player.Controllers
                 if (argument != null)
                 {
                     var trackId = (int) argument;
-                    this.window.UriPlayer.SetSubtitle(trackId);
-                    this.EventC.SetEvent(new EventText("Subtitle " + trackId + "!"));
+                    if (trackId < 0)
+                    {
+                        this.window.UriPlayer.NoSubtitle();
+                        this.EventC.SetEvent(new EventText("No subtitles"));
+                    }
+                    else
+                    {
+                        this.window.UriPlayer.SetSubtitle(trackId);
+                        this.EventC.SetEvent(new EventText("Subtitle " + trackId + "!"));
+                    }
                 }
                 else
                 {
@@ -719,6 +731,11 @@ namespace Imp.Player.Controllers
             this.EventC.RefreshPosition();
             this.PanelC.CheckResize();
             this.imageController.ScreenSizeChanged();
+        }
+
+        public void ReadTracks()
+        {
+            this.window.UriPlayer.ReadTracks();
         }
     }
 }

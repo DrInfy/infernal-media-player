@@ -72,6 +72,7 @@
             <Label x:Name="LabelEvent" Content="Titlee" Style="{StaticResource ShadowStyle}"  FontSize="18"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Label>
         </Popup>
 
+        
         <Popup Name="ContentMenu" Placement="Absolute" MouseLeave="ContentMenu_MouseLeave">
             <lists:ContextMenuList Name="MenuList" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" MouseDown="MenuList_MouseDown" TouchTap="MenuList_OnTouchTap" />
             

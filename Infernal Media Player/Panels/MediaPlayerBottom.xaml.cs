@@ -1,9 +1,12 @@
 ﻿#region Usings
 
+using System;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Imp.Base.Commands;
+using Imp.Base.ListLogic;
 using Imp.Controls.Gui;
+using Imp.Controls.Lists;
 using Imp.Player.Controllers;
 
 #endregion
@@ -98,7 +101,105 @@ namespace Imp.Player.Panels
 
         private void ButtonSettings_OnClicked(object sender)
         {
-            this.mainC.Exec(ImpCommand.ChangeSubtitles, 1);
+            this.ButtonSettings.CurrentState++;
+
+            if (this.ButtonSettings.CurrentState == 1)
+            {
+                this.mainC.ReadTracks();
+
+                // Update track selection menu
+                this.audioTracks.ClearList();
+                foreach (var track in this.mainC.AudioTracks)
+                {
+                    var name = track.lang + " " + track.Title;
+                    if (track.IsSelected)
+                    {
+                        name = "(current) " + name;
+                    }
+                    this.audioTracks.AddToList(new ImpTextAndCommand(name, ImpCommand.ChangeAudioTrack, track.Id));
+                }
+
+
+                // Update track selection menu
+                this.subTitleTracks.ClearList();
+                this.subTitleTracks.AddToList(new ImpTextAndCommand("No subtitles", ImpCommand.ChangeSubtitles, -1));
+
+                foreach (var track in this.mainC.SubtitleTracks)
+                {
+                    var name = track.lang + " " + track.Title;
+                    if (track.IsSelected)
+                    {
+                        name = "(current) " + name;
+                    }
+                    this.subTitleTracks.AddToList(new ImpTextAndCommand(name, ImpCommand.ChangeSubtitles, track.Id));
+                }
+
+                var size = this.subTitleTracks.DesiredSize();
+                var size2 = this.audioTracks.DesiredSize();
+
+                this.TrackSelectionMenu.Height = Math.Max(size.Height, size2.Height);
+
+                this.TrackSelectionMenu.IsOpen = true;
+                this.TrackSelectionMenu.ReleaseMouseCapture();
+            }
+            else
+            {
+                this.TrackSelectionMenu.IsOpen = false;
+            }
+        }
+
+        private void AudioTracks_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SetTrack((ContextMenuList)sender);
+        }
+
+        private void AudioTracks_OnTouchTap(object sender, TouchEventArgs e)
+        {
+            SetTrack((ContextMenuList)sender);
+        }
+
+        private void SubTitleTracks_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SetTrack((ContextMenuList)sender);
+        }
+
+        private void SubTitleTracks_OnTouchTap(object sender, TouchEventArgs e)
+        {
+            SetTrack((ContextMenuList) sender);
+        }
+
+        private void SetTrack(ContextMenuList sender)
+        {
+            CloseMenu();
+
+            var item = sender.GetSelected();
+
+            if (item != null)
+            {
+                this.mainC.Exec(item.Command, item.Argument);
+            }
+        }
+
+        public void CloseMenu()
+        {
+            this.ButtonSettings.CurrentState = 0;
+            this.TrackSelectionMenu.IsOpen = this.ButtonSettings.CurrentState == 1;
+        }
+
+        private void AudioTracks_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            ((ContextMenuList) sender).SelectNone();
+        }
+
+        private void MediaPlayerBottom_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            var pos = (e.GetPosition(this));
+            bool isOutside = pos.X < 0 || pos.Y < 0 || pos.Y > this.ActualHeight || pos.X > this.ActualWidth;
+
+            if (isOutside && !this.TrackSelectionMenu.IsMouseOver)
+            {
+                CloseMenu();
+            }
         }
     }
 }

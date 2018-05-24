@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:Imp.Controls;assembly=ImpControls"
+             xmlns:lists="clr-namespace:Imp.Controls.Lists;assembly=ImpControls"
              x:Class="Imp.Player.Panels.MediaPlayerBottom" 
              mc:Ignorable="d" 
-             d:DesignHeight="40" d:DesignWidth="1000">
+             d:DesignHeight="40" d:DesignWidth="1000" MouseLeave="MediaPlayerBottom_OnMouseLeave">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -31,13 +32,23 @@
         <controls:ImpButton Name="ButtonPlay"  HorizontalAlignment="Stretch" Grid.Column="{controls:GridDefinition play}" Margin="0,0,0,0" VerticalAlignment="Stretch"  CheckStates="2" Clicked="ButtonPlay_Clicked" IsTabStop="False"/>
         <controls:ImpButton Name="ButtonLoop"  HorizontalAlignment="Stretch" Grid.Column="{controls:GridDefinition pause}" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="3" Clicked="ButtonLoop_Clicked" IsTabStop="False"/>
         <controls:ImpButton Name="ButtonNext"  HorizontalAlignment="Stretch" Grid.Column="{controls:GridDefinition stop}" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="3" Clicked="ButtonNext_Clicked" IsTabStop="False"/>
-        <controls:ImpButton Name="ButtonSettings"  HorizontalAlignment="Stretch" Grid.Column="{controls:GridDefinition settings}" Margin="0,0,0,0" VerticalAlignment="Stretch" CheckStates="3" Clicked="ButtonSettings_OnClicked" IsTabStop="False"/>
+        <controls:PushDownButton Name="ButtonSettings"  HorizontalAlignment="Stretch" Grid.Column="{controls:GridDefinition settings}" Margin="0,0,0,0" VerticalAlignment="Stretch" Clicked="ButtonSettings_OnClicked" IsTabStop="False"/>
 
         <controls:ImpButton Name="ButtonMute"  HorizontalAlignment="Right"  Margin="0,0,0,0" VerticalAlignment="Stretch" Width="40" CheckStates="2" Grid.Column="{controls:GridDefinition mute}" Clicked="ButtonMute_Clicked" CurrentState="1" IsTabStop="False"/>
 
         <ProgressBar  Name="SliderTime" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,3,20,20" HorizontalContentAlignment="Stretch" Grid.Column="{controls:GridDefinition time}" Grid.ColumnSpan="2" SmallChange="0.1" Foreground="DarkRed" OverridesDefaultStyle="False" AllowDrop="False" MouseMove="sliderTime_MouseMove" MouseUp="sliderTime_MouseUp" MouseDown="sliderTime_MouseDown" IsTabStop="False"/>
-        
-        
+
+        <Popup Name="TrackSelectionMenu" Placement="Top" PlacementTarget="{Binding ElementName=ButtonSettings}" Width="300px" MinHeight="50px" VerticalOffset="2" HorizontalOffset="-50px" MouseLeave="MediaPlayerBottom_OnMouseLeave">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <lists:ContextMenuList x:Name="audioTracks" Grid.Column="0" MouseDown="AudioTracks_OnMouseDown" TouchTap="AudioTracks_OnTouchTap" MouseLeave="AudioTracks_OnMouseLeave"/>
+                <lists:ContextMenuList x:Name="subTitleTracks" Grid.Column="1" MouseDown="SubTitleTracks_OnMouseDown" TouchTap="SubTitleTracks_OnTouchTap" MouseLeave="AudioTracks_OnMouseLeave"/>
+            </Grid>
+        </Popup>
+
         <!--<Path Name="pathDash"  Stroke="DarkRed" StrokeThickness="3" Data="M 0,0 l 0,1 M 1,0 l 0,1 M 2,0 l 0,1 M 3,0 l 0,1 M 4,0 l 0,1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="90,1,60,28" Stretch="Fill" IsHitTestVisible="False" MouseMove="sliderTime_MouseMove" MouseUp="sliderTime_MouseUp" MouseDown="sliderTime_MouseDown" >
         </Path>-->
         <Label Name="LabelPosition" Grid.Column="{controls:GridDefinition time}" Grid.ColumnSpan="2" HorizontalAlignment="center" Margin="20,15,20,-5" FontSize="14" FontWeight="Bold" IsTabStop="False">"-:--:--"</Label>

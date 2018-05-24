@@ -257,6 +257,11 @@ namespace Imp.Player
             // set focus to "something", when clicking away from text boxes
             if (!IsMouseOverList() && !IsMouseOverTextbox())
                 this.ButtonExit.Focus();
+
+            if (!this.PlayerBottom.IsMouseOver)
+            {
+                this.PlayerBottom.CloseMenu();
+            }
         }
 
         private void grid_MouseMove(object sender, MouseEventArgs e)

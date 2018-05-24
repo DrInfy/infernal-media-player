@@ -386,7 +386,7 @@ namespace Imp.MpvPlayer
             return id;
         }
 
-        private void ReadTracks()
+        public void ReadTracks()
         {
             string tracksJson;
 
