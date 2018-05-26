@@ -21,6 +21,7 @@ namespace Imp.MpvPlayer
         #region Static Fields and Constants
 
         private const int timePosUserData = 10;
+        private const int eofUserData = 11;
 
         #endregion
 
@@ -183,6 +184,8 @@ namespace Imp.MpvPlayer
         {
             this.mpv = new Mpv.NET.Mpv("lib\\mpv-1.dll");
 
+            this.mpv.Command("load-script", @"scripts\ytdl_hook.lua");
+            
             SetMpvHost();
 
             this.Background = Brushes.Black;
@@ -193,9 +196,9 @@ namespace Imp.MpvPlayer
             this.mpv.Seek += MpvOnSeek;
 
             this.mpv.EndFile += MpvOnEndFile;
-
             this.mpv.PropertyChange += MpvOnPropertyChange;
 
+            this.mpv.ObserveProperty("eof-reached", MpvFormat.String, eofUserData);
             this.mpv.ObserveProperty("time-pos", MpvFormat.Double, timePosUserData);
         }
 
@@ -221,6 +224,13 @@ namespace Imp.MpvPlayer
 
                     PlayerOnPositionChanged(newPosition);
                     break;
+                case eofUserData:
+                    if (eventProperty.DataString == "yes")
+                    {
+                        this.Dispatcher.Invoke(() => MediaPlayerEnded?.Invoke());
+                    }
+                    break;
+
             }
         }
 
@@ -250,24 +260,24 @@ namespace Imp.MpvPlayer
             if (this.IsPlaying)
             {
                 this.cachedPosition = position;
-                string eof;
+                //string eof;
 
-                lock (this.mpv)
-                {
-                    try
-                    {
-                        eof = this.mpv.GetPropertyString("eof-reached");
-                    }
-                    catch
-                    {
-                        eof = null;
-                    }
-                }
+                //lock (this.mpv)
+                //{
+                //    try
+                //    {
+                //        eof = this.mpv.GetPropertyString("eof-reached");
+                //    }
+                //    catch
+                //    {
+                //        eof = null;
+                //    }
+                //}
 
-                if (eof == "yes")
-                {
-                    this.Dispatcher.Invoke(() => MediaPlayerEnded?.Invoke());
-                }
+                //if (eof == "yes")
+                //{
+                //    this.Dispatcher.Invoke(() => MediaPlayerEnded?.Invoke());
+                //}
             }
             else
             {
