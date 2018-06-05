@@ -54,7 +54,7 @@ namespace Imp.Base.FileData
 
         public override string ToString()
         {
-            return Name;
+            return this.Name;
         }
 
         public void CheckDate()

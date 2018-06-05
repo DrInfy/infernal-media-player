@@ -100,13 +100,15 @@ namespace Imp.Base.Libraries
             gBuilder.Replace("'", " ");
             gBuilder.Replace("~", " ");
             gBuilder.Replace("_", " ");
+            gBuilder.Replace("#", "");
 
 
             Removebrackets(gBuilder);
             RemoveWords(gBuilder);
             FillNumerals(gBuilder);
+            RemoveSpaces(gBuilder);
 
-            gBuilder.Replace("  ", " ");
+            //gBuilder.Replace("  ", " ");
             gBuilder.Replace("\\ ", "\\");
 
             return gBuilder.ToString();
@@ -121,8 +123,10 @@ namespace Imp.Base.Libraries
                     numberCount++;
                 else if (numberCount > 0)
                 {
-                    FillNumeral(builder, i, numberCount);
-                    i += fillNumbersToLength - numberCount - 1;
+                    if (FillNumeral(builder, i, numberCount))
+                    {
+                        i += fillNumbersToLength - numberCount - 1;
+                    }
                     numberCount = 0;
                 }
             }
@@ -131,10 +135,70 @@ namespace Imp.Base.Libraries
                 FillNumeral(builder, builder.Length, numberCount);
         }
 
-        private static void FillNumeral(StringBuilder builder, int endIndex, int length)
+        public static void RemoveSpaces(StringBuilder builder)
+        {
+            int len = builder.Length,
+                index = 0,
+                i = 0;
+            
+            bool skip = true;
+            char ch;
+            for (; i < len; i++)
+            {
+                ch = builder[i];
+                switch (ch)
+                {
+                    case '\u0020':
+                    case '\u00A0':
+                    case '\u1680':
+                    case '\u2000':
+                    case '\u2001':
+                    case '\u2002':
+                    case '\u2003':
+                    case '\u2004':
+                    case '\u2005':
+                    case '\u2006':
+                    case '\u2007':
+                    case '\u2008':
+                    case '\u2009':
+                    case '\u200A':
+                    case '\u202F':
+                    case '\u205F':
+                    case '\u3000':
+                    case '\u2028':
+                    case '\u2029':
+                    case '\u0009':
+                    case '\u000A':
+                    case '\u000B':
+                    case '\u000C':
+                    case '\u000D':
+                    case '\u0085':
+                        if (skip) continue;
+                        builder[index++] = ' ';
+                        skip = true;
+                        continue;
+                    default:
+                        skip = false;
+                        builder[index++] = ch;
+                        continue;
+                }
+            }
+
+            if (index < i)
+            {
+                builder.Remove(index, i - index);
+            }
+        }
+
+        private static bool FillNumeral(StringBuilder builder, int endIndex, int length)
         {
             if (length < fillNumbersToLength)
+            {
                 builder.Insert(Math.Max(endIndex - length, 0), "0", fillNumbersToLength - length);
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsNumeral(char number)
@@ -147,6 +211,10 @@ namespace Imp.Base.Libraries
             builder.Replace("dvd", "");
             builder.Replace("h264", "");
             builder.Replace(" ep ", " ");
+            builder.Replace("2160p", "");
+            builder.Replace("1080p", "");
+            builder.Replace("720p", "");
+            builder.Replace("480p", "");
         }
 
         private static void Removebrackets(StringBuilder builder)

@@ -17,7 +17,7 @@ namespace Imp.Base.ListLogic
                 // string.ToString would create a new instance, which could cause an
                 // impact in performance
                 var str = Content as string;
-                return str ?? Content.ToString();
+                return str ?? Content.ToString() ?? "";
             }
         }
 

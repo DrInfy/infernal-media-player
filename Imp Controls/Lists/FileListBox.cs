@@ -166,6 +166,7 @@ namespace Imp.Controls.Lists
                 return;
 
 
+            
             var text = FormatText(controller.GetText(index), ref brush);
 
             if (text.MaxTextWidth > 0)
