@@ -297,6 +297,12 @@ namespace Imp.Player.Controllers
             this.window.MenuList.CaptureMouse();
         }
 
+        protected override void StepChapter(int chapterStep)
+        {
+            var result = this.window.UriPlayer.StepChapter(chapterStep);
+            this.EventC.SetEvent(new EventText(result));
+        }
+
         protected override void ChangeAudioTrack(object argument)
         {
             if (this.window.UriPlayer.IsPlaying)

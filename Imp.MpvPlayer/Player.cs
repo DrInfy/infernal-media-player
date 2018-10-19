@@ -416,5 +416,35 @@ namespace Imp.MpvPlayer
         }
 
         #endregion
+
+        public string StepChapter(int chapterStep)
+        {
+            lock (this.mpv)
+            {
+                try
+                {
+                    var chapters = this.mpv.GetPropertyLong("chapters");
+                    var currentChapter = this.mpv.GetPropertyLong("chapter");
+                    var adjustedChapter = currentChapter + chapterStep;
+                    if (adjustedChapter < 0)
+                    {
+                        adjustedChapter = 0;
+                    }
+                    if (adjustedChapter >= chapters)
+                    {
+                        adjustedChapter = chapters - 1;
+                    }
+                    this.mpv.SetPropertyLong("chapter", currentChapter + chapterStep);
+
+                    return $"Chapter {adjustedChapter}";
+                }
+                catch
+                {
+                    return "No chapters";
+                }
+            }
+
+            return "";
+        }
     }
 }

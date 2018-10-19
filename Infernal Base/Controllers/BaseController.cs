@@ -357,10 +357,18 @@ namespace Imp.Base.Controllers
                 case ImpCommand.ChangeAudioTrack:
                     ChangeAudioTrack(argument);
                     break;
+                case ImpCommand.PreviousChapter:
+                    StepChapter(-1);
+                    break;
+                case ImpCommand.NextChapter:
+                    StepChapter(1);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("cmd");
             }
         }
+
+        protected abstract void StepChapter(int chapterStep);
 
         protected abstract void ChangeAudioTrack(object argument);
 
