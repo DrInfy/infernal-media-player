@@ -12,24 +12,27 @@ namespace Imp.Base.FileData
     {
         #region Fields
 
-        public string Path;
-        public string Name;
+        public string FullPath;
+        public string FileName;
         public string SmartName;
         public long DateModified;
         public FileTypes FileType = FileTypes.Any;
+        public long DataSize;
 
         #endregion
 
+        protected FileImpInfo() { }
+
         public FileImpInfo(ErrorType result)
         {
-            Path = "";
+            this.FullPath = "";
             switch (result)
             {
                 case ErrorType.FailedToOpenFolder:
-                    Name = "Failed to open folder";
+                    this.FileName = "Failed to open folder";
                     break;
                 case ErrorType.FailedToOpenFile:
-                    Name = "Failed to open file";
+                    this.FileName = "Failed to open file";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("result");
@@ -38,32 +41,36 @@ namespace Imp.Base.FileData
 
         public FileImpInfo(string path)
         {
-            Path = path;
-            Name = StringHandler.GetFilename(path);
-            SmartName = StringHandler.GetSmartName(Name);
+            this.FullPath = path;
+            this.FileName = StringHandler.GetFilename(path);
+            this.SmartName = StringHandler.GetSmartName(this.FileName);
             CheckDate();
         }
 
-        public FileImpInfo(FileSystemInfo info)
+        public FileImpInfo(FileInfo info)
         {
-            Path = info.FullName;
-            Name = StringHandler.GetFilename(Path);
-            SmartName = StringHandler.GetSmartName(Name);
-            DateModified = info.LastWriteTimeUtc.Ticks;
+            this.FullPath = info.FullName;
+            this.FileName = StringHandler.GetFilename(this.FullPath);
+            this.SmartName = StringHandler.GetSmartName(this.FileName);
+            this.DateModified = info.LastWriteTimeUtc.Ticks;
+            this.DataSize = info.Length;
         }
 
         public override string ToString()
         {
-            return this.Name;
+            return this.FileName;
         }
 
         public void CheckDate()
         {
             try
             {
-                var info = new FileInfo(Path);
+                var info = new FileInfo(this.FullPath);
                 if (info.Exists)
-                    DateModified = info.LastWriteTimeUtc.Ticks;
+                {
+                    this.DateModified = info.LastWriteTimeUtc.Ticks;
+                    this.DataSize = info.Length;
+                }
             }
             catch (Exception)
             {

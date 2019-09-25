@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using Imp.Base;
 using Imp.Base.Commands;
 using Imp.Base.Controllers;
+using Imp.Base.Data;
 using Imp.Base.FileData;
 using Imp.Base.FileLoading;
 using Imp.Base.Libraries;
@@ -127,12 +128,22 @@ namespace Imp.Player.Controllers
 
         protected override void CloseWindows()
         {
+            if (this.playingItem != null)
+            {
+                ImpDatabase.FileClosed(this.playingItem, TimeSpan.FromSeconds(this.window.UriPlayer.Position));
+            }
+
             this.window.Close();
             this.window.WindowClosed = true;
         }
 
         protected override void OpenFile(PlaylistItem item)
         {
+            if (this.playingItem != null)
+            {
+                ImpDatabase.FileClosed(this.playingItem, TimeSpan.FromSeconds(this.window.UriPlayer.Position));
+            }
+
             if (item == null || this.loadingItem != null && this.loadingItem.FullPath == item.FullPath
                 || this.playingItem != null && this.playingItem.FullPath == item.FullPath)
             {
@@ -202,6 +213,8 @@ namespace Imp.Player.Controllers
 
         private void ImageLoaded(BitmapSource bitmap)
         {
+            ImpDatabase.FileOpened(this.loadingItem);
+
             this.playingItem = this.loadingItem;
             //loadingItem = null;
             this.itemOnPlayer = this.playingItem;
@@ -232,6 +245,8 @@ namespace Imp.Player.Controllers
 
         private void MediaLoaded(bool success)
         {
+            ImpDatabase.FileOpened(this.loadingItem);
+
             this.playingItem = this.loadingItem;
             this.itemOnPlayer = this.playingItem;
             
@@ -458,7 +473,7 @@ namespace Imp.Player.Controllers
 
             foreach (var fileImpInfo in items)
             {
-                paths.Add(fileImpInfo.Path);
+                paths.Add(fileImpInfo.FullPath);
                 playlistItems.Add(new PlaylistItem(fileImpInfo));
             }
 

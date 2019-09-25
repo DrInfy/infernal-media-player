@@ -60,7 +60,7 @@ namespace Imp.Controls.Lists
 
         protected override void GetTooltip()
         {
-            toolTip.Content = controller.GetContent(MouseoverIndex).Name;
+            toolTip.Content = controller.GetContent(MouseoverIndex).FileName;
         }
 
         public void SetPath(string path, List<string> extensions)
@@ -104,7 +104,7 @@ namespace Imp.Controls.Lists
         {
             var list = LibImp.FilterFiles(fileInfos, currentExtensions);
             foreach (var fileImpInfo in list)
-                fileImpInfo.FileType = FileTypeFinder.DetermineFileType(fileImpInfo.Path);
+                fileImpInfo.FileType = FileTypeFinder.DetermineFileType(fileImpInfo.FullPath);
 
             SetList(list);
             Sort();

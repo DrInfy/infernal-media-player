@@ -9,7 +9,7 @@ using Imp.Base.Libraries;
 
 namespace Imp.Base.ListLogic
 {
-    public class PlaylistItem
+    public class PlaylistItem: FileImpInfo
     {
         #region Fields
 
@@ -19,27 +19,19 @@ namespace Imp.Base.ListLogic
 
         #region Properties
 
-        public string FullPath { get; set; }
-        public string Filename { get; set; }
-        public string SmartName { get; set; }
         public string AdditionalInfo { get; set; }
         public int Bitrate { get; set; }
         public string Name { get; set; }
         public bool Playing { get; set; }
-        public FileTypes FileType { get; set; }
 
         #endregion
 
-        public PlaylistItem(string path)
+        public PlaylistItem(string path) : base(path)
         {
-            var fileInfo = new FileImpInfo(path);
-            CopyFileInfo(fileInfo);
         }
 
-        public PlaylistItem(FileInfo info)
+        public PlaylistItem(FileInfo info): base(info)
         {
-            var fileInfo = new FileImpInfo(info);
-            CopyFileInfo(fileInfo);
         }
 
         public PlaylistItem(FileImpInfo info)
@@ -49,12 +41,12 @@ namespace Imp.Base.ListLogic
 
         private void CopyFileInfo(FileImpInfo info)
         {
-            FullPath = info.Path;
-            Filename = info.Name;
+            this.FullPath = info.FullPath;
+            this.FileName = info.FileName;
             SmartName = info.SmartName;
             DateModified = info.DateModified;
-            Name = StringHandler.RemoveExtension(info.Name);
-            FileType = FileTypeFinder.DetermineFileType(info.Name);
+            Name = StringHandler.RemoveExtension(info.FileName);
+            FileType = FileTypeFinder.DetermineFileType(info.FileName);
         }
 
         public override string ToString()
@@ -67,10 +59,10 @@ namespace Imp.Base.ListLogic
         /// </summary>
         public void ReadFileData()
         {
-            var extension = Path.GetExtension(FullPath)?.ToLowerInvariant();
+            var extension = Path.GetExtension(this.FullPath)?.ToLowerInvariant();
             if (extension == ".mp3")
             {
-                var mp3Reader = new Mp3(FullPath);
+                var mp3Reader = new Mp3(this.FullPath);
                 if (string.IsNullOrWhiteSpace(mp3Reader.Artist) || string.IsNullOrWhiteSpace(mp3Reader.Title))
                 {
                     SetDefaultSongSmartName();
@@ -82,8 +74,8 @@ namespace Imp.Base.ListLogic
             }
             else if (extension == ".flac" || extension == ".ogg")
             {
-                var mp3Reader = new Mp3(FullPath);
-                var flacReader = new FlacOgg(FullPath);
+                var mp3Reader = new Mp3(this.FullPath);
+                var flacReader = new FlacOgg(this.FullPath);
                 if (!string.IsNullOrWhiteSpace(mp3Reader.Title))
                 {
                     SmartName = mp3Reader.Artist + " - " + mp3Reader.Album + " - " + mp3Reader.Track + " " + mp3Reader.Title;
@@ -101,7 +93,7 @@ namespace Imp.Base.ListLogic
             }
             else if (extension == ".wma")
             {
-                var asfReader = new Asf(FullPath);
+                var asfReader = new Asf(this.FullPath);
                 if (string.IsNullOrWhiteSpace(asfReader.Artist) || string.IsNullOrWhiteSpace(asfReader.Title))
                 {
                     SetDefaultSongSmartName();
@@ -113,14 +105,14 @@ namespace Imp.Base.ListLogic
 
             else if (extension == ".wmv")
             {
-                var asfReader = new Asf(FullPath);
+                var asfReader = new Asf(this.FullPath);
                 if (string.IsNullOrWhiteSpace(asfReader.Artist) || string.IsNullOrWhiteSpace(asfReader.Title)) return;
                 ArtistTitleToName(asfReader.Artist, asfReader.Title, asfReader.Track);
             }
 
             else if (extension == ".m4a")
             {
-                var m4AReader = new M4A(FullPath);
+                var m4AReader = new M4A(this.FullPath);
                 if (string.IsNullOrWhiteSpace(m4AReader.Artist) || string.IsNullOrWhiteSpace(m4AReader.Title)) return;
 
                 SmartName = m4AReader.Artist + " - " + m4AReader.Album + " - " + m4AReader.Track + " " + m4AReader.Title;
@@ -130,7 +122,7 @@ namespace Imp.Base.ListLogic
 
         public void SetDefaultSongSmartName()
         {
-            var folderName = Path.GetDirectoryName(FullPath);
+            var folderName = Path.GetDirectoryName(this.FullPath);
             SmartName = folderName + " " + SmartName;
         }
 

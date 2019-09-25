@@ -76,7 +76,7 @@ namespace Imp.Base.FileLoading
             var added = 0;
             for (var i = 0; i < fileInfos.Length; i++)
             {
-                if (StringHandler.FindFound(fileInfos[i].Name, FindFilesWords))
+                if (StringHandler.FindFound(fileInfos[i].FileName, FindFilesWords))
                 {
                     fileInfos[added] = fileInfos[i];
                     added++;
