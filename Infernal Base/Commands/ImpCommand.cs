@@ -139,6 +139,9 @@
         ChangeAudioTrack,
 
         PreviousChapter,
-        NextChapter
+        NextChapter,
+
+        MarkAsWatched,
+        RemoveWatched,
     }
 }

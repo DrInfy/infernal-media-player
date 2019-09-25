@@ -497,7 +497,7 @@ namespace Imp.Player
             if (e.LeftButton != MouseButtonState.Pressed) return;
             var textAndCommand = this.MenuList.GetSelected();
             if (textAndCommand != null)
-                this.mainC.Exec(textAndCommand.Command, textAndCommand.Argument);
+                this.mainC.Exec(textAndCommand.Command, textAndCommand.Argument?.Invoke());
             this.ContentMenu.IsOpen = false;
         }
 
@@ -510,7 +510,7 @@ namespace Imp.Player
         {
             var textAndCommand = this.MenuList.GetSelected();
             if (textAndCommand != null)
-                this.mainC.Exec(textAndCommand.Command, textAndCommand.Argument);
+                this.mainC.Exec(textAndCommand.Command, textAndCommand.Argument?.Invoke());
             this.ContentMenu.IsOpen = false;
         }
     }

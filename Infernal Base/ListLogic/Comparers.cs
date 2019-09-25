@@ -17,6 +17,39 @@ namespace Imp.Base.ListLogic
         }
     }
 
+    public class ComparerSelectableViewThenName : IComparer<Selectable<FileImpInfo>>
+    {
+        public int Compare(Selectable<FileImpInfo> x, Selectable<FileImpInfo> y)
+        {
+            if (x.Content.LastUsage != null && y.Content.LastUsage != null)
+            {
+                if (x.Content.LastUsage.Value > y.Content.LastUsage.Value)
+                {
+                    return -1;
+                }
+
+                if (x.Content.LastUsage.Value < y.Content.LastUsage.Value)
+                {
+                    return 1;
+                }
+
+                return 0;
+            }
+
+            if (x.Content.LastUsage == null && y.Content.LastUsage != null)
+            {
+                return -1;
+            }
+
+            if (x.Content.LastUsage != null && y.Content.LastUsage == null)
+            {
+                return 1;
+            }
+
+            return string.Compare(x.Content.SmartName, y.Content.SmartName, StringComparison.Ordinal);
+        }
+    }
+
     public class ComparerSelectableFileDate : IComparer<Selectable<FileImpInfo>>
     {
         public int Compare(Selectable<FileImpInfo> x, Selectable<FileImpInfo> y)

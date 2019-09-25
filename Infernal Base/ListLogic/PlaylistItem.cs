@@ -28,10 +28,12 @@ namespace Imp.Base.ListLogic
 
         public PlaylistItem(string path) : base(path)
         {
+            Name = StringHandler.RemoveExtension(this.FileName);
         }
 
         public PlaylistItem(FileInfo info): base(info)
         {
+            Name = StringHandler.RemoveExtension(this.FileName);
         }
 
         public PlaylistItem(FileImpInfo info)
@@ -41,12 +43,14 @@ namespace Imp.Base.ListLogic
 
         private void CopyFileInfo(FileImpInfo info)
         {
+            this.SmartId = info.SmartId;
+            this.FileType = info.FileType;
             this.FullPath = info.FullPath;
             this.FileName = info.FileName;
+            this.LastUsage = info.LastUsage;
             SmartName = info.SmartName;
             DateModified = info.DateModified;
             Name = StringHandler.RemoveExtension(info.FileName);
-            FileType = FileTypeFinder.DetermineFileType(info.FileName);
         }
 
         public override string ToString()

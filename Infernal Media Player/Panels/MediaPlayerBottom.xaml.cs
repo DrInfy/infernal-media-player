@@ -116,13 +116,15 @@ namespace Imp.Player.Panels
                     {
                         name = "(current) " + name;
                     }
-                    this.audioTracks.AddToList(new ImpTextAndCommand(name, ImpCommand.ChangeAudioTrack, track.Id));
+
+                    var trackId = track.Id;
+                    this.audioTracks.AddToList(new ImpTextAndCommand(name, ImpCommand.ChangeAudioTrack, () => trackId));
                 }
 
 
                 // Update track selection menu
                 this.subTitleTracks.ClearList();
-                this.subTitleTracks.AddToList(new ImpTextAndCommand("No subtitles", ImpCommand.ChangeSubtitles, -1));
+                this.subTitleTracks.AddToList(new ImpTextAndCommand("No subtitles", ImpCommand.ChangeSubtitles, () => -1));
 
                 foreach (var track in this.mainC.SubtitleTracks)
                 {
@@ -131,7 +133,9 @@ namespace Imp.Player.Panels
                     {
                         name = "(current) " + name;
                     }
-                    this.subTitleTracks.AddToList(new ImpTextAndCommand(name, ImpCommand.ChangeSubtitles, track.Id));
+
+                    var trackId = track.Id;
+                    this.subTitleTracks.AddToList(new ImpTextAndCommand(name, ImpCommand.ChangeSubtitles, () => trackId));
                 }
 
                 var size = this.subTitleTracks.DesiredSize();

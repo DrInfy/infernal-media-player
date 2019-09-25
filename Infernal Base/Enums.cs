@@ -80,9 +80,10 @@ namespace Imp.Base
 
     public enum FileSortMode
     {
-        Name,
-        Date,
+        Name = 0,
+        Date = 1,
+        LastUsage = 2,
         Random,
-        Path
+        Path,
     }
 }

@@ -1,9 +1,11 @@
 ﻿#region Usings
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Imp.Base.Commands;
@@ -79,9 +81,12 @@ namespace Imp.Base.Controllers
                     cmdList.Add(new ImpTextAndCommand("Play this", ImpCommand.OpenPlaylst));
                     cmdList.Add(new ImpTextAndCommand("Remove selected", ImpCommand.RemoveSelected));
                     cmdList.Add(new ImpTextAndCommand("Sort files", ImpCommand.Sort));
-                    cmdList.Add(new ImpTextAndCommand("Sort files by dates", ImpCommand.Sort, FileSortMode.Date));
-                    cmdList.Add(new ImpTextAndCommand("Sort files by paths", ImpCommand.Sort, FileSortMode.Path));
-                    cmdList.Add(new ImpTextAndCommand("Randomize file order", ImpCommand.Sort, FileSortMode.Random));
+                    cmdList.Add(new ImpTextAndCommand("Sort files by dates", ImpCommand.Sort, () => FileSortMode.Date));
+                    cmdList.Add(new ImpTextAndCommand("Sort files by paths", ImpCommand.Sort, () => FileSortMode.Path));
+                    cmdList.Add(new ImpTextAndCommand("Randomize file order", ImpCommand.Sort, () => FileSortMode.Random));
+                    cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
+                    cmdList.Add(new ImpTextAndCommand("Mark as watched", ImpCommand.MarkAsWatched, GetPlaylistItems));
+                    cmdList.Add(new ImpTextAndCommand("Remove watched", ImpCommand.RemoveWatched, GetPlaylistItems));
                     cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
                     cmdList.Add(new ImpTextAndCommand("Open path in file browser", ImpCommand.ShowInExplorer));
                     cmdList.Add(new ImpTextAndCommand("Delete Selected Files", ImpCommand.DeletePlFiles));
@@ -89,6 +94,9 @@ namespace Imp.Base.Controllers
                 case ContextMenuEnum.FileList:
                     cmdList.Add(new ImpTextAndCommand("Play selected files", ImpCommand.PlaySelectedOpenFiles));
                     cmdList.Add(new ImpTextAndCommand("Add selected files", ImpCommand.AddSelectedOpenFiles));
+                    cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
+                    cmdList.Add(new ImpTextAndCommand("Mark as watched", ImpCommand.MarkAsWatched, GetFilelistItems));
+                    cmdList.Add(new ImpTextAndCommand("Remove watched", ImpCommand.RemoveWatched, GetFilelistItems));
                     cmdList.Add(new ImpTextAndCommand("------------", ImpCommand.None));
                     cmdList.Add(new ImpTextAndCommand("Delete Selected Files", ImpCommand.DeleteOpenFiles));
                     break;
@@ -112,6 +120,10 @@ namespace Imp.Base.Controllers
             }
             CreateContextMenu(cursorPositionInDesktop, cmdList);
         }
+
+        protected abstract object GetFilelistItems();
+
+        protected abstract object GetPlaylistItems();
 
         protected abstract void CreateContextMenu(Point cursorPositionInDesktop, List<ImpTextAndCommand> cmdList);
 
@@ -363,10 +375,22 @@ namespace Imp.Base.Controllers
                 case ImpCommand.NextChapter:
                     StepChapter(1);
                     break;
+                case ImpCommand.AddfastFile:
+                    break;
+                case ImpCommand.MarkAsWatched:
+                    MarkAsWatched((IEnumerable)argument);
+                    break;
+                case ImpCommand.RemoveWatched:
+                    RemoveWatched((IEnumerable)argument);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("cmd");
             }
         }
+
+        protected abstract void RemoveWatched(IEnumerable argument);
+
+        protected abstract void MarkAsWatched(IEnumerable argument);
 
         protected abstract void StepChapter(int chapterStep);
 

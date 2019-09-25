@@ -128,11 +128,9 @@ namespace Imp.Controls.Gui
                 case BtnNumber.SortByName:
                     return SortByName(pFc, pG);
                 case BtnNumber.Sort:
-                    if (state == 0)
-                    {
-                        return SortByName(pFc, pG);
-                    }
-                    return SortByTime(pFc, pG);
+                    if (state == 0) { return SortByName(pFc, pG); }
+                    if (state == 1) { return SortByTime(pFc, pG); }
+                    return SortByView(pFc, pG);
                 case BtnNumber.Movie:
                     return Movie(pFc, pG);
                 case BtnNumber.Music:
@@ -227,6 +225,28 @@ namespace Imp.Controls.Gui
             AddLine(new Point(40, 90), new Point(100, 90), pFc);
 
             pG.Figures = pFc;
+            return pG;
+        }
+
+        private static Geometry SortByView(PathFigureCollection pFc, PathGeometry pG)
+        {
+            AddLine(new Point(10, 0), new Point(20, 0), pFc);
+            AddLine(new Point(10, 0), new Point(10, 70), pFc);
+            AddLine(new Point(20, 0), new Point(20, 70), pFc);
+            AddLine(new Point(10, 70), new Point(0, 70), pFc);
+            AddLine(new Point(20, 70), new Point(30, 70), pFc);
+            AddLine(new Point(0, 70), new Point(15, 100), pFc);
+            AddLine(new Point(30, 70), new Point(15, 100), pFc);
+
+            var center = new Point(65, 40);
+            AddLine(new Point(30, 40), new Point(65, 20), pFc);
+            AddLine(new Point(30, 40), new Point(65, 60), pFc);
+            AddLine(new Point(100, 40), new Point(65, 20), pFc);
+            AddLine(new Point(100, 40), new Point(65, 60), pFc);
+
+            pG.Figures = pFc;
+            pG.AddGeometry(new EllipseGeometry(center, 15, 15));
+
             return pG;
         }
 

@@ -15,5 +15,7 @@ namespace Imp.Base.Data
         public DateTime? TimeClosed { set; get; }
 
         public TimeSpan? FileTimeClosed { set; get; }
+
+        public bool Completed { get; set; }
     }
 }

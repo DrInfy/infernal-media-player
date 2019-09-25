@@ -124,8 +124,9 @@
                                    CheckStates="2" Clicked="ButtonClearFind_Clicked" />
 
             <controls:ImpButton x:Name="ButtonSort" Grid.Column="4" HorizontalAlignment="Stretch" Margin="0,0,0,0"
-                                   Grid.Row="0" VerticalAlignment="Stretch" CheckStates="2"
+                                   Grid.Row="0" VerticalAlignment="Stretch" CheckStates="3"
                                    Clicked="ButtonSort_Clicked" />
+
             <controls:ImpButton x:Name="ButtonAddSelected" HorizontalAlignment="Stretch" Margin="0,0,0,0"
                                    Grid.Column="5" VerticalAlignment="Stretch" Clicked="ButtonAddSelected_Clicked" />
             <controls:ImpButton x:Name="ButtonClearPlaylist" HorizontalAlignment="Stretch" Margin="0,0,0,0"

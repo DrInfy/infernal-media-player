@@ -29,7 +29,7 @@ namespace Imp.Base.Data
 
         public static void FileOpened(FileImpInfo fileInfo)
         {
-            var id = (long)IdCipher.GetKeyFromText(fileInfo.SmartName);
+            var id = fileInfo.SmartId;
             var data = db.Find<FileData>(id);
 
             if (data == null)
@@ -59,7 +59,7 @@ namespace Imp.Base.Data
 
         public static void FileClosed(FileImpInfo fileInfo, TimeSpan? mediaTime = null)
         {
-            var id = (long)IdCipher.GetKeyFromText(fileInfo.SmartName);
+            var id = fileInfo.SmartId;
             var nonClosed = db.Query<FileUsageData>("Select * FROM [FileUsageData] WHERE [FileInfoId] = ? AND [TimeClosed] IS NULL", id);
 
             foreach (var fileUsageData in nonClosed)
@@ -71,22 +71,49 @@ namespace Imp.Base.Data
             db.UpdateAll(nonClosed);
         }
 
-
-        private static Guid GetGuid(string n1, string n2)
+        public static List<FileUsageData> FileUsages(long smartId)
         {
-            var firstPart = IdCipher.GetKeyFromText(n1);
-            var secondPart = IdCipher.GetKeyFromText(n2);
-            var guidBytes = new byte[128 / 8];
-            var first = BitConverter.GetBytes(firstPart);
-            var second = BitConverter.GetBytes(secondPart);
+            var opened = db.Query<FileUsageData>("Select * FROM [FileUsageData] WHERE [FileInfoId] = ? AND [TimeClosed] IS NOT NULL", smartId);
+            return opened;
+        }
 
-            for (int i = 0; i < first.Length; i++)
+        public static void SetWatched(long smartId)
+        {
+            var usageData = new FileUsageData
             {
-                guidBytes[i] = first[i];
-                guidBytes[i + first.Length] = second[i];
+                FileInfoId = smartId,
+                TimeOpened = DateTime.UtcNow,
+                TimeClosed = DateTime.UtcNow,
+                Completed = true
+            };
+
+            db.Insert(usageData);
+        }
+
+        public static void SetWatchedAll(IEnumerable<long> smartIds)
+        {
+            var list = new List<FileUsageData>();
+
+            foreach (var smartId in smartIds)
+            {
+                var usageData = new FileUsageData
+                {
+                    FileInfoId = smartId,
+                    TimeOpened = DateTime.UtcNow,
+                    TimeClosed = DateTime.UtcNow,
+                    Completed = true
+                };
+
+                list.Add(usageData);
             }
 
-            return new Guid(guidBytes);
+            db.InsertAll(list);
+        }
+
+
+        public static void RemoveWatched(IEnumerable<long> smartIds)
+        {
+            db.Execute($"DELETE FROM [FileUsageData] WHERE [FileInfoId] IN ({String.Join(",", smartIds)})");
         }
     }
 }

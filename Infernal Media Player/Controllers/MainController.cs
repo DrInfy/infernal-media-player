@@ -1,9 +1,11 @@
 ﻿#region Usings
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -283,6 +285,16 @@ namespace Imp.Player.Controllers
             OpenFile(item);
         }
 
+        protected override object GetFilelistItems()
+        {
+            return this.window.PanelOpen.ListFiles.GetSelectedList();
+        }
+
+        protected override object GetPlaylistItems()
+        {
+            return this.window.PanelPlaylist.ListPlaylist.GetSelectedList();
+        }
+
         protected override void CreateContextMenu(Point cursorPositionInDesktop, List<ImpTextAndCommand> cmdList)
         {
             Rect area;
@@ -311,6 +323,43 @@ namespace Imp.Player.Controllers
             this.ContentMenu.IsOpen = true;
             this.window.MenuList.CaptureMouse();
         }
+
+        #region Data Watched / Listened
+
+        protected override void RemoveWatched(IEnumerable argument)
+        {
+            var smartIds = new List<long>();
+            foreach (FileImpInfo listItem in argument)
+            {
+                smartIds.Add(listItem.SmartId);
+                listItem.LastUsage = null;
+            }
+
+            if (smartIds.Count > 0)
+            {
+                ImpDatabase.RemoveWatched(smartIds);
+            }
+        }
+
+        protected override void MarkAsWatched(IEnumerable argument)
+        {
+            var smartIds = new List<long>();
+            var now = DateTime.UtcNow;
+
+            foreach (FileImpInfo listItem in argument)
+            {
+                smartIds.Add(listItem.SmartId);
+                listItem.LastUsage = now;
+            }
+
+            if (smartIds.Count > 0)
+            {
+                ImpDatabase.SetWatchedAll(smartIds);
+            }
+            
+        }
+
+        #endregion
 
         protected override void StepChapter(int chapterStep)
         {

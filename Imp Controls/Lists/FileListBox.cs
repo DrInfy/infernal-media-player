@@ -24,6 +24,7 @@ namespace Imp.Controls.Lists
 
         private readonly ComparerSelectableFileName nameComparer;
         private readonly ComparerSelectableFileDate dateComparer;
+        private readonly ComparerSelectableViewThenName viewComparer;
         private FileSortMode sortMode;
         private string currentPath;
         private List<string> currentExtensions;
@@ -56,6 +57,7 @@ namespace Imp.Controls.Lists
             SortMode = FileSortMode.Name;
             nameComparer = new ComparerSelectableFileName();
             dateComparer = new ComparerSelectableFileDate();
+            this.viewComparer = new ComparerSelectableViewThenName();
         }
 
         protected override void GetTooltip()
@@ -103,8 +105,11 @@ namespace Imp.Controls.Lists
         private void FilterSort(FileInfo[] fileInfos)
         {
             var list = LibImp.FilterFiles(fileInfos, currentExtensions);
+
             foreach (var fileImpInfo in list)
+            {
                 fileImpInfo.FileType = FileTypeFinder.DetermineFileType(fileImpInfo.FullPath);
+            }
 
             SetList(list);
             Sort();
@@ -135,7 +140,24 @@ namespace Imp.Controls.Lists
         protected override Brush getBrush(int i, DrawingContext drawingContext, Brush brush)
         {
             brush = base.getBrush(i, drawingContext, brush);
-            if (IsEnabled && ColorCoding)
+            if (this.IsEnabled && this.SortMode == FileSortMode.LastUsage)
+            {
+                if (i == MouseoverIndex)
+                {
+                    if (controller.GetContent(i).LastUsage != null)
+                        brush = new SolidColorBrush(Color.FromRgb(255, 210, 255));
+                    else
+                        brush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                }
+                else if (!controller.IsSelected(i))
+                {
+                    if (controller.GetContent(i).LastUsage != null)
+                        brush = new SolidColorBrush(Color.FromRgb(220, 190, 220));
+                    else
+                        brush = new SolidColorBrush(Color.FromRgb(220, 220, 220));
+                }
+            }
+            else if (IsEnabled && ColorCoding)
             {
                 if (i == MouseoverIndex)
                 {
@@ -165,8 +187,6 @@ namespace Imp.Controls.Lists
             if (ActualWidth - sStyle.ScrollbarWidth< 0)
                 return;
 
-
-            
             var text = FormatText(controller.GetText(index), ref brush);
 
             if (text.MaxTextWidth > 0)
@@ -186,6 +206,10 @@ namespace Imp.Controls.Lists
             if (SortMode == FileSortMode.Name)
             {
                 controller.Sort(nameComparer);
+            }
+            else if (SortMode == FileSortMode.LastUsage)
+            {
+                controller.Sort(viewComparer);
             }
             else
             {

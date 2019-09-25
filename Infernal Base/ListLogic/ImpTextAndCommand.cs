@@ -1,5 +1,6 @@
 ﻿#region Usings
 
+using System;
 using Imp.Base.Commands;
 
 #endregion
@@ -12,11 +13,11 @@ namespace Imp.Base.ListLogic
 
         public readonly string Text;
         public readonly T Command;
-        public readonly object Argument;
+        public readonly Func<object> Argument;
 
         #endregion
 
-        public TextAndCommand(string text, T command, object argument = null)
+        public TextAndCommand(string text, T command, Func<object> argument = null)
         {
             Text = text;
             Command = command;
@@ -31,6 +32,6 @@ namespace Imp.Base.ListLogic
 
     public class ImpTextAndCommand : TextAndCommand<ImpCommand>
     {
-        public ImpTextAndCommand(string text, ImpCommand command, object argument = null) : base(text, command, argument) {}
+        public ImpTextAndCommand(string text, ImpCommand command, Func<object> argument = null) : base(text, command, argument) {}
     }
 }
