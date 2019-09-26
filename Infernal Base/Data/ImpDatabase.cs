@@ -69,7 +69,12 @@ namespace Imp.Base.Data
                 if (mediaTime.Value.TotalSeconds > mediaDuration.Value.TotalSeconds * 0.75)
                 {
                     complete = true;
+                    fileInfo.LastUsage = DateTime.UtcNow;
                 }
+            }
+            else if (fileInfo.FileType == FileTypes.Pictures)
+            {
+                fileInfo.LastUsage = DateTime.UtcNow;
             }
 
             foreach (var fileUsageData in nonClosed)
