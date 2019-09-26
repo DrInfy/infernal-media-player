@@ -329,6 +329,9 @@ namespace Imp.Player.Panels
                 case FileSortMode.Date:
                     comparer = new ComparerFileDate();
                     break;
+                case FileSortMode.LastUsage:
+                    comparer = new ComparerViewThenName();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

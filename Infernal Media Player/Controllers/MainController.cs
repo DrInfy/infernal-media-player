@@ -143,7 +143,14 @@ namespace Imp.Player.Controllers
         {
             if (this.playingItem != null)
             {
-                ImpDatabase.FileClosed(this.playingItem, TimeSpan.FromSeconds(this.window.UriPlayer.Position));
+                if (!this.window.UriPlayer.IsPlaying)
+                {
+                    ImpDatabase.FileClosed(this.playingItem);
+                }
+                else
+                {
+                    ImpDatabase.FileClosed(this.playingItem, TimeSpan.FromSeconds(this.window.UriPlayer.Position), TimeSpan.FromSeconds(this.window.UriPlayer.Duration));
+                }
             }
 
             if (item == null || this.loadingItem != null && this.loadingItem.FullPath == item.FullPath

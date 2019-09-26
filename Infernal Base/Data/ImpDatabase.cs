@@ -57,15 +57,26 @@ namespace Imp.Base.Data
             db.Insert(usageData);
         }
 
-        public static void FileClosed(FileImpInfo fileInfo, TimeSpan? mediaTime = null)
+        public static void FileClosed(FileImpInfo fileInfo, TimeSpan? mediaTime = null, TimeSpan? mediaDuration = null)
         {
             var id = fileInfo.SmartId;
             var nonClosed = db.Query<FileUsageData>("Select * FROM [FileUsageData] WHERE [FileInfoId] = ? AND [TimeClosed] IS NULL", id);
+
+            var complete = false;
+
+            if (mediaTime != null && mediaDuration != null)
+            {
+                if (mediaTime.Value.TotalSeconds > mediaDuration.Value.TotalSeconds * 0.75)
+                {
+                    complete = true;
+                }
+            }
 
             foreach (var fileUsageData in nonClosed)
             {
                 fileUsageData.TimeClosed = DateTime.UtcNow;
                 fileUsageData.FileTimeClosed = mediaTime;
+                fileUsageData.Completed = complete;
             }
 
             db.UpdateAll(nonClosed);

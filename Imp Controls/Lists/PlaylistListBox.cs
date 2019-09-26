@@ -79,6 +79,21 @@ namespace Imp.Controls.Lists
             controller = playListController;
         }
 
+        protected override Brush getBrush(int i, DrawingContext drawingContext, Brush brush)
+        {
+            var item = this.controller.GetContent(i);
+            if (!item.Playing && !this.controller.IsSelected(i) && item.LastUsage != null)
+            {
+                if (i == MouseoverIndex)
+                {
+                    return new SolidColorBrush(Color.FromRgb(255, 210, 255));
+                }
+
+                return new SolidColorBrush(Color.FromRgb(220, 190, 220));
+            }
+            return base.getBrush(i, drawingContext, brush);
+        }
+
         protected override void DrawText(int index, DrawingContext drawingContext, Brush brush)
         {
             if (ActualWidth - sStyle.ScrollbarWidth < 0)

@@ -74,6 +74,39 @@ namespace Imp.Base.ListLogic
         }
     }
 
+    public class ComparerViewThenName : IComparer<FileImpInfo>
+    {
+        public int Compare(FileImpInfo x, FileImpInfo y)
+        {
+            if (x.LastUsage != null && y.LastUsage != null)
+            {
+                if (x.LastUsage.Value > y.LastUsage.Value)
+                {
+                    return -1;
+                }
+
+                if (x.LastUsage.Value < y.LastUsage.Value)
+                {
+                    return 1;
+                }
+
+                return 0;
+            }
+
+            if (x.LastUsage == null && y.LastUsage != null)
+            {
+                return -1;
+            }
+
+            if (x.LastUsage != null && y.LastUsage == null)
+            {
+                return 1;
+            }
+
+            return string.Compare(x.SmartName, y.SmartName, StringComparison.Ordinal);
+        }
+    }
+
     public class ComparerFolderSmart : IComparer<ImpFolder>
     {
         public int Compare(ImpFolder x, ImpFolder y)
