@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Imp.Base;
 using Mpv.NET;
+using Mpv.NET.API;
 
 namespace Imp.MpvPlayer
 {

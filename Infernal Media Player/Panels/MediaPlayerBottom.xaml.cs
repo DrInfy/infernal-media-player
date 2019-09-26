@@ -180,7 +180,7 @@ namespace Imp.Player.Panels
 
             if (item != null)
             {
-                this.mainC.Exec(item.Command, item.Argument);
+                this.mainC.Exec(item.Command, item.Argument?.Invoke());
             }
         }
 

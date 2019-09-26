@@ -9,6 +9,7 @@ using System.Windows.Media;
 using Imp.Base.Interfaces;
 using Imp.MpvPlayer.Containers;
 using Mpv.NET;
+using Mpv.NET.API;
 using Newtonsoft.Json;
 using SEdge;
 
@@ -92,7 +93,7 @@ namespace Imp.MpvPlayer
 
         #region Local Fields
 
-        private Mpv.NET.Mpv mpv;
+        private Mpv.NET.API.Mpv mpv;
         private double? seekTarget;
         private double cachedPosition;
 
@@ -182,7 +183,7 @@ namespace Imp.MpvPlayer
 
         public void Init()
         {
-            this.mpv = new Mpv.NET.Mpv("lib\\mpv-1.dll");
+            this.mpv = new Mpv.NET.API.Mpv("lib\\mpv-1.dll");
 
             this.mpv.Command("load-script", @"scripts\ytdl_hook.lua");
             

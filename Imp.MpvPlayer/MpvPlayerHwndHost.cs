@@ -9,7 +9,7 @@ namespace Imp.MpvPlayer
 {
     internal class MpvPlayerHwndHost : HwndHost
     {
-        private Mpv.NET.Mpv mpv;
+        private Mpv.NET.API.Mpv mpv;
 
         private const int WS_CHILD = 0x40000000;
         private const int WS_VISIBLE = 0x10000000;
@@ -17,7 +17,7 @@ namespace Imp.MpvPlayer
         private const int WS_CLIPCHILDREN = 0x02000000;
         
 
-        public MpvPlayerHwndHost([NotNull]Mpv.NET.Mpv mpv)
+        public MpvPlayerHwndHost([NotNull]Mpv.NET.API.Mpv mpv)
         {
             this.mpv = mpv;
         }
