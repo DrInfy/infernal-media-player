@@ -16,7 +16,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid x:Name="grid" Background="Black" MouseDown="grid_MouseDown" MouseMove="grid_MouseMove" MouseUp="grid_MouseUp" ScrollViewer.VerticalScrollBarVisibility="Disabled">
 
         
@@ -34,7 +34,7 @@
             <RowDefinition x:Name="PanelLow" Height="40"/>
         </Grid.RowDefinitions>
 
-        <Image x:Name="ImageViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Stretch="None" Visibility="Hidden"  />
+        <controls:ImpImageViewer x:Name="ImageViewer" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"  Margin="0,0,0,0" VerticalAlignment="Center" Stretch="None" Visibility="Hidden"  />
 
         <Rectangle x:Name="BarBottom" Grid.ColumnSpan="5" Fill="#FFF4F4F5" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Row="2" VerticalAlignment="Stretch" />
 

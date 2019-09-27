@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infernal Base", "Infernal Base\Infernal Base.csproj", "{432C12B3-4F8C-4BEA-91DD-50562A8383D6}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfernalWorkOutTracker", "InfernalWorkOutTracker\InfernalWorkOutTracker.csproj", "{FD6A7379-EBCF-4D4D-910B-2F3525DD7FF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imp.MpvPlayer", "Imp.MpvPlayer\Imp.MpvPlayer.csproj", "{4183D70D-9ED7-4521-9815-0FC8C8299FB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnimatedGif", "WpfAnimatedGif\WpfAnimatedGif.csproj", "{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,14 @@ Global
 		{4183D70D-9ED7-4521-9815-0FC8C8299FB0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4183D70D-9ED7-4521-9815-0FC8C8299FB0}.Release|x64.ActiveCfg = Release|Any CPU
 		{4183D70D-9ED7-4521-9815-0FC8C8299FB0}.Release|x64.Build.0 = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|x64.Build.0 = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|x64.ActiveCfg = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

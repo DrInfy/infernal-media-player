@@ -218,6 +218,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Infernal Media Player_TemporaryKey.pfx" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -239,6 +240,10 @@
     <ProjectReference Include="..\Infernal Base\Infernal Base.csproj">
       <Project>{432c12b3-4f8c-4bea-91dd-50562a8383d6}</Project>
       <Name>Infernal Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfAnimatedGif\WpfAnimatedGif.csproj">
+      <Project>{d129789c-3096-4d0b-8dd7-fe24a4df4b21}</Project>
+      <Name>WpfAnimatedGif</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

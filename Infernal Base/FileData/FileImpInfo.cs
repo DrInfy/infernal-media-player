@@ -76,7 +76,7 @@ namespace Imp.Base.FileData
 
             if (this.FileType == FileTypes.Pictures)
             {
-                var minTime = TimeSpan.FromSeconds(5);
+                var minTime = TimeSpan.FromSeconds(2);
                 this.LastUsage = usages.Where(x => x.Completed
                                                    || (x.TimeClosed != null && x.TimeClosed.Value - x.TimeOpened > minTime))
                     .OrderBy(x => x.TimeOpened).FirstOrDefault()?.TimeOpened;

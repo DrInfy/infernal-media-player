@@ -6,16 +6,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Imp.Base;
 using Imp.Base.FileLoading;
+using Imp.Controls.Images;
+using WpfAnimatedGif;
+using WpfAnimatedGif.Decoding;
 
 #endregion
 
 namespace Imp.Player.Image
 {
-    public class ImageLoader : FileLoader<BitmapSource>
+    public class ImageLoader : FileLoader<ImpImage>
     {
         public ImageLoader(Dispatcher dispatcher) : base(dispatcher) {}
 
-        protected override BitmapSource Load(string path, out ImpError error)
+        protected override ImpImage Load(string path, out ImpError error)
         {
             error = null;
             var myUri = new Uri(path, UriKind.RelativeOrAbsolute);
@@ -36,7 +39,7 @@ namespace Imp.Player.Image
                         catch (Exception)
                         {
                             var impJpgDecoder = new ImpJpgDecoder(myUri);
-                            return impJpgDecoder.Source;
+                            return new ImpImage(impJpgDecoder.Source);
                         }
                         break;
                     case ImageType.Png:
@@ -49,12 +52,21 @@ namespace Imp.Player.Image
                         {
                             var impPngDecoder = new ImpPngDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
                                 BitmapCacheOption.OnLoad);
-                            return impPngDecoder.Source;
+                            return new ImpImage(impPngDecoder.Source);
                         }
                         break;
                     case ImageType.Gif:
                         decoder = new GifBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
                             BitmapCacheOption.OnLoad);
+
+                        if (decoder.Frames.Count > 1)
+                        {
+                            using (var stream = new FileStream(myUri.AbsolutePath, FileMode.Open))
+                            {
+                                var gifFile = GifFile.ReadGifFile(stream, true);
+                                return new ImpImage((GifBitmapDecoder)decoder, gifFile);
+                            }
+                        }
                         break;
                     case ImageType.Bmp:
                         decoder = new BmpBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat,
@@ -88,7 +100,7 @@ namespace Imp.Player.Image
             if (error != null)
                 return null;
 
-            return decoder.Frames[0];
+            return new ImpImage(decoder);
         }
 
         protected ImageType GetType(string path)

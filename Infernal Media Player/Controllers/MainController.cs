@@ -47,7 +47,7 @@ namespace Imp.Player.Controllers
         private readonly ImageLoader imageLoader;
         private readonly MpvLoader mediaLoader;
         private readonly MainWindow window;
-        private BitmapSource currentImage;
+        private Controls.Images.ImpImage currentImage;
         //private readonly SubtitleController subtitleController;
 
         #endregion
@@ -230,7 +230,7 @@ namespace Imp.Player.Controllers
             this.window.Title = "Infernal Media Player";
         }
 
-        private void ImageLoaded(BitmapSource bitmap)
+        private void ImageLoaded(Controls.Images.ImpImage bitmap)
         {
             ImpDatabase.FileOpened(this.loadingItem);
 
@@ -238,12 +238,12 @@ namespace Imp.Player.Controllers
             //loadingItem = null;
             this.itemOnPlayer = this.playingItem;
             this.window.PanelPlaylist.ListPlaylist.PlayingThis(this.playingItem);
+            this.window.UriPlayer.Clear();
+            this.currentImage = bitmap;
+            this.window.ImageViewer.ImageSource = bitmap;
             this.window.ImageViewer.Visibility = Visibility.Visible;
             this.window.UriPlayer.Visibility = Visibility.Hidden;
             this.window.LogoViewer.Visibility = Visibility.Hidden;
-            this.window.UriPlayer.Clear();
-            this.currentImage = bitmap;
-            this.window.ImageViewer.Source = bitmap;
             this.window.ImageViewer.Stretch = Stretch.Uniform;
             this.window.ImageViewer.StretchDirection = StretchDirection.Both;
 
