@@ -119,6 +119,21 @@ namespace Imp.Player.Controllers
             this.window.PanelOpen.GetFilters();
         }
 
+        protected override void SavePlayerState()
+        {
+            if (this.playingItem != null)
+            {
+                if (!this.window.UriPlayer.IsPlaying)
+                {
+                    ImpDatabase.FileClosed(this.playingItem);
+                }
+                else
+                {
+                    ImpDatabase.FileClosed(this.playingItem, TimeSpan.FromSeconds(this.window.UriPlayer.Position), TimeSpan.FromSeconds(this.window.UriPlayer.Duration));
+                }
+            }
+        }
+
         protected override void UpdateSettings()
         {
             this.Settings.Volume = this.MediaC.Volume;
@@ -130,11 +145,6 @@ namespace Imp.Player.Controllers
 
         protected override void CloseWindows()
         {
-            if (this.playingItem != null)
-            {
-                ImpDatabase.FileClosed(this.playingItem, TimeSpan.FromSeconds(this.window.UriPlayer.Position));
-            }
-
             this.window.Close();
             this.window.WindowClosed = true;
         }
@@ -233,7 +243,6 @@ namespace Imp.Player.Controllers
             this.window.LogoViewer.Visibility = Visibility.Hidden;
             this.window.UriPlayer.Clear();
             this.currentImage = bitmap;
-
             this.window.ImageViewer.Source = bitmap;
             this.window.ImageViewer.Stretch = Stretch.Uniform;
             this.window.ImageViewer.StretchDirection = StretchDirection.Both;

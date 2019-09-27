@@ -106,6 +106,7 @@ namespace Imp.Player
         private bool MouseOverGrid => this.grid.IsMouseDirectlyOver || this.LabelTopic.IsMouseOver || this.BarBottom.IsMouseDirectlyOver || this.BarTop.IsMouseDirectlyOver || this.BarTop2.IsMouseDirectlyOver ||
                                       //ImageViewer.IsMouseDirectlyOver ||
                                       this.UriPlayer.IsMouseOver || this.LogoViewer.IsMouseDirectlyOver ||
+                                      this.ImageViewer.IsMouseDirectlyOver ||
                                       //PanelOpen.LabelTopic.IsMouseOver ||
                                       //PanelPlaylist.LabelTopic.IsMouseOver ||
                                       this.PlayerBottom.LabelPosition.IsMouseOver || this.ViewerBottom.IsMouseOver;

@@ -434,6 +434,9 @@ namespace Imp.Base.Controllers
             else
             {
                 // double pressed, time to quit
+
+                SavePlayerState();
+
                 this.MediaC.FreePlayer();
                 UpdateSettings();
                 WriteSettings(this.settingsPath, this.Settings);
@@ -441,6 +444,8 @@ namespace Imp.Base.Controllers
                 Application.Current.Shutdown();
             }
         }
+
+        protected abstract void SavePlayerState();
 
         //protected abstract void ApplySettings();
 
