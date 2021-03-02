@@ -140,42 +140,54 @@ namespace Imp.Controls.Lists
         protected override Brush getBrush(int i, DrawingContext drawingContext, Brush brush)
         {
             brush = base.getBrush(i, drawingContext, brush);
-            if (this.IsEnabled && this.SortMode == FileSortMode.LastUsage)
+            if (IsEnabled)
             {
-                if (i == MouseoverIndex)
+                void historyColor()
                 {
-                    if (controller.GetContent(i).LastUsage != null)
-                        brush = new SolidColorBrush(Color.FromRgb(255, 210, 255));
-                    else
-                        brush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                    if (i == MouseoverIndex)
+                    {
+                        if (controller.GetContent(i).LastUsage != null)
+                            brush = new SolidColorBrush(Color.FromRgb(255, 210, 255));
+                        else
+                            brush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                    }
+                    else if (!controller.IsSelected(i))
+                    {
+                        if (controller.GetContent(i).LastUsage != null)
+                            brush = new SolidColorBrush(Color.FromRgb(220, 190, 220));
+                        else
+                            brush = new SolidColorBrush(Color.FromRgb(220, 220, 220));
+                    }
                 }
-                else if (!controller.IsSelected(i))
+
+                if (this.SortMode == FileSortMode.LastUsage)
                 {
-                    if (controller.GetContent(i).LastUsage != null)
-                        brush = new SolidColorBrush(Color.FromRgb(220, 190, 220));
-                    else
-                        brush = new SolidColorBrush(Color.FromRgb(220, 220, 220));
+                    historyColor();
                 }
-            }
-            else if (IsEnabled && ColorCoding)
-            {
-                if (i == MouseoverIndex)
+                else if (ColorCoding)
                 {
-                    if (controller.GetContent(i).FileType == FileTypes.Videos)
-                        brush = new SolidColorBrush(Color.FromRgb(210, 255, 255));
-                    else if (controller.GetContent(i).FileType == FileTypes.Music)
-                        brush = new SolidColorBrush(Color.FromRgb(255, 255, 210));
-                    else if (controller.GetContent(i).FileType == FileTypes.Pictures)
-                        brush = new SolidColorBrush(Color.FromRgb(210, 210, 255));
+                    if (i == MouseoverIndex)
+                    {
+                        if (controller.GetContent(i).FileType == FileTypes.Videos)
+                            brush = new SolidColorBrush(Color.FromRgb(210, 255, 255));
+                        else if (controller.GetContent(i).FileType == FileTypes.Music)
+                            brush = new SolidColorBrush(Color.FromRgb(255, 255, 210));
+                        else if (controller.GetContent(i).FileType == FileTypes.Pictures)
+                            brush = new SolidColorBrush(Color.FromRgb(210, 210, 255));
+                    }
+                    else if (!controller.IsSelected(i))
+                    {
+                        if (controller.GetContent(i).FileType == FileTypes.Videos)
+                            brush = new SolidColorBrush(Color.FromRgb(190, 220, 220));
+                        else if (controller.GetContent(i).FileType == FileTypes.Music)
+                            brush = new SolidColorBrush(Color.FromRgb(220, 220, 190));
+                        else if (controller.GetContent(i).FileType == FileTypes.Pictures)
+                            brush = new SolidColorBrush(Color.FromRgb(190, 190, 220));
+                    }
                 }
-                else if (!controller.IsSelected(i))
+                else
                 {
-                    if (controller.GetContent(i).FileType == FileTypes.Videos)
-                        brush = new SolidColorBrush(Color.FromRgb(190, 220, 220));
-                    else if (controller.GetContent(i).FileType == FileTypes.Music)
-                        brush = new SolidColorBrush(Color.FromRgb(220, 220, 190));
-                    else if (controller.GetContent(i).FileType == FileTypes.Pictures)
-                        brush = new SolidColorBrush(Color.FromRgb(190, 190, 220));
+                    historyColor();
                 }
             }
 

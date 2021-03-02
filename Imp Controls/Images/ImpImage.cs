@@ -78,8 +78,5 @@ namespace Imp.Controls.Images
         {
             this.imageSource = source;
         }
-
-
-
     }
 }
