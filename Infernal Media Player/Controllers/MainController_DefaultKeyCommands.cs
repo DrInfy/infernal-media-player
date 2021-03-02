@@ -36,16 +36,24 @@ namespace Imp.Player.Controllers
             cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.NextChapter, Key = Key.Right, NeedRelease = true, AllowedStyle = PlayerStyle.MediaPlayer, ModifierKeys = ModifierKeys.Shift });
 
             // in picture mode
-            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanLeftOrPrev, Key = Key.Left, NeedRelease = true, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.2 });
-            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanRightOrNext, Key = Key.Right, NeedRelease = true, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.2 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanLeftOrPrev, Key = Key.Left, NeedRelease = true, ModifierKeys = ModifierKeys.Shift, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.2 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanRightOrNext, Key = Key.Right, NeedRelease = true, ModifierKeys = ModifierKeys.Shift, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.2 });
 
-            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanUp, Key = Key.Up, NeedRelease = true, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.2 });
-            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanDown, Key = Key.Down, NeedRelease = true, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.2 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanLeft, Key = Key.Left, NeedRelease = false, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.05 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanRight, Key = Key.Right, NeedRelease = false, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.05 });
+
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanUp, Key = Key.Up, NeedRelease = true, ModifierKeys = ModifierKeys.Shift, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.2 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanDown, Key = Key.Down, NeedRelease = true, ModifierKeys = ModifierKeys.Shift, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.2 });
+
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanUp, Key = Key.Up, NeedRelease = false, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.05 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.PanDown, Key = Key.Down, NeedRelease = false, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.05 });
 
             cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.ChangeZoom, Key = Key.Up, NeedRelease = true, ModifierKeys = ModifierKeys.Control, AllowedStyle = PlayerStyle.PictureViewer, Argument = 0.1 });
             cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.ChangeZoom, Key = Key.Down, NeedRelease = true, ModifierKeys = ModifierKeys.Control, AllowedStyle = PlayerStyle.PictureViewer, Argument = -0.1 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.SetZoom , Key = Key.D0, NeedRelease = true, ModifierKeys = ModifierKeys.Control, AllowedStyle = PlayerStyle.PictureViewer, Argument = 1.0 });
 
-            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.SetZoom, Key = Key.Space, NeedRelease = true, AllowedStyle = PlayerStyle.PictureViewer, Argument = 1.0 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.SetZoom, Key = Key.Space, NeedRelease = true, ModifierKeys = ModifierKeys.Control, AllowedStyle = PlayerStyle.PictureViewer, Argument = 1.0 });
+            cmds.Add(new KeyCommand<ImpCommand>() { Command = ImpCommand.OpenNext, Key = Key.Space, NeedRelease = true, AllowedStyle = PlayerStyle.PictureViewer, Argument = 1.0 });
 
             // volume / mute keycommands
             cmds.Add(new KeyCommand<ImpCommand>() {Command = ImpCommand.VolumeChange, Key = Key.Add, NeedRelease = false, Argument = 0.01, AllowedStyle = PlayerStyle.MediaPlayer });
