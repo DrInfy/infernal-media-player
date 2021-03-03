@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Media;
 using Imp.Controls.Gui;
 using Imp.Player.Controllers;
 
@@ -42,6 +43,7 @@ namespace Imp.Player
             styling.SetStyle(DeleteButton, "Delete");
             styling.SetStyle(CancelButton, "Cancel");
             styling.SetStyle(ListItemsToDelete);
+            this.Background = new SolidColorBrush(Color.FromArgb(255, 50, 50, 50));
         }
 
         private void DeleteButton_Clicked(object sender)

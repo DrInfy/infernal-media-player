@@ -634,6 +634,11 @@ namespace Imp.Controls.Lists
             controller.RemoveSelected();
         }
 
+        public void Remove(T content)
+        {
+            controller.Remove(content);
+        }
+
         public List<T> GetSelectedList()
         {
             return controller.GetSelectedList();

@@ -254,6 +254,20 @@ namespace Imp.Base.ListLogic
             }
         }
 
+        public void Remove(T content)
+        {
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (items[i].Content.Equals(content))
+                {
+                    items.RemoveAt(i);
+                    OnListSizeChanged(false);
+                    return;
+                }
+            }
+        }
+        
+
         protected virtual void RemoveItem(int index)
         {
             items.RemoveAt(index);

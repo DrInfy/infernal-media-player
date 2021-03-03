@@ -179,6 +179,8 @@ namespace Imp.MpvPlayer
         {
             Stop();
             this.Tracks.Clear();
+            this.mpv.Command("stop"); // stop 
+            this.HasVideo = false;
         }
 
         public void Init()

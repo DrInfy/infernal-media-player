@@ -159,5 +159,10 @@ namespace Imp.Base.ListLogic
                 Name = Artist + " - Track " + Track;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj) || this.FullPath == (obj as PlaylistItem)?.FullPath;
+        }
     }
 }

@@ -756,10 +756,10 @@ namespace Imp.Player.Controllers
             return this.window.PanelPlaylist.ListPlaylist.GetSelectedList();
         }
 
-        public void PermanentlyDeleteFiles(List<PlaylistItem> playlistItemsToDelete)
+        public void PermanentlyDeleteFiles(List<PlaylistItem> itemsToDelete)
         {
             var fileDeleteCount = 0;
-            foreach (var playlistItem in playlistItemsToDelete)
+            foreach (var playlistItem in itemsToDelete)
             {
                 if (this.playingItem != null && this.playingItem.FullPath.Equals(playlistItem.FullPath))
                 {
@@ -773,15 +773,16 @@ namespace Imp.Player.Controllers
                     else
                     {
                         this.window.UriPlayer.Clear();
-                        while (this.window.UriPlayer.IsPlaying)
-                        {
-                            Thread.Sleep(5);
-                        }
+                        this.window.UriPlayer.Visibility = Visibility.Hidden;
+                        this.window.LogoViewer.Visibility = Visibility.Hidden;
                     }
 
                     this.playingItem = null;
                     ResetTitle();
                 }
+
+                this.window.PanelPlaylist.ListPlaylist.Remove(playlistItem);
+
                 try
                 {
                     File.Delete(playlistItem.FullPath);
@@ -794,7 +795,6 @@ namespace Imp.Player.Controllers
                 }
             }
             this.EventC.SetEvent(new EventText(fileDeleteCount + " files permanently deleted", 3, EventType.Delayed));
-            this.window.PanelPlaylist.ListPlaylist.RemoveSelected();
         }
 
         public Point CursorPositionInDesktop(MouseButtonEventArgs e)
